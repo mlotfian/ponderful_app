@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'ponderful_app.wsgi.application'
 DATABASES = {
     'default': {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        'NAME': os.getenv("POSTGRES_DB"),
+        'NAME': os.getenv("POSTGRES_DBNAME"),
         'USER': os.getenv("POSTGRES_USER"),
         'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
         'HOST': os.getenv("POSTGRES_HOST"),
