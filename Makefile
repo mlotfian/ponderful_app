@@ -13,7 +13,7 @@ down:
 logs:
 	docker-compose logs
 migrate:
-	docker-compose exec api python3 manage.py migrate --noinput
+	docker-compose exec web python3 manage.py migrate --noinput
 makemigrations:
 	docker-compose exec api python3 manage.py makemigrations
 
