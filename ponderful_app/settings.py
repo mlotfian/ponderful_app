@@ -47,9 +47,9 @@ DJANGO_APPS = [
     "django.contrib.gis",
 ]
 
-THIRD_PARTY_APPS = ["rest_framework", "rest_framework_gis"]
+THIRD_PARTY_APPS = ["rest_framework", "rest_framework_gis", "floppyforms"]
 
-PROJECTY_APPS = []
+PROJECTY_APPS = ['ponderful_mcda.apps.PonderfulMcdaConfig']
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECTY_APPS
 
