@@ -12,16 +12,4 @@ class CustomUser(AbstractUser):
         return self.username
 
 
-class Species(models.Model):
-    species_choices = [
-    ('tree', 'Tree'),
-    ('bird', 'Bird'),
-    ('flower','Flower'),
-    ('butterfly','Butterfly'),
-]
-
-    name = models.CharField(max_length=255, verbose_name="Name",)
-    obs_type = models.CharField(max_length=255, choices = species_choices,default='none' )
-    def __str__(self):
-        return '{} {}'.format(self.name, self.obs_type)
 
