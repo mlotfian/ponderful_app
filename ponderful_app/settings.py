@@ -45,13 +45,14 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "ponderful_mcda.apps.PonderfulMcdaConfig",
 ]
 
 THIRD_PARTY_APPS = ["rest_framework", "rest_framework_gis", "floppyforms"]
 
-PROJECTY_APPS = ['ponderful_mcda.apps.PonderfulMcdaConfig']
+#PROJECTY_APPS = ['ponderful_mcda.apps.PonderfulMcdaConfig']
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECTY_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -68,7 +69,7 @@ ROOT_URLCONF = 'ponderful_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR/"templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -139,3 +140,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# for custom user
+
+AUTH_USER_MODEL = "ponderful_mcda.CustomUser"
+
+
+# django_project/settings.py
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
