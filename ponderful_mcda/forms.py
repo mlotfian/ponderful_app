@@ -48,10 +48,11 @@ class CriteriaForm(forms.Form):
 
 
 
-class CriteriaParamsForm(forms.ModelForm):
+class WeightRangeForm(forms.ModelForm):
     class Meta:
         model = criteria_params
-        fields = ['weight_range', 'weight', 'rank', 'user', 'study_area']
+        fields = ['weight_range']
+
 
 
 

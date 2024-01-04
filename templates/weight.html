@@ -12,13 +12,13 @@
     flex-grow: 1;
 }
 
-.rank-fields {
+.weight-fields {
     width: 1000px; /* Adjust the width as needed */
 }
         </style>
         <body>
             
-            <form method="post" action="{% url 'add_params' %}">
+            <form method="post" action="{% url 'add_weight' %}">
                 {% csrf_token %}
                     
                     
@@ -27,10 +27,8 @@
                     
                     {% for form in formset %}
                     <div class="criteria-container">
-                        <div class="criteria-name">
-                            {{ form.initial.criteria_name }}
-                        </div>
-                        <div class="rank-fields">
+                        
+                        <div class="weight-fields">
                             {{ form.as_p }}
                         </div>
                     </div>
