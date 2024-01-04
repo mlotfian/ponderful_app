@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <body>
+            <h1>Criteria</h1>
+            <p>this is criteria page</p>
+            <form method="post" action="{% url 'select_criteria' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Submit">
+            </form>
+        </body>
+    </head>
+</html>

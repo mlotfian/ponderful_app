@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Display Polygon</title>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+</head>
+<body>
+
+    <h1>Study Area Detail</h1>
+
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+
+    <!-- <form method="post" action="{% url 'map' %}">
+        {% csrf_token %}
+        <label for="study_area_name">Study Area Name:</label>
+        <input type="text" id="study_area_name" name="study_area_name" required>
+        <button type="submit">Submit</button>
+    </form> -->
+
+    <form method="post" action="{% url 'map' %}">
+        {% csrf_token %}
+        <label for="study_area_name">Select the study area:</label>
+        <select id="study_area_name" name="study_area_name">
+            {% for name in study_area_all_names %}
+                <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Submit">
+    </form>
+
+   {% if polygon_geometry %}
+        
+        <div id="map" style="height: 400px;"></div>
+        <script>
+            // Assuming 'polygon_geometry' contains the geometry information for the polygon
+            var map = L.map('map').setView([46.8182,8.2275],6);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+        
+           var zone = {{ polygon_geometry|safe }};
+            console.log("GeoJSON Data:", zone);
+            // Add a GeoJSON layer with the polygon
+            var polygonLayer = L.geoJSON(zone).addTo(map);
+
+            // Fit the map to the bounds of the polygon
+            map.fitBounds(polygonLayer.getBounds());
+        </script>
+    {% endif %}
+
+</body>
+</html>

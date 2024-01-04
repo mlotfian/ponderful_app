@@ -1,8 +1,9 @@
+from leaflet.admin import LeafletGeoAdmin
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser
+from .models import CustomUser , studyarea, criteria, criteria_params
 
 # Register your models here.
 
@@ -12,6 +13,13 @@ class CustomUserAdmin(UserAdmin):
     model = CustomUser
     list_display = ["email", "username","organization",]
 
+
+
 admin.site.register(CustomUser, CustomUserAdmin)
 
 
+admin.site.register(studyarea, LeafletGeoAdmin)
+
+admin.site.register(criteria)
+
+admin.site.register(criteria_params)

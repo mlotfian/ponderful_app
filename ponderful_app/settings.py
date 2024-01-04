@@ -46,6 +46,8 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "ponderful_mcda.apps.PonderfulMcdaConfig",
+    "leaflet",
+    
 ]
 
 THIRD_PARTY_APPS = ["rest_framework", "rest_framework_gis", "floppyforms"]
@@ -136,6 +138,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

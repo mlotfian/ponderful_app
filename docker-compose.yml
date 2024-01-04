@@ -22,7 +22,7 @@ services:
       - POSTGRES_PASS=${POSTGRES_PASSWORD}
       - POSTGRES_DBNAME=${POSTGRES_DB}
     ports:
-      - "${DB_HOST_PORT}:5432"
+      - "${DB_HOST_PORT}:5434"
 
 volumes:
   postgres_data:

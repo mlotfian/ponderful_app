@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <body>
+            <h1>Criteria</h1>
+            <p>this is criteria page</p>
+            <form method="post" action="{% url 'add_params' %}">
+                {% csrf_token %}
+                    
+                    
+                    {{ formset.management_form }}
+    
+                    
+                      {{ formset.as_p }}
+                    
+                    
+                    
+                
+                <input type="submit" value="Submit">
+            </form>
+        </body>
+    </head>
+</html>
