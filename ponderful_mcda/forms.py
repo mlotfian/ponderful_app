@@ -8,6 +8,7 @@ from django.contrib.gis import forms as gis_forms
 from .models import studyarea, criteria_params, criteria
 from django.forms import ModelForm
 from django.forms import modelformset_factory
+from django.forms import widgets
 
 # forms.py
 import floppyforms as forms
@@ -53,8 +54,39 @@ class WeightRangeForm(forms.ModelForm):
         model = criteria_params
         fields = ['weight_range']
 
+"""class RankSliderWidget(forms.widgets.NumberInput):
+    template_name = 'widgets/rank_slider_widget.html' 
+  
+    def render(self, name, value, attrs=None, renderer=None):
+        if value is not None:
+            attrs['value'] = str(value)
+        return super().render(name, value, attrs=attrs, renderer=renderer)"""
 
+      
 
+"""class RankSliderWidget(forms.NumberInput):
+    input_type = 'range'
+    input_id = 'myRange'
+    template_name = 'widgets/rank_slider_widget.html'"""
 
-        
+class SliderRangeInput(widgets.NumberInput):
+    def __init__(self, min_value=0, max_value=100, step=1):
+        super().__init__()
+        self.min_value = min_value
+        self.max_value = max_value
+        self.step = step
+
+    def render(self, name, value, attrs=None, renderer=None):
+        html = '<input type="range" name="%s" min="%s" max="%s" step="%s" value="%s" id="%s" class="range-slider">' % (
+            name, self.min_value, self.max_value, self.step, value
+        )
+        return mark_safe(html)
+
+class CriteriaParamsForm(forms.ModelForm):
+    rank = forms.IntegerField(widget=SliderRangeInput(min_value=0, max_value=100))
+
+    class Meta:
+        model = criteria_params
+        fields = ['rank']
+
 

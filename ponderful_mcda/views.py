@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
-from .forms import CustomUserCreationForm, StudyAreaForm, StudyAreaSelectionForm, CriteriaForm, WeightRangeForm
+from .forms import CustomUserCreationForm, StudyAreaForm, StudyAreaSelectionForm, CriteriaForm, WeightRangeForm,SliderRangeInput, CriteriaParamsForm
 from .models import studyarea, CustomUser, criteria, criteria_params
 from django.core.serializers import serialize
 from django.contrib.gis.geos import Polygon
@@ -15,6 +15,8 @@ from django.contrib.gis.geos import GEOSGeometry
 from pygeoif import geometry
 
 from django.forms import modelformset_factory
+from floppyforms.widgets import RangeInput
+from django import forms
 
 
 # Create your views here.
@@ -108,7 +110,7 @@ def add_params(request):
    
     print(len(selected_criteria))
     
-    CriteriaParamsFormSet = modelformset_factory(criteria_params, fields=['rank'], extra=len(selected_criteria))
+    CriteriaParamsFormSet = modelformset_factory(criteria_params, fields=['rank'], extra=len(selected_criteria), widgets = {'rank': forms.TextInput(attrs={'type': 'range', 'step': '1', 'min': '1', 'max': '15', 'class':'slider', 'id':'myRange'})})
 
     if request.method == 'POST':
         formset = CriteriaParamsFormSet(request.POST)
@@ -118,9 +120,11 @@ def add_params(request):
             rank_data = [instance.rank for instance in instances]
             request.session['rank_data'] = rank_data
             # Redirect to the appropriate view after successful form submission
+            print(len(rank_data))
             if len(rank_data) == len(selected_criteria):
                 return redirect('add_weight')
             else:
+                print("not right length")
                 formset_data = [{'criteria_name': criteria.objects.get(pk=criterion_id).name} for criterion_id in selected_criteria]
                 formset = CriteriaParamsFormSet(queryset = criteria_params.objects.exclude(pk__in=criteria_params.objects.all()), initial=formset_data)
                 return render(request, 'step2.html', {'formset': formset, 'selected_criteria': selected_criteria})
