@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
-from .forms import CustomUserCreationForm, StudyAreaForm, StudyAreaSelectionForm, CriteriaForm, WeightRangeForm,SliderRangeInput, CriteriaParamsForm
+from .forms import CustomUserCreationForm, StudyAreaForm, StudyAreaSelectionForm, CriteriaForm, WeightRangeForm,RangeSliderWidget
 from .models import studyarea, CustomUser, criteria, criteria_params
 from django.core.serializers import serialize
 from django.contrib.gis.geos import Polygon
@@ -119,10 +119,39 @@ def add_params(request):
             instances = formset.save(commit=False)
             rank_data = [instance.rank for instance in instances]
             request.session['rank_data'] = rank_data
+
+            # compute the weight
+
+            all_weights = []
+
+            for i, criterion in enumerate(selected_criteria):
+                instance = criteria_params(
+                    criteria_id=criterion,
+                    study_area_id=study_area_id,
+                    user_id=request.user.id,
+                    rank=rank_data[i],
+                    #weight_range=weight_range,
+                )
+                if rank_data[i]==max(rank_data):
+                    instance.weight = min(rank_data) # least important criteria
+                    all_weights.append(instance.weight)
+                elif rank_data[i]==min(rank_data):
+                    instance.weight = max(rank_data) # most important criteria
+                    all_weights.append(instance.weight)
+                else:
+                    instance.weight = 1 + ((max(rank_data)-1)*(max(rank_data)-rank_data[i])/(max(rank_data)-min(rank_data)))
+                    all_weights.append(instance.weight)
+                instance.save()
+                
+            # now calculating the weights in percentage
+            total_weight_sum = sum(all_weights)
+            for instance in criteria_params.objects.filter(criteria_id__in=selected_criteria, user_id=request.user.id, study_area_id=study_area_id):
+                instance.weight_percentage = (instance.weight / total_weight_sum) * 100
+                instance.save()
             # Redirect to the appropriate view after successful form submission
             print(len(rank_data))
             if len(rank_data) == len(selected_criteria):
-                return redirect('add_weight')
+                return redirect('map')
             else:
                 print("not right length")
                 formset_data = [{'criteria_name': criteria.objects.get(pk=criterion_id).name} for criterion_id in selected_criteria]
@@ -151,7 +180,7 @@ def add_weight(request):
         
    
     print(len(selected_criteria))
-    CriteriaParamsFormSet = modelformset_factory(criteria_params, fields=['weight_range'], extra=1)
+    CriteriaParamsFormSet = modelformset_factory(criteria_params, fields=['weight_range'], extra=1, widgets={'weight_range':RangeSliderWidget})
     #CriteriaParamsFormSet = modelformset_factory(criteria_params, fields=['rank'], extra=len(selected_criteria))
 
     if request.method == 'POST':

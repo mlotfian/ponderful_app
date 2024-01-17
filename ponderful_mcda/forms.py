@@ -69,24 +69,24 @@ class WeightRangeForm(forms.ModelForm):
     input_id = 'myRange'
     template_name = 'widgets/rank_slider_widget.html'"""
 
-class SliderRangeInput(widgets.NumberInput):
-    def __init__(self, min_value=0, max_value=100, step=1):
-        super().__init__()
-        self.min_value = min_value
-        self.max_value = max_value
-        self.step = step
+class RangeSliderWidget(forms.MultiWidget):
+    def __init__(self, attrs=None):
+        widgets = (forms.TextInput(attrs=attrs), forms.TextInput(attrs=attrs))
+        super().__init__(widgets, attrs)
 
-    def render(self, name, value, attrs=None, renderer=None):
-        html = '<input type="range" name="%s" min="%s" max="%s" step="%s" value="%s" id="%s" class="range-slider">' % (
-            name, self.min_value, self.max_value, self.step, value
-        )
-        return mark_safe(html)
+    def decompress(self, value):
+        if value:
+            return [value[0], value[1]]
+        return [None, None]
 
-class CriteriaParamsForm(forms.ModelForm):
+    def format_output(self, rendered_widgets):
+        return f'{rendered_widgets[0]} to {rendered_widgets[1]}'
+
+"""class CriteriaParamsForm(forms.ModelForm):
     rank = forms.IntegerField(widget=SliderRangeInput(min_value=0, max_value=100))
 
     class Meta:
         model = criteria_params
-        fields = ['rank']
+        fields = ['rank']"""
 
 
