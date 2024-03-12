@@ -20,6 +20,8 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -30,9 +32,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['localhost',os.getenv('BASE_URL')]
+#ALLOWED_HOSTS = ['localhost',os.getenv('BASE_URL')]
 
-
+ALLOWED_HOSTS = ['*']
 # Application definition
 
 # Application definition
@@ -50,7 +52,7 @@ DJANGO_APPS = [
     
 ]
 
-THIRD_PARTY_APPS = ["rest_framework", "rest_framework_gis", "floppyforms"]
+THIRD_PARTY_APPS = ["rest_framework", "rest_framework_gis"]
 
 #PROJECTY_APPS = ['ponderful_mcda.apps.PonderfulMcdaConfig']
 
@@ -154,3 +156,8 @@ AUTH_USER_MODEL = "ponderful_mcda.CustomUser"
 # django_project/settings.py
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
+LOGIN_URL = 'home'
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.ngrok-free.app'
+]

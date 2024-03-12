@@ -1,0 +1,44 @@
+<html>
+<head>
+    <!-- Add jQuery for simplicity, you can use plain JavaScript as well -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+</head>
+<body>
+    {% block content %}
+    <h2>Add Alternatives Params</h2>
+    <form method="post" action="{% url 'create_alternatives' %}">
+        {% csrf_token %}
+
+        {{ formset.management_form }}
+        
+        <div id="form-container">
+          <table>
+            {% for form in formset %}
+            {{ form.as_table }}
+          {% endfor %}
+          </table>
+          
+        </div>
+
+        <button type="button" id="add_more">Add Another Set</button>
+        <button type="submit">Submit</button>
+
+        <div id="empty_form" style="display:none">
+          <table class='no_error'>
+              {{ formset.empty_form.as_table }}
+          </table>
+      </div>
+    </form>
+
+    <script>
+      $('#add_more').click(function() {
+          var form_idx = $('#id_form-TOTAL_FORMS').val();
+          $('#form-container').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+          $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+      });
+  </script>
+
+    {% endblock %}
+</body>
+</html>

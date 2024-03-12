@@ -2,16 +2,17 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from .models import CustomUser
 
-import floppyforms as forms
+#import floppyforms as forms
 from django import forms
 from django.contrib.gis import forms as gis_forms
-from .models import studyarea, criteria_params, criteria
+from .models import *
 from django.forms import ModelForm
+#from floppyforms.models import ModelForm
 from django.forms import modelformset_factory
 from django.forms import widgets
 
 # forms.py
-import floppyforms as forms
+#import floppyforms as forms
 
 class CustomUserCreationForm(UserCreationForm):
 
@@ -89,4 +90,17 @@ class RangeSliderWidget(forms.MultiWidget):
         model = criteria_params
         fields = ['rank']"""
 
+
+class AlternativesParamsForm(forms.ModelForm):
+    class Meta:
+        model = alternatives_params
+        fields = ['action','pond_min', 'pond_max', 'pond_size']
+
+class ScenarioForm(forms.ModelForm):
+    class Meta:
+        model = scenario_user
+        fields = ['scenario_type']
+        labels = {
+            'scenario': 'Select Climate Change Scenario',
+        }
 

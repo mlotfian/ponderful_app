@@ -126,7 +126,7 @@
         <button onclick=toggleDivs() type="button" class="btn btn-dark btn-lg">Back to Home Page</button>
         
         {% if user.is_authenticated %}
-        <a href="{% url 'map' %}"><button type="button" class="btn btn-success btn-lg">Start</button></a>
+        <a href="{% url 'start_analysis' %}"><button type="button" class="btn btn-success btn-lg">Start</button></a>
         {% else %}
         <a href="{% url 'login' %}"><button type="button" class="btn btn-success btn-lg">Start</button></a>
         {% endif %}

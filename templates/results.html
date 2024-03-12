@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple POST Button</title>
+</head>
+<body>
+
+<form action="{% url 'mcda_result' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Run MCDA</button>
+</form>
+
+</body>
+</html>

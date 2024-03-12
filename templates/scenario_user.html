@@ -1,0 +1,16 @@
+
+<html>
+  <head>
+    
+  </head>
+  <body>
+    {% block content %}
+<h2>Select Climate Change Scenario</h2>
+<form method="post" action="{% url 'select_scenario' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}
+  </body>
+</html>
