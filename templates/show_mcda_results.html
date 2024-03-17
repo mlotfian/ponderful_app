@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple POST Button</title>
+    {% load static %}
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Display Polygon</title>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />-->
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'index.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<style>
+
+.cover {
+    background: url('/static/images/pond.jpg') center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center; /* Center children horizontally */
+    align-items: center; /* Center children vertically */
+    height: 100vh; /* Use the full height of the viewport */
+}
+    .nav-right {
+    display: flex;
+    justify-content: flex-end; /* Align items to the right */
+    
+}
+
+.nav-right a {
+    color: green; /* Change the color to green */
+    text-decoration: none; /* Optional: Removes underline from the link */
+     /* Optional: Adds some spacing around the link */
+}
+
+.form-container {
+      background-color: white; /* White background */
+      padding: 20px; /* Add some padding around the form */
+      border-radius: 5px; /* Optional: rounds the corners of the form container */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow for better aesthetics */
+      width: auto; /* Adjust width as needed */
+      max-width: 90%; /* Prevents the form from becoming too wide on larger screens */
+  }
+
+  .bad { background-color: red; }
+.weak { background-color: orange; }
+.average { background-color: yellow; }
+.good { background-color: lightgreen; }
+.excellent { background-color: darkgreen; }
+  
+</style>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <span class="navbar-brand mb-0 h1">
+          <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
+        </span>
+        <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: lightgreen;"><i class="fa fa-fw fa-home"></i> Home</a></div>
+    </nav>
+    <div class="content-container cover" style="background-color: white;">
+        
+        <div class="form-container">
+    <h3>Results for the scenario: {{ scenario_name }}</h3>
+    <div>Guidance for overall objective achievement in percentage: </div>
+    <div><span class="bad">&nbsp;&nbsp;&nbsp;&nbsp;</span> 0%-20%: Poor</div>
+    <div><span class="weak">&nbsp;&nbsp;&nbsp;&nbsp;</span> 20%-40%: Weak</div>
+    <div><span class="average">&nbsp;&nbsp;&nbsp;&nbsp;</span> 40%-60%: Average</div>
+    <div><span class="good">&nbsp;&nbsp;&nbsp;&nbsp;</span> 60%-80%: Good</div>
+    <div><span class="excellent">&nbsp;&nbsp;&nbsp;&nbsp;</span> 80%-100%: Excellent</div>
+    <table border="1" style="margin: 20px;">
+        <thead>
+            <tr>
+                <th>NBS</th>
+                {% for title in criteria_titles %}
+                <th>{{ title }}</th>
+                {% endfor %}
+                <th>Global</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alternative, details in data.items %}
+    <tr>
+        <td>{{ alternative }}</td>
+        {% for value in details.values %}
+        <td class="{% if value <= 20 %}bad{% elif value <= 40 %}weak{% elif value <= 60 %}average{% elif value <= 80 %}good{% else %}excellent{% endif %}">
+            {{ value|floatformat:2 }}<span>%</span>
+        {% endfor %}
+        <td class="{% if details.sum <= 20 %}bad{% elif details.sum <= 40 %}weak{% elif details.sum <= 60 %}average{% elif details.sum <= 80 %}good{% else %}excellent{% endif %}">{{ details.sum|floatformat:2 }}<span>%</span></td>
+        
+    </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'home' %}" class="btn btn-primary btn-lg btn-back">Start a New Analysis</a>
+        </div>
+    </div>
+</body>
+</html>

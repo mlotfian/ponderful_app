@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from djgeojson.fields import PolygonField
 from django.contrib.postgres.fields import ArrayField
+from django.core.validators import MaxValueValidator, MinValueValidator 
 
 # Create your models here.
 
@@ -63,7 +64,7 @@ class criteria_params(models.Model):
     )
     weight = models.FloatField(verbose_name="Weight")
     weight_percentage = models.FloatField(verbose_name="Weight in percentage", default=100)
-    rank = models.IntegerField(verbose_name="Importance Rank")
+    rank = models.IntegerField(verbose_name="Priority Rank")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     study_area = models.ForeignKey(studyarea, on_delete=models.CASCADE, default=0)
     analysis_run = models.ForeignKey(AnalysisRun, on_delete=models.CASCADE)
@@ -84,7 +85,6 @@ class action_types(models.Model):
     ('Water management','Water management'), # quantity 
     ('Land management','Land management'), # pollution? or change the land cover?  
     ('No action','No action'),
-    ('Management','Management'), 
     ]
     name = models.CharField(max_length=255, choices = actions_types, verbose_name="Action Name")
     
@@ -95,8 +95,8 @@ class action_types(models.Model):
 class alternatives_params(models.Model):
     action = models.ForeignKey(action_types, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    pond_min = models.IntegerField(verbose_name="Minimum number of ponds")
-    pond_max = models.IntegerField(verbose_name="Maximum number of ponds")
+    pond_min = models.IntegerField(verbose_name="Minimum number of ponds", validators=[MinValueValidator(1), MaxValueValidator(20)])
+    pond_max = models.IntegerField(verbose_name="Maximum number of ponds", validators=[MinValueValidator(1), MaxValueValidator(20)])
     pond_sizes = [
     ('small', 'Small'),
     ('average', 'Average'),
@@ -110,10 +110,13 @@ class alternatives_params(models.Model):
 # add without land use change to all the other scenarios, e.g., sus + without lu change..
 class scenario(models.Model):
     scenario_category = [
-    ('Sustainability', 'Sustainability'),
-    ('Regional rivalry', 'Regional rivalry'),
-    ('Fossil-fueled development','Fossil-fueled development'),
-    ('Without land use change','Without land use change'),]
+    ('Land Use: SSP1, Climate Change: SSP1', 'Land Use: SSP1, Climate Change: SSP1'),
+    ('Land Use: SSP3, Climate Change: SSP3', 'Land Use: SSP3, Climate Change: SSP3'),
+    ('Land Use: SSP5, Climate Change: SSP5','Land Use: SSP5, Climate Change: SSP5'),
+    ('Land Use: No Change, Climate Change: SSP1','Land Use: No Change, Climate Change: SSP1'),
+    ('Land Use: No Change, Climate Change: SSP3','Land Use: No Change, Climate Change: SSP3'),
+    ('Land Use: No Change, Climate Change: SSP5','Land Use: No Change, Climate Change: SSP5'),
+    ('Land Use: No Change, Climate Change: No Change','Land Use: No Change, Climate Change: No Change')]
     #'With land use improvement? check with WP3']
 
     name = models.CharField(max_length=255, choices = scenario_category, verbose_name="Climate Change Scenario")

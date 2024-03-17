@@ -1,44 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    
+    
+    {% load static %}
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Display Polygon</title>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />-->
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'index.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 </head>
+<style>
+    .nav-right {
+    display: flex;
+    justify-content: flex-end; /* Align items to the right */
+    
+}
+
+.nav-right a {
+    color: green; /* Change the color to green */
+    text-decoration: none; /* Optional: Removes underline from the link */
+     /* Optional: Adds some spacing around the link */
+}
+
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Transparent black */
+    display: flex;
+    justify-content: space-between; /* Distribute space between items */
+    align-items: center;
+    padding: 10px;
+}
+
+.bottom-bar .form-inline {
+    flex-grow: 1; /* Allow the form to take up the available space */
+    display: flex;
+    justify-content: center; /* Center form in the available space */
+    align-items: center;
+}
+
+.bottom-bar .btn-back {
+    margin-right: auto; /* Push everything else to the right */
+}
+
+.bottom-bar .btn-next {
+    margin-left: auto; /* Push everything else to the left */
+   
+}
+
+.disabled-link {
+    pointer-events: none;
+    color: #ccc;
+    background-color: #efefef;
+    border-color: #ccc;
+}
+</style>
 <body>
 
+    <!-- adding navbar -->
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <span class="navbar-brand mb-0 h1">
+      <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
+    </span>
+    <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: lightgreen;"><i class="fa fa-fw fa-home"></i> Home</a></div>
+</nav>
+ 
     <h1>Study Area Detail</h1>
 
     {% if error_message %}
         <p>{{ error_message }}</p>
     {% endif %}
 
-    <!-- <form method="post" action="{% url 'map' %}">
-        {% csrf_token %}
-        <label for="study_area_name">Study Area Name:</label>
-        <input type="text" id="study_area_name" name="study_area_name" required>
-        <button type="submit">Submit</button>
-    </form> -->
+   
 
-    <form method="post" action="{% url 'map' %}">
-        {% csrf_token %}
-        <label for="study_area_name">Select the study area:</label>
-        <select id="study_area_name" name="study_area_name">
-            {% for name in study_area_all_names %}
-                <option value="{{ name }}">{{ name }}</option>
-            {% endfor %}
-        </select>
-        <input type="submit" value="Submit">
-    </form>
+    
+
+    <div class="bottom-bar">
+        <a href="{% url 'home' %}" class="btn btn-primary btn-lg btn-back">Back</a>
+        <form method="post" action="{% url 'map' %}" class="form-inline">
+            {% csrf_token %}
+            <label for="study_area_name" style="color: white;">Select the study area:</label>
+            <select id="study_area_name" name="study_area_name">
+                {% for name in study_area_all_names %}
+                    <option value="{{ name }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Display" class="btn btn-success btn-lg" onclick="displayMapAndShowNext()">
+        </form>
+        
+    
 
    {% if polygon_geometry %}
+   <a href="{% url 'select_criteria' %}" class="btn btn-success btn-lg btn-next" id="nextButton" onclick="goToSelectCriteria()">Next</a>
+</div>     
+   <div id="map" style="height: 400px;"></div>
         
-        <div id="map" style="height: 400px;"></div>
         <script>
             // Assuming 'polygon_geometry' contains the geometry information for the polygon
             var map = L.map('map').setView([46.8182,8.2275],6);
@@ -53,10 +126,16 @@
 
             // Fit the map to the bounds of the polygon
             map.fitBounds(polygonLayer.getBounds());
+
+
+            
         </script>
 
-    <div id="next_button"><a href="{% url 'select_criteria' %}"><button type="button" class="btn btn-success btn-lg">Select Criteria</button></a></div>
+
+
     {% endif %}
+
+
 
 </body>
 </html>

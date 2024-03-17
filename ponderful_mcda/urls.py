@@ -14,5 +14,6 @@ urlpatterns = [
     path('start-analysis/', start_analysis, name='start_analysis'),
     path('select_scenario/', select_scenario, name='select_scenario'),
     path('mcda_result/', mcda_results, name='mcda_result'),
+    path('show_results/', show_results, name='show_results')
 
 ]

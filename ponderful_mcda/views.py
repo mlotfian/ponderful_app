@@ -23,6 +23,8 @@ from .models import AnalysisRun
 from django.db.models import Max
 from django.shortcuts import get_object_or_404
 
+from collections import defaultdict
+
 
 
 # Create your views here.
@@ -218,7 +220,10 @@ def select_scenario(request):
         if form.is_valid():
             try:
                 instance = form.save(commit=False)
-                print("okay")
+                print(instance)
+                selected_scenario = instance.scenario_type.name
+                request.session['selected_scenario'] = selected_scenario
+                print(selected_scenario)
                 instance.analysis_run = analysis_run
                 instance.save()  # Commit changes only after successful validation
                 return redirect('create_alternatives')
@@ -343,13 +348,49 @@ def mcda_results(request):
                 weighted_avg = weighted_avg,
 
             )
-        return redirect('map')
+        return redirect('show_results')
     
     
     
     return render(request, 'results.html')
 
-        
+
+@login_required
+def show_results(request):
+    # Retrieve the analysis_run ID from the session or request
+    analysis_run_id = request.session.get('analysis_run_id')
+
+    # Retrieve the scenario name from the session
+    scenario_name = request.session.get('selected_scenario')
+
+    # Fetch mcda_result entries for this analysis_run
+    results = mcda_result.objects.filter(analysis_run=analysis_run_id).select_related('criteria')
+
+    criteria_titles = sorted({result.criteria.name for result in results})
+    alternatives = sorted(set(result.alternative for result in results))
+
+    # Initialize data structure with sums
+    data_with_sums = {}
+
+    for alternative in alternatives:
+        values = []
+        sum_values = 0  # Initialize sum for this alternative
+        for title in criteria_titles:
+            result = next((r.weighted_avg for r in results if r.alternative == alternative and r.criteria.name == title), 'N/A')
+            values.append(result)
+            if isinstance(result, (int, float)):  # Ensure 'result' is numeric before adding to sum
+                sum_values += result
+        # Store values and their sum in the data structure
+        data_with_sums[alternative] = {'values': values, 'sum': sum_values}
+
+    context = {
+        'data': data_with_sums,
+        'criteria_titles': criteria_titles,
+        'scenario_name': scenario_name,
+    }
+
+    # Pass the results and scenario name to the template
+    return render(request, 'show_mcda_results.html', context)
 
 
 

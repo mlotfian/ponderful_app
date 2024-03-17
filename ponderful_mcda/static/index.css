@@ -1,91 +1,69 @@
 body {
   
-    height: 100%;
-    width: 100%;
-	z-index: -1;
+  height: 100%;
+  width: 100%;
+z-index: -1;
 }
 .coverMap {
-  
-  background: url('/static/images/pond.jpg') center center;
-  background-size: cover;
-  background-repeat: no-repeat;
+
+background: url('/static/images/pond.jpg') center center;
+background-size: cover;
+background-repeat: no-repeat;
+
+   
 }
 .addButton{
-  position: absolute;
-  left: 55%;
-  top: 16%;
+position: absolute;
+left: 55%;
+top: 16%;
 }
 
 .brandsize {
-  height: 30px;
-  width: 100px;
+height: 30px;
+width: 100px;
 }
 .btn-margin-left {
-    margin-left: 2px;
+  margin-left: 2px;
 }
 .btn-margin-right {
-    margin-right: 2px;
+  margin-right: 2px;
 }
 
 @media screen and (min-width: 850px) {
-  .addButton{
-    left:85%;
-  }
+.addButton{
+  left:85%;
+}
 }
 
 
 .div1 {
-  
   background-color: rgba(255, 255, 255, 0.8);
-  font-family:verdana;
- 
   position: relative;
   width: 60%;
   padding: 10px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+@media (max-width: 768px) {
+  .div1 {
+      width: 50%;
+      padding: 10px; /* Reduced padding for smaller screens */
+  }
 }
 
 .text-p {
-  display: list-item;          /* This has to be "list-item"                                               */
-  list-style-type: square;     /* See https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type     */
-  list-style-position: inside; /* See https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-position */
-  
+display: list-item;          /* This has to be "list-item"                                               */
+list-style-type: square;     /* See https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type     */
+list-style-position: inside; /* See https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-position */
+
 }
 
 .button {
- 
 
-  display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.div2{
-  display: none;
-  background-color: rgba(255, 255, 255, 0.8);
-  font-family:verdana;
- 
-  position: relative;
-  width: 60%;
-  padding: 10px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.button2 {
- 
-
-  display: flex;
-    justify-content: left;
-    align-items: left;
-}
-.button3 {
- 
-
-  display: flex;
-    justify-content: right;
-    align-items: right;
+display: flex;
+  justify-content: center;
+  align-items: center;
 }

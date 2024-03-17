@@ -45,7 +45,7 @@ class CriteriaForm(forms.Form):
     criteria_choices = forms.ModelMultipleChoiceField(
         queryset=criteria.objects.all(),
         widget=forms.CheckboxSelectMultiple,
-        label="Select Criteria"
+        label="Select the NCP Indicators of Your Interest:"
     )
 
 

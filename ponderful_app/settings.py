@@ -49,10 +49,11 @@ DJANGO_APPS = [
     "django.contrib.gis",
     "ponderful_mcda.apps.PonderfulMcdaConfig",
     "leaflet",
+
     
 ]
 
-THIRD_PARTY_APPS = ["rest_framework", "rest_framework_gis"]
+THIRD_PARTY_APPS = ["rest_framework", "rest_framework_gis", "django_extensions",]
 
 #PROJECTY_APPS = ['ponderful_mcda.apps.PonderfulMcdaConfig']
 
@@ -66,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'ponderful_mcda.middleware.SuperuserDebugMiddleware'
 ]
 
 ROOT_URLCONF = 'ponderful_app.urls'
@@ -161,3 +163,8 @@ LOGIN_URL = 'home'
 CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.app'
 ]
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}

@@ -1,13 +1,110 @@
-<html>
-    <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    
+    
+    {% load static %}
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Display Polygon</title>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />-->
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'index.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+</head>
+
+<style>
+
+.cover {
+    background: url('/static/images/pond.jpg') center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center; /* Center children horizontally */
+    align-items: center; /* Center children vertically */
+    height: 100vh; /* Use the full height of the viewport */
+}
+
+    .nav-right {
+    display: flex;
+    justify-content: flex-end; /* Align items to the right */
+    
+}
+
+.nav-right a {
+    color: green; /* Change the color to green */
+    text-decoration: none; /* Optional: Removes underline from the link */
+     /* Optional: Adds some spacing around the link */
+}
+
+.form-container {
+    background-color: white; /* White background */
+    padding: 20px; /* Add some padding around the form */
+    border-radius: 5px; /* Optional: rounds the corners of the form container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow for better aesthetics */
+    width: auto; /* Adjust width as needed */
+    max-width: 90%; /* Prevents the form from becoming too wide on larger screens */
+}
+
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Transparent black */
+    display: flex;
+    justify-content: space-between; /* Distribute space between items */
+    align-items: center;
+    padding: 10px;
+}
+
+.bottom-bar .form-inline {
+    flex-grow: 1; /* Allow the form to take up the available space */
+    display: flex;
+    justify-content: center; /* Center form in the available space */
+    align-items: center;
+}
+
+.bottom-bar .btn-back {
+    margin-right: auto; /* Push everything else to the right */
+}
+
+.bottom-bar .btn-next {
+    margin-left: auto; /* Push everything else to the left */
+   
+}
+
+</style>
+
         <body>
-            <h1>Criteria</h1>
-            <p>this is criteria page</p>
-            <form method="post" action="{% url 'select_criteria' %}">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <input type="submit" value="Submit">
-            </form>
+
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <span class="navbar-brand mb-0 h1">
+                  <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
+                </span>
+                <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: lightgreen;"><i class="fa fa-fw fa-home"></i> Home</a></div>
+            </nav>
+            <div class="content-container cover">
+            <div class="form-container">
+                <form method="post" action="{% url 'select_criteria' %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success btn-lg">Submit Selection and Rank the Selected Indicators</button>
+                    <!-- This input is now inside the bottom bar, so we remove it from here -->
+                </form>
+            </div>
+        </div>
         </body>
-    </head>
+    
 </html>

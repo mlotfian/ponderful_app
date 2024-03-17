@@ -94,36 +94,15 @@
 
   <div class="div1">
     <p>
-  Within the framework of the Ponderful project, we aim to provide decision-makers involved in pond management and development policy with a decision support tool, which helps them:</p>
+  Within the framework of the Ponderful project, we aim to provide decision-makers involved in pond management and development policy with a decision support tool, which helps them 
+  in choosing a strategic option (continue as before, increase the number of ponds a little or a lot).</p>
   
-    <p class="text-p">In choosing a strategic option (continue as before, increase the number of ponds a little or a lot)</p>
-    <p class="text-p">To have a ready-made project (with a map of all new ponds, their location, costs, etc.)</p>
-    
-  <p>
-    Objectives of the decision support tool: </p>
+  <p><b>Objectives of the decision support tool are:</b></p>
   <p class="text-p">The decision support tool builds on the scientific results of the project to help decision makers understand the advantages and disadvantages of the major policy options available to them.</p> 
   <p class="text-p">The tool allows the user to contextualize the analysis by setting a number of parameters such  as the choice of criteria and their weighting. 
     </p>
   <div class="button">
-    <button onclick=toggleDivs() type="button" class="btn btn-dark btn-lg">What are the steps?</button>
-  </div>
-  </div>
-
-  <div class="div2">
-    <p>The tool has four main steps, which some steps has some sub-steps, the main steps include:</br>
-    </br>
-      1. Selection of parameters of the zone of interest</br>
-      2. Selection of decision criteria</br>
-      3.Ranking the decision criteria</br>
-      4.Assigning weights to the criteria</br>
-      5. Selection of scenario</br>
-      6. Selection of parameters for building strategic actions</br>
-      7. Assigning satisfaction thresholds for each criteria</br>
-      8. Run MCDA</br>
-      9. Visualize results</br>
-      
-      <div>
-        <button onclick=toggleDivs() type="button" class="btn btn-dark btn-lg">Back to Home Page</button>
+    
         
         {% if user.is_authenticated %}
         <a href="{% url 'start_analysis' %}"><button type="button" class="btn btn-success btn-lg">Start</button></a>
@@ -131,9 +110,10 @@
         <a href="{% url 'login' %}"><button type="button" class="btn btn-success btn-lg">Start</button></a>
         {% endif %}
         
-      </div>
-      </p>
   </div>
+  </div>
+
+  
 
 
 
@@ -148,4 +128,3 @@
 
 </body>
 </html>
-

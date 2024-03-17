@@ -1,6 +1,56 @@
 <html>
     <head>
+        {% load static %}
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Display Polygon</title>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />-->
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'index.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+</head>
         <style>
+
+.cover {
+    background: url('/static/images/pond.jpg') center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center; /* Center children horizontally */
+    align-items: center; /* Center children vertically */
+    height: 100vh; /* Use the full height of the viewport */
+}
+
+    .nav-right {
+    display: flex;
+    justify-content: flex-end; /* Align items to the right */
+    
+}
+
+.nav-right a {
+    color: green; /* Change the color to green */
+    text-decoration: none; /* Optional: Removes underline from the link */
+     /* Optional: Adds some spacing around the link */
+}
+
+.form-container {
+    background-color: white; /* White background */
+    padding: 10px; /* Add some padding around the form */
+    border-radius: 5px; /* Optional: rounds the corners of the form container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow for better aesthetics */
+    width: auto; /* Adjust width as needed */
+    max-width: 70%; /* Prevents the form from becoming too wide on larger screens */
+}
 
 .criteria-container {
     display: flex;
@@ -45,9 +95,25 @@
   background: #04AA6D;
   cursor: pointer;
 }
+
+.centered-text-container {
+    text-align: center;
+}
         </style>
         <body>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <span class="navbar-brand mb-0 h1">
+                  <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
+                </span>
+                <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: lightgreen;"><i class="fa fa-fw fa-home"></i> Home</a></div>
+            </nav>
             
+            <div class="content-container cover">
+                
+                <div class="form-container">
+                    <div class="centered-text-container">
+                        <p>Rank the selected NCP indicators based on their level of importance (management priority) from <b>left: <i>very important</i></b> to <b>right: <i>least important</i></b></p>
+                    </div>
             <form method="post" action="{% url 'add_params' %}">
                 {% csrf_token %}
                     
@@ -56,24 +122,23 @@
     
                     
                     {% for form in formset %}
-                    <div class="criteria-container">
-                        <div class="criteria-name">
-                            {{ form.initial.criteria_name }}
-                        </div>
-                        <div class="rank-fields">
+                    <!--<div class="criteria-container">-->
+                        
+                        <!--<div class="criteria-name">-->
+                            <b>{{ form.initial.criteria_name }}</b>
+                        <!-- </div>-->
+                        <!--<div class="rank-fields">-->
                             
                             {{ form.as_p }}
-                        </div>
-                    </div>
+                       <!-- </div>
+                    </div>-->
                 {% endfor %}
-                    
-                    
-                    
                 
-                <input type="submit" value="Submit">
+                <button type="submit" class="btn btn-success btn-lg">Submit Ranking</button>
             </form>
-
+</div>
+</div>
             
         </body>
-    </head>
+    
 </html>
