@@ -68,7 +68,7 @@
     
     <div class="form-container">
     {% block content %}
-    <p>Add Nature Based Solutions (NBS) That You Want to Apply.</p>
+    <p>Add the Nature Based Solutions (NBS) that you want to implement.</p>
     <form method="post" action="{% url 'create_alternatives' %}">
         {% csrf_token %}
 
@@ -99,6 +99,26 @@
           $('#form-container').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
           $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
       });
+
+
+// New function to disable options
+function disableNonCreationOptions() {
+          var actionSelect = document.querySelectorAll('select[name$="action"]');
+          actionSelect.forEach(function(select) {
+              for (var i = 0; i < select.options.length; i++) {
+                  if (select.options[i].text !== 'Creation') {
+                      select.options[i].disabled = true;
+                  }
+              }
+          });
+      }
+
+      // Disable non-creation options on initial load and after adding new forms
+      document.addEventListener('DOMContentLoaded', function() {
+          disableNonCreationOptions();
+      });
+    </script>
+
   </script>
 
     {% endblock %}

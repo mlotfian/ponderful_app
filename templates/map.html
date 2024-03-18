@@ -24,6 +24,31 @@
 
 </head>
 <style>
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+nav {
+    width: 100%;
+    /* Adjust height as needed or make it auto if you have a fixed-height navbar */
+    height: 50px; /* Example height */
+}
+
+#map {
+    width: 100%;
+    /* Calculate height: 100% of viewport height minus navbar height minus bottom bar height */
+    height: calc(100vh - 50px - 70px); /* Adjust 50px and 70px based on actual heights of your navbar and bottom bar */
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+
+
+
     .nav-right {
     display: flex;
     justify-content: flex-end; /* Align items to the right */
@@ -37,9 +62,10 @@
 }
 
 .bottom-bar {
-    position: fixed;
+    position: absolute;
     bottom: 0;
     left: 0;
+    height: 70px; /* Adjust based on your bottom bar content */
     width: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Transparent black */
     display: flex;
@@ -70,6 +96,8 @@
     background-color: #efefef;
     border-color: #ccc;
 }
+
+
 </style>
 <body>
 
@@ -82,7 +110,7 @@
     <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: lightgreen;"><i class="fa fa-fw fa-home"></i> Home</a></div>
 </nav>
  
-    <h1>Study Area Detail</h1>
+    
 
     {% if error_message %}
         <p>{{ error_message }}</p>
@@ -102,39 +130,43 @@
                     <option value="{{ name }}">{{ name }}</option>
                 {% endfor %}
             </select>
-            <input type="submit" value="Display" class="btn btn-success btn-lg" onclick="displayMapAndShowNext()">
+            <input type="submit" value="Display" class="btn btn-warning btn-lg" style="margin: 10px;" onclick="displayMapAndShowNext()">
         </form>
-        
-    
-
-   {% if polygon_geometry %}
-   <a href="{% url 'select_criteria' %}" class="btn btn-success btn-lg btn-next" id="nextButton" onclick="goToSelectCriteria()">Next</a>
-</div>     
-   <div id="map" style="height: 400px;"></div>
-        
-        <script>
-            // Assuming 'polygon_geometry' contains the geometry information for the polygon
-            var map = L.map('map').setView([46.8182,8.2275],6);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-        
-           var zone = {{ polygon_geometry|safe }};
-            console.log("GeoJSON Data:", zone);
-            // Add a GeoJSON layer with the polygon
-            var polygonLayer = L.geoJSON(zone).addTo(map);
-
-            // Fit the map to the bounds of the polygon
-            map.fitBounds(polygonLayer.getBounds());
-
-
-            
-        </script>
-
-
-
+        {% if polygon_geometry %}
+    <a href="{% url 'select_criteria' %}" class="btn btn-success btn-lg btn-next" id="nextButton">Next</a>
     {% endif %}
+</div>
+    
+  
+        <div id="map"></div>
+             
+             <script>
+                 // Assuming 'polygon_geometry' contains the geometry information for the polygon
+                 var map = L.map('map').setView([54.5260,15.2551],5);
+                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+         }).addTo(map);
+                </script>
+                {% if polygon_geometry %}
+                
+          <script>
+                
 
+                var zone = {{ polygon_geometry|safe }};
+                 console.log("GeoJSON Data:", zone);
+                 // Add a GeoJSON layer with the polygon
+                 var polygonLayer = L.geoJSON(zone).addTo(map);
+     
+                 // Fit the map to the bounds of the polygon
+                 map.fitBounds(polygonLayer.getBounds());
+     
+                 
+                 
+             </script>
+     {% endif %}
+     
+     
+         
 
 
 </body>

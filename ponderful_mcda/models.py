@@ -93,7 +93,7 @@ class action_types(models.Model):
         return self.name
 
 class alternatives_params(models.Model):
-    action = models.ForeignKey(action_types, on_delete=models.CASCADE)
+    action = models.ForeignKey(action_types, on_delete=models.CASCADE, verbose_name="NBS implementation type")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     pond_min = models.IntegerField(verbose_name="Minimum number of ponds", validators=[MinValueValidator(1), MaxValueValidator(20)])
     pond_max = models.IntegerField(verbose_name="Maximum number of ponds", validators=[MinValueValidator(1), MaxValueValidator(20)])
