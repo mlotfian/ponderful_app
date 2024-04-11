@@ -5,6 +5,7 @@
     {% leaflet_css %}
     
     {% load static %}
+    {% load i18n %}
 
     <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width">
     <meta charset="utf-8" />
@@ -31,13 +32,19 @@
 .same_lenght{
   width: 150px;
 }
+.navbar-brand img.brandsize {
+    background-color: transparent; /* Ensures no background color */
+    width: auto; /* Adjust to your needs, keeps the image's aspect ratio */
+    height: 30px; /* Example height; adjust as necessary without scaling too much */
+    object-fit: contain; /* Keeps the image's aspect ratio without cropping */
+}
 
 </style>
 <body class="coverMap">
 
   <!-- adding navbar -->
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <span class="navbar-brand mb-0 h1">
         <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
       </span>
@@ -94,12 +101,10 @@
 
   <div class="div1">
     <p>
-  Within the framework of the Ponderful project, we aim to provide decision-makers involved in pond management and development policy with a decision support tool, which helps them 
-  in choosing a strategic option (continue as before, increase the number of ponds a little or a lot).</p>
-  
-  <p><b>Objectives of the decision support tool are:</b></p>
-  <p class="text-p">The decision support tool builds on the scientific results of the project to help decision makers understand the advantages and disadvantages of the major policy options available to them.</p> 
-  <p class="text-p">The tool allows the user to contextualize the analysis by setting a number of parameters such  as the choice of criteria and their weighting. 
+      The Ponderful project is dedicated to empowering decision-makers in pond management and policy development with a  decision support tool. This tool assists the decision makers in selecting the most strategic direction—whether to maintain the status quo, moderately increase, or significantly boost the number of ponds—by assessing the effects of diverse <b>Nature Based Solutions (NBS)</b> on <b>Nature Contribution to People (NCP)</b>, within specific climate change and land use scenarios, and thus predict the trends or values for different NCP indicators for the year 2050.
+  <p><b>Objectives of the decision support tool:</b></p>
+  <p class="text-p">Using the scientific outcomes from the project, this tool is designed to facilitate decision-makers in evaluating and comparing different NBS approaches based on a range of NCP indicators.</p> 
+  <p class="text-p">The tool offers users the flexibility to contextualize the analysis by setting a number of parameters such as the choice of NCP indicators and their weighting. 
     </p>
   <div class="button">
     

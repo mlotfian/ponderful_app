@@ -282,9 +282,11 @@ def mcda_results(request):
     analysis_run = get_object_or_404(AnalysisRun, id=analysis_run_id)
 
     # getting scenario_id from analysis_run_id
-    scenario_id = scenario_user.objects.filter(analysis_run=analysis_run_id).values_list('scenario_type_id', flat=True).distinct().first()
-    scenario_instance = scenario.objects.get(pk=scenario_id)
-    print("scenario, ", scenario_id)
+    #scenario_id = scenario_user.objects.filter(analysis_run=analysis_run_id).values_list('scenario_type_id', flat=True).distinct().first()
+    #scenario_instance = scenario.objects.get(pk=scenario_id)
+    #print("scenario, ", scenario_id)
+    all_scenario_ids = scenario.objects.all().values_list('id', flat=True)
+    #request.session['scenario_ids']=all_scenario_ids
     # get action, pund min and pund max values from alternative params
 
     alt_param = alternatives_params.objects.filter(analysis_run=analysis_run_id).values_list('action','pond_min','pond_max').distinct()
@@ -310,20 +312,22 @@ def mcda_results(request):
         satisfaction_c = satisfaction_threshold.objects.filter(study_area=study_area_id,criteria_id=indicator).values_list('threshold_max', flat=True).distinct().first()
                 
         for ap in action_pond:
-            if ap[0] != 11:
-                output = modeling_result.objects.filter(action=ap[0],criteria=indicator, pond_num=ap[1], scenario=scenario_id).values_list('output', flat=True).distinct().first()
-                print("here", ap[0])
-                all_values.append((indicator,"Creation of " + str(ap[1]) + " Ponds", output, satisfaction_c, satisfaction_n, weight))
-            else:
-                output = modeling_result.objects.filter(action=ap[0],criteria=indicator, scenario=scenario_id).values_list('output', flat=True).distinct().first()
-                print(ap[0])
-                all_values.append((indicator,"No action", output, satisfaction_c, satisfaction_n, weight))
+            for scenario_id in all_scenario_ids:
+                if ap[0] != 11:
+                
+                    output = modeling_result.objects.filter(action=ap[0],criteria=indicator, pond_num=ap[1], scenario=scenario_id).values_list('output', flat=True).distinct().first()
+                    #print("here", ap[0])
+                    all_values.append((indicator,"Creation of " + str(ap[1]) + " Ponds", output, satisfaction_c, satisfaction_n, weight, scenario_id))
+                else:
+                    output = modeling_result.objects.filter(action=ap[0],criteria=indicator, scenario=scenario_id).values_list('output', flat=True).distinct().first()
+                    #print(ap[0])
+                    all_values.append((indicator,"No action", output, satisfaction_c, satisfaction_n, weight, scenario_id))
     
 
     if request.method == 'POST':
 
         for element in all_values:
-            print(element[2], element[3], element[4])
+            #print(element[2], element[3], element[4])
             if element[2]<=element[4]:
                 partial_satisfaction = 0
                 weighted_avg = partial_satisfaction * element[5]
@@ -338,7 +342,7 @@ def mcda_results(request):
             
             mcda_result.objects.create(
                 alternative = element[1],
-                scenario = scenario_instance,
+                scenario = scenario.objects.get(pk=element[6]),
                 criteria = criteria_instance,
                 user = request.user,
                 analysis_run=analysis_run,
@@ -355,41 +359,58 @@ def mcda_results(request):
     return render(request, 'results.html')
 
 
+
 @login_required
 def show_results(request):
-    # Retrieve the analysis_run ID from the session or request
+    # Retrieve the analysis_run ID and scenario_name from the session
     analysis_run_id = request.session.get('analysis_run_id')
+    session_scenario_name = request.session.get('selected_scenario')
+    
+    # Adapt the retrieval of scenarios based on session data or query parameters
+    #scenario_ids = request.GET.getlist('scenario_ids')
+    
+    # Get all scenarios to display in the form
+    all_scenarios = scenario.objects.all().order_by('-id')
+    
+    # Handle selected scenarios from GET parameters
+    selected_scenario_ids = request.GET.getlist('scenario_ids')
+    if selected_scenario_ids:
+        scenarios = all_scenarios.filter(id__in=selected_scenario_ids)
+    else:
+        # If no scenarios are selected, optionally display results for the session scenario
+        session_scenario = all_scenarios.filter(name=session_scenario_name).first()
+        scenarios = [session_scenario] if session_scenario else all_scenarios
+        print(scenarios[0].id)
 
-    # Retrieve the scenario name from the session
-    scenario_name = request.session.get('selected_scenario')
-
-    # Fetch mcda_result entries for this analysis_run
-    results = mcda_result.objects.filter(analysis_run=analysis_run_id).select_related('criteria')
-
-    criteria_titles = sorted({result.criteria.name for result in results})
-    alternatives = sorted(set(result.alternative for result in results))
-
-    # Initialize data structure with sums
-    data_with_sums = {}
-
-    for alternative in alternatives:
-        values = []
-        sum_values = 0  # Initialize sum for this alternative
-        for title in criteria_titles:
-            result = next((r.weighted_avg for r in results if r.alternative == alternative and r.criteria.name == title), 'N/A')
-            values.append(result)
-            if isinstance(result, (int, float)):  # Ensure 'result' is numeric before adding to sum
-                sum_values += result
-        # Store values and their sum in the data structure
-        data_with_sums[alternative] = {'values': values, 'sum': sum_values}
+    # Assuming all scenarios within an analysis run share the same criteria and alternatives
+    results_sample = mcda_result.objects.filter(scenario=scenarios[0], analysis_run=analysis_run_id).select_related('criteria')
+    criteria_titles = sorted({result.criteria.name for result in results_sample})
+    alternatives = sorted(set(result.alternative for result in results_sample))
+    
+    # Fetch mcda_result entries for selected scenarios within the analysis_run
+    results_by_scenario = {}
+    
+    for scen in scenarios:
+        results = mcda_result.objects.filter(scenario=scen, analysis_run=analysis_run_id).select_related('criteria')
+        scenario_data = {alternative: {'values': [], 'sum': 0} for alternative in alternatives}
+        for alternative in alternatives:
+            sum_values = 0
+            for title in criteria_titles:
+                result = next((r.weighted_avg for r in results if r.alternative == alternative and r.criteria.name == title), 'N/A')
+                scenario_data[alternative]['values'].append(result)
+                if isinstance(result, (int, float)):
+                    sum_values += result
+            scenario_data[alternative]['sum'] = sum_values
+        results_by_scenario[(scen.name, scen.id)] = scenario_data
 
     context = {
-        'data': data_with_sums,
+        'all_scenarios': all_scenarios,
+        'selected_scenarios': scenarios,
+        'data': results_by_scenario,
         'criteria_titles': criteria_titles,
-        'scenario_name': scenario_name,
+        'alternatives': alternatives,
     }
 
-    # Pass the results and scenario name to the template
     return render(request, 'show_mcda_results.html', context)
 
 

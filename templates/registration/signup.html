@@ -1,13 +1,123 @@
-<!-- templates/registration/signup.html -->
 {% extends "base.html" %}
 
 {% block title %}Sign Up{% endblock %}
 
 {% block content %}
-<h2>Sign Up</h2>
+<style>
+    body{
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5;
+    padding: 40px 0; /* Increased padding at the top and bottom */
+    box-sizing: border-box;
+  }
+  .form-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 40%; /* Make the container wider */
+    min-width: 300px; /* Ensure form is not too narrow on small screens */
+    max-width: 600px; /* Cap the width to ensure the form does not get too wide */
+    margin: auto; /* Ensure vertical alignment is maintained */
+  }
+  form > p {
+    margin: 10px 0;
+  }
+
+  form input[type="text"], form input[type="email"], form input[type="password"], form button.submit-button {
+    width: 100%; /* Sets the width of text fields and the button to be the same */
+    box-sizing: border-box; /* Ensures padding and border are included in the width */
+  }
+  
+  button {
+    background-color: #007bff; /* Or #28a745 for the signup button */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+  }
+  form > div {
+    margin-bottom: 10px; /* Adjusts spacing between form fields */
+  }
+
+  
+  button:hover {
+    background-color: #0056b3; /* Or #218838 for the signup button */
+  }
+
+  .error { color: red; }
+  .password-conditions { color: blue; margin-top: 10px; }
+</style>
+
+<div class="form-container">
+  <!--<h2>Sign Up</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign Up</button>
+  </form>-->
+
+  <h2>Sign Up</h2>
 <form method="post">
   {% csrf_token %}
-  {{ form.as_p }}
+  <div>
+    <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+    <input type="text" maxlength="150" pattern="[A-Za-z0-9_@.+-]+" title="150 characters or fewer. Letters, digits and @/./+/-/_ only." autofocus required id="id_username" class="form-control form_class" name="username" placeholder="Username" required="required">
+      
+    {% if form.username.errors %}
+      <div class="error">{{ form.username.errors }}</div>
+    {% endif %}
+  </div>
+  <div>
+    <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+    
+    <input type="email" id="id_email" class="form-control form_class" name="email" placeholder="Email Address" required="required">
+    {% if form.email.errors %}
+      <div class="error">{{ form.email.errors }}</div>
+    {% endif %}
+  </div>
+  <div>
+    <label for="{{ form.organization.id_for_label }}">{{ form.organization.label }}</label>
+    <input type="text" id="id_organization" class="form-control form_class" name="organization" placeholder="Enter Your Organization">
+    {% if form.organization.errors %}
+      <div class="error">{{ form.organization.errors }}</div>
+    {% endif %}
+  </div>
+  <div>
+    <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+    <input type="password" pattern="(?=.*[a-z]).{8,}" title=" 1)Your password can't be entirely numeric. 2)Your password must contain at least one lower case and at least 8 characters 3)Your password can't be a commonly used password. 4)Your password can't be too similar to your other personal information" id="id_password1" class="form-control form_class" name="password1" placeholder="Password" required="required">
+      
+    {% if form.password1.errors %}
+      <div class="password-conditions">
+        <p>Your password must meet the following requirements:</p>
+        <ul>
+          <li>Be at least 8 characters long</li>
+          <li>Contain both uppercase and lowercase letters</li>
+          <li>Include at least one numerical digit</li>
+          <li>Have at least one special character (e.g., !, @, #)</li>
+        </ul>
+      </div>
+    {% endif %}
+  </div>
+  <div>
+    <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+    <input type="password" id="id_password2" class="form-control form_class" name="password2" placeholder="Confirm Password" required="required">
+         
+    {% if form.password2.errors %}
+      <div class="error">{{ form.password2.errors }}</div>
+    {% endif %}
+  </div>
+
   <button type="submit">Sign Up</button>
 </form>
+</div>
 {% endblock %}
+
+

@@ -1,13 +1,58 @@
-<!-- templates/registration/login.html -->
 {% extends "base.html" %}
 
 {% block title %}Log In{% endblock %}
 
 {% block content %}
-<h2>Log In</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Log In</button>
-</form>
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5; /* Light gray background */
+  }
+  .form-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 30%;
+    min-width: 300px; /* Ensure form is not too narrow on small screens */
+  }
+  form > p {
+    margin: 10px 0;
+  }
+  button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+  .signup-link {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+  }
+  form input[type="text"], form input[type="email"], form input[type="password"], form button.submit-button {
+    width: 100%; /* Sets the width of text fields and the button to be the same */
+    box-sizing: border-box; /* Ensures padding and border are included in the width */
+  }
+</style>
+
+<div class="form-container">
+  <h2>Log In</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Log In</button>
+    <a href="{% url 'signup' %}" class="signup-link">Don't have an account? Sign up</a>
+  </form>
+</div>
 {% endblock %}

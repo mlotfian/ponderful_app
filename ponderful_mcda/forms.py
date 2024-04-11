@@ -103,4 +103,9 @@ class ScenarioForm(forms.ModelForm):
         labels = {
             'scenario': 'Select Climate Change Scenario',
         }
+        
+    def __init__(self, *args, **kwargs):
+        super(ScenarioForm, self).__init__(*args, **kwargs)
+        # Adjust the queryset for scenario_type field
+        self.fields['scenario_type'].queryset = scenario.objects.all().order_by('-id')
 

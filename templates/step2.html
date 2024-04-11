@@ -22,7 +22,7 @@
         <style>
 
 .cover {
-    background: url('/static/images/pond.jpg') center center;
+    background-color: beige; center center;
     background-size: cover;
     background-repeat: no-repeat;
     display: flex;
@@ -31,16 +31,26 @@
     height: 100vh; /* Use the full height of the viewport */
 }
 
-    .nav-right {
+.navbar {
     display: flex;
-    justify-content: flex-end; /* Align items to the right */
-    
+    justify-content: space-between; /* This will place items on both ends */
 }
 
-.nav-right a {
-    color: green; /* Change the color to green */
+.nav-left, .navbar-brand {
+    display: flex;
+    align-items: center; /* This ensures the items are vertically centered */
+}
+
+.nav-left a {
+    color: green; /* Keeping your color requirement */
     text-decoration: none; /* Optional: Removes underline from the link */
-     /* Optional: Adds some spacing around the link */
+}
+
+.navbar-brand img.brandsize {
+    background-color: transparent; /* Ensures no background color */
+    width: auto; /* Adjust to your needs, keeps the image's aspect ratio */
+    height: 30px; /* Example height; adjust as necessary without scaling too much */
+    object-fit: contain; /* Keeps the image's aspect ratio without cropping */
 }
 
 .form-container {
@@ -80,32 +90,91 @@
   opacity: 1;
 }
 
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2); /* Increase the size */
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 25px;
-  height: 25px;
-  background: #04AA6D;
+  width: 20px;
+  height: 20px;
+  background: var(--thumb-color, #04AA6D); /* Default color, updated by JS */
   cursor: pointer;
+  border-radius: 50%;
+  border: var(--thumb-border, 1px solid black); /* Default border */
+  
 }
 
 .slider::-moz-range-thumb {
   width: 25px;
   height: 25px;
-  background: #04AA6D;
+  background: var(--thumb-color, #04AA6D); /* Default color, updated by JS */
   cursor: pointer;
+  border: var(--thumb-border, 1px solid black); /* Default border */
 }
+
+
 
 .centered-text-container {
     text-align: center;
 }
+
+
+.importance-label-plus {
+    
+    padding: 1px;
+    color: green;
+    
+}
+.importance-label-minus {
+    
+    padding: 1px;
+    color: red;
+    
+}
+.slider-container {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Spread the children (+, slider, -) */
+    width: 100%; /* Ensure the container takes the full width of its parent */
+    padding: 0 10px; /* Add padding to prevent the slider from touching the container edges */
+}
+
+.criteria-container {
+    display: flex;
+    flex-direction: column; /* Ensure the name and slider are stacked */
+    align-items: center; /* Center the content */
+    margin-bottom: 20px; /* Space between each slider group */
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: calc(100% - 20px); /* Adjust width to leave space for + and - */
+    height: 10px; /* Making the slider thinner */
+    background: #d3d3d3;
+    outline: none;
+    transition: opacity .2s;
+    cursor: pointer;
+}
+
         </style>
         <body>
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                
+                <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);"><i class="fa fa-fw fa-home"></i> Home</a></div>
                 <span class="navbar-brand mb-0 h1">
-                  <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
-                </span>
-                <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: lightgreen;"><i class="fa fa-fw fa-home"></i> Home</a></div>
+                    <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
+                  </span>
             </nav>
             
             <div class="content-container cover">
@@ -122,16 +191,17 @@
     
                     
                     {% for form in formset %}
-                    <!--<div class="criteria-container">-->
-                        
-                        <!--<div class="criteria-name">-->
-                            <b>{{ form.initial.criteria_name }}</b>
-                        <!-- </div>-->
-                        <!--<div class="rank-fields">-->
-                            
-                            {{ form.as_p }}
-                       <!-- </div>
-                    </div>-->
+    
+        <!-- Criteria Name -->
+        <div class="criteria-container">
+            <div class="criteria-name">{{ form.initial.criteria_name }}</div>
+            <!-- Slider and Labels -->
+            <div class="slider-container">
+                <span class="importance-label-plus"><strong>+</strong></span> <!-- Left label -->
+                {{ form.rank }} <!-- Slider -->
+                <span class="importance-label-minus"><strong>-</strong></span> <!-- Right label -->
+            </div>
+        </div>
                 {% endfor %}
                 
                 <button type="submit" class="btn btn-success btn-lg">Submit Ranking</button>
@@ -139,6 +209,44 @@
 </div>
 </div>
             
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Find all sliders in the document
+        const sliders = document.querySelectorAll('.slider');
+    
+        sliders.forEach(function(slider) {
+            // Initialize color based on the current value
+            updateSliderColor(slider);
+    
+            // Add an event listener for when the slider value changes
+            slider.addEventListener('input', function() {
+                updateSliderColor(slider);
+            });
+        });
+    
+        function updateSliderColor(slider) {
+        const valueRatio = (slider.value - slider.min) / (slider.max - slider.min);
+        let color;
+
+        // Sharpening the color change
+        if(valueRatio <= 0.5) {
+            // Transition from green to yellow (0 - 0.5)
+            const r = Math.round(255 * (valueRatio * 2));
+            const g = 255;
+            const b = 0;
+            color = `rgb(${r}, ${g}, ${b})`;
+        } else {
+            // Transition from yellow to red (0.5 - 1)
+            const r = 255;
+            const g = Math.round(255 * ((1 - valueRatio) * 2));
+            const b = 0;
+            color = `rgb(${r}, ${g}, ${b})`;
+        }
+
+        slider.style.setProperty('--thumb-color', color);
+    }
+    });
+    </script>
         </body>
     
 </html>

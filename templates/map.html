@@ -49,18 +49,27 @@ nav {
 
 
 
-    .nav-right {
+   /* Ensuring the navbar contents are flexibly aligned */
+.navbar {
     display: flex;
-    justify-content: flex-end; /* Align items to the right */
-    
+    justify-content: space-between; /* This will place items on both ends */
 }
 
-.nav-right a {
-    color: green; /* Change the color to green */
+.nav-left, .navbar-brand {
+    display: flex;
+    align-items: center; /* This ensures the items are vertically centered */
+}
+
+.nav-left a {
+    color: green; /* Keeping your color requirement */
     text-decoration: none; /* Optional: Removes underline from the link */
-     /* Optional: Adds some spacing around the link */
 }
-
+.navbar-brand img.brandsize {
+    background-color: transparent; /* Ensures no background color */
+    width: auto; /* Adjust to your needs, keeps the image's aspect ratio */
+    height: 30px; /* Example height; adjust as necessary without scaling too much */
+    object-fit: contain; /* Keeps the image's aspect ratio without cropping */
+}
 .bottom-bar {
     position: absolute;
     bottom: 0;
@@ -103,11 +112,13 @@ nav {
 
     <!-- adding navbar -->
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    
+    <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);"><i class="fa fa-fw fa-home"></i> Home</a></div>
+
     <span class="navbar-brand mb-0 h1">
-      <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
-    </span>
-    <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: lightgreen;"><i class="fa fa-fw fa-home"></i> Home</a></div>
+        <img class="brandsize" src="{% static 'images/logo.png' %}" alt="">
+      </span>
 </nav>
  
     

@@ -29,7 +29,13 @@ admin.site.register(studyarea, LeafletGeoAdmin)
 
 admin.site.register(criteria)
 
-admin.site.register(criteria_params)
+
+
+class CriteriaParamsAdmin(admin.ModelAdmin):
+    list_display = ['id','weight_percentage' ,'rank','analysis_run']  # Adapt field names as needed
+    
+admin.site.register(criteria_params, CriteriaParamsAdmin)
+
 
 admin.site.register(action_types)
 
