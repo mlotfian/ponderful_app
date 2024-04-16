@@ -68,7 +68,7 @@ class criteria_params(models.Model):
     )
     weight = models.FloatField(verbose_name="Weight")
     weight_percentage = models.FloatField(verbose_name="Weight in percentage", default=100)
-    rank = models.IntegerField(verbose_name="")
+    rank = models.IntegerField(verbose_name="rank")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     study_area = models.ForeignKey(studyarea, on_delete=models.CASCADE, default=0)
     analysis_run = models.ForeignKey(AnalysisRun, on_delete=models.CASCADE)

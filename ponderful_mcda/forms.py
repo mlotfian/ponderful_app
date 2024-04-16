@@ -45,10 +45,15 @@ class StudyAreaSelectionForm(forms.Form):
 
 class CriteriaForm(forms.Form):
     criteria_choices = forms.ModelMultipleChoiceField(
-        queryset=criteria.objects.all(),
+        queryset=None,  # Set default to None
         widget=forms.CheckboxSelectMultiple,
         label=_("Select the NCP Indicators of Your Interest:")
     )
+
+    def __init__(self, *args, **kwargs):
+        criteria_queryset = kwargs.pop('criteria_queryset', criteria.objects.all())
+        super(CriteriaForm, self).__init__(*args, **kwargs)
+        self.fields['criteria_choices'].queryset = criteria_queryset
 
 
 
@@ -103,11 +108,12 @@ class ScenarioForm(forms.ModelForm):
         model = scenario_user
         fields = ['scenario_type']
         labels = {
-            'scenario': 'Select Climate Change Scenario',
+            'scenario_type': 'Select Climate Change Scenario',
         }
-        
+        widgets = {
+            'scenario_type': forms.RadioSelect
+        }
+
     def __init__(self, *args, **kwargs):
         super(ScenarioForm, self).__init__(*args, **kwargs)
-        # Adjust the queryset for scenario_type field
         self.fields['scenario_type'].queryset = scenario.objects.all().order_by('-id')
-

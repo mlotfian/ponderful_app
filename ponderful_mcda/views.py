@@ -24,6 +24,7 @@ from django.db.models import Max
 from django.shortcuts import get_object_or_404
 
 from collections import defaultdict
+from django.db.models import F
 
 
 
@@ -113,20 +114,31 @@ def study_area_detail(request):
 
 @login_required
 def select_criteria(request):
+    criteria_queryset = criteria.objects.all()  # Get the queryset
+    for crt in criteria_queryset:
+        print(f"Name: {crt.name}, Unit of Measure: {crt.unit_of_measure}")
+
     if request.method == 'POST':
-        form = CriteriaForm(request.POST)
+        form = CriteriaForm(request.POST, criteria_queryset=criteria_queryset)
         if form.is_valid():
-            selected_criteria = form.cleaned_data['criteria_choices'].values_list('id', flat=True)
-            request.session['selected_criteria'] = list(selected_criteria)
-            
-            #request.session['selected_criteria'] = selected_criteria
+            selected_criteria = form.cleaned_data['criteria_choices']
+            criteria_ids = [c.id for c in selected_criteria]
+            request.session['selected_criteria'] = criteria_ids
             return redirect('add_params')
-        else:
-            form = CriteriaForm()
-            return render(request, 'step1.html', {'form': form})
-    else:  # Handle GET requests
-        form = CriteriaForm()
-        return render(request, 'step1.html', {'form': form})
+    else:
+        form = CriteriaForm(criteria_queryset=criteria_queryset)  # Pass the queryset to the form
+
+    # Preprocess data for the template
+    criteria_data = []
+    for crt in form.fields['criteria_choices'].queryset:
+        checkbox_html = f'<input type="checkbox" name="criteria_choices" value="{crt.id}" id="id_criteria_choices_{crt.id}">'
+        criteria_data.append({
+            'checkbox_html': checkbox_html,
+            'name': crt.name,
+            'unit_of_measure': crt.unit_of_measure,
+        })
+
+    return render(request, 'step1.html', {'form': form, 'criteria_data': criteria_data})
 
 @login_required
 def add_params(request):
@@ -235,9 +247,18 @@ def select_scenario(request):
     else:
         form = ScenarioForm()
     
-    return render(request, 'scenario_user.html', {'form': form})
+    scenarios = scenario.objects.all().order_by('name')  # Sorting by name or any other attribute as needed
 
+    scenario_data = []
+    for s in scenarios:
+        radio_html = f'<input type="radio" name="scenario_type" value="{s.id}" id="id_scenario_type_{s.id}">'
+        scenario_data.append({
+            'radio_html': radio_html,
+            'name': s.name,
+            'description': s.description,
+        })
 
+    return render(request, 'scenario_user.html', {'scenario_data': scenario_data})
 
 @login_required
 def create_alternatives(request):

@@ -14,10 +14,11 @@ class PonderfulMcdaConfig(AppConfig):
 #@register(criteria)
 
 
-"""
+    
     def ready(self):
-        from modeltranslation.translator import translator, TranslationOptions
+        from modeltranslation.translator import translator, TranslationOptions,register
         from .models import criteria
+        
         class CriteriaTranslationOptions(TranslationOptions):
             fields = ('name', 'unit_of_measure')
-        translator.register(criteria, CriteriaTranslationOptions)"""
+        translator.register(criteria, CriteriaTranslationOptions)

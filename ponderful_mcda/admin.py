@@ -33,7 +33,7 @@ admin.site.register(criteria)
 
 
 class CriteriaParamsAdmin(admin.ModelAdmin):
-    list_display = ['id','weight_percentage' ,'rank','analysis_run']  # Adapt field names as needed
+    list_display = ['id', 'criteria','weight_percentage' ,'analysis_run', 'rank']  # Adapt field names as needed
     
 admin.site.register(criteria_params, CriteriaParamsAdmin)
 

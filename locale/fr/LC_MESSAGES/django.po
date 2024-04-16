@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-16 13:13+0000\n"
+"POT-Creation-Date: 2024-04-16 16:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,27 +34,27 @@ msgstr "Sélectionnez les indicateurs du NCP qui vous intéressent :"
 msgid "Landuse Intensity"
 msgstr ""
 
-#: ponderful_mcda/models.py:97
+#: ponderful_mcda/models.py:100
 msgid "NBS implementation type"
 msgstr "Type de mise en œuvre des NBS"
 
-#: ponderful_mcda/models.py:99
+#: ponderful_mcda/models.py:102
 msgid "Minimum number of ponds"
 msgstr "Nombre minimum d'étangs"
 
-#: ponderful_mcda/models.py:100
+#: ponderful_mcda/models.py:103
 msgid "Maximum number of ponds"
 msgstr "Nombre maximal d'étangs"
 
-#: ponderful_mcda/models.py:102
+#: ponderful_mcda/models.py:105
 msgid "Small"
 msgstr "Petit"
 
-#: ponderful_mcda/models.py:107
+#: ponderful_mcda/models.py:110
 msgid "Pond Size"
 msgstr "Taille des étangs"
 
-#: ponderful_mcda/models.py:131
+#: ponderful_mcda/models.py:134
 msgid "Scenario Type"
 msgstr "Type de scénario"
 
@@ -176,9 +176,29 @@ msgstr ""
 msgid "Submit Scenario"
 msgstr "Soumettre le scénario"
 
-#: templates/step1.html:128
+#: templates/step1.html:125
+msgid "Choice of NCP indicators (Nature's Contribution to People)"
+msgstr "Choix des indicateurs (NCP - Contribution de la Nature aux Personnes)"
+
+#: templates/step1.html:126
+msgid "Which NCP indicators do you want to take into account in your analysis?"
+msgstr "Quels indicateurs souhaitez-vous prendre en considération dans l’analyse ?"
+
+#: templates/step1.html:133
+msgid "Select"
+msgstr "Sélectionner"
+
+#: templates/step1.html:134
+msgid "NCP Indicator"
+msgstr "Indicateur NCP"
+
+#: templates/step1.html:135
+msgid "Unit of Measure"
+msgstr "Unité de mesure"
+
+#: templates/step1.html:148
 msgid "Submit Selection and Rank the Selected Indicators"
-msgstr "Soumettre la sélection et classer les indicateurs sélectionnés"
+msgstr "Soumettre la sélection et passer à l’étape suivante."
 
 #: templates/step2.html:199
 msgid ""
