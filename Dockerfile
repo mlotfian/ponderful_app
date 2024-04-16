@@ -15,6 +15,9 @@ RUN apt-get update \
 RUN apt-get update \
     && apt-get install -y binutils libproj-dev gdal-bin python-gdal python3-gdal
 
+RUN apt-get update\
+    && apt-get install -y gettext
+
 RUN pip install --upgrade pip
 
 COPY ./requirements.txt /app/requirements.txt

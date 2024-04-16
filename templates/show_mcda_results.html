@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Compare MCDA Results</title>
     {% load static %}
+    {% load i18n %}
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'index.css' %}">
@@ -158,6 +159,21 @@
     <span class="navbar-brand mb-0 h1">
         <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="Logo">
     </span>
+
+    <form action="{% url 'set_language' %}" method="post">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ redirect_to }}" />
+        <select name="language" onchange="this.form.submit();">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as LANGUAGES %}
+            {% for lang in LANGUAGES %}
+            <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>
+                {{ lang.1 }}
+            </option>
+            {% endfor %}
+        </select>
+    </form>
+</div> 
 </nav>
 <div class="content-container cover">
     <h3 class="main_title">Overal Objective Achievements Per NBS And For Each NCP, Based on Model Predictions for 2050</h3>

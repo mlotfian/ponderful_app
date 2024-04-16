@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import *
+from modeltranslation.translator import register, TranslationOptions
 # Register your models here.
 
 class CustomUserAdmin(UserAdmin):
@@ -73,3 +74,5 @@ class MCDAResultAdmin(admin.ModelAdmin):
     
 
 admin.site.register(mcda_result, MCDAResultAdmin)
+
+

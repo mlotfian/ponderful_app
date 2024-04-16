@@ -11,6 +11,8 @@ from django.forms import ModelForm
 from django.forms import modelformset_factory
 from django.forms import widgets
 
+from django.utils.translation import gettext_lazy as _
+
 # forms.py
 #import floppyforms as forms
 
@@ -45,7 +47,7 @@ class CriteriaForm(forms.Form):
     criteria_choices = forms.ModelMultipleChoiceField(
         queryset=criteria.objects.all(),
         widget=forms.CheckboxSelectMultiple,
-        label="Select the NCP Indicators of Your Interest:"
+        label=_("Select the NCP Indicators of Your Interest:")
     )
 
 

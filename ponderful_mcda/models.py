@@ -6,6 +6,8 @@ from django.conf import settings
 from djgeojson.fields import PolygonField
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator 
+from django.utils.translation import gettext_lazy as _
+from modeltranslation.translator import register, TranslationOptions
 
 # Create your models here.
 
@@ -32,7 +34,7 @@ class studyarea(models.Model):
     ('high','High'),
 ]
     name = models.CharField(max_length=255, verbose_name="Study Area Name", unique=True)
-    landuseintensity = models.CharField(max_length=255, choices = landuseintensity_choices,blank=True, verbose_name='Landuse Intensity')
+    landuseintensity = models.CharField(max_length=255, choices = landuseintensity_choices,blank=True, verbose_name=_('Landuse Intensity'))
     num_small_pond = models.IntegerField(verbose_name="Number of curret small size ponds", blank=True, null=True)
     num_avg_pond = models.IntegerField(verbose_name="Number of curret average size ponds", blank=True, null=True)
     num_big_pond = models.IntegerField(verbose_name="Number of curret big size ponds", blank=True, null=True)
@@ -50,6 +52,8 @@ class criteria(models.Model):
 
     def __str__(self):
         return self.name
+
+
  
 class criteria_params(models.Model):
 
@@ -93,17 +97,17 @@ class action_types(models.Model):
         return self.name
 
 class alternatives_params(models.Model):
-    action = models.ForeignKey(action_types, on_delete=models.CASCADE, verbose_name="NBS implementation type")
+    action = models.ForeignKey(action_types, on_delete=models.CASCADE, verbose_name=_("NBS implementation type"))
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    pond_min = models.IntegerField(verbose_name="Minimum number of ponds", validators=[MinValueValidator(1), MaxValueValidator(20)])
-    pond_max = models.IntegerField(verbose_name="Maximum number of ponds", validators=[MinValueValidator(1), MaxValueValidator(20)])
+    pond_min = models.IntegerField(verbose_name=_("Minimum number of ponds"), validators=[MinValueValidator(1), MaxValueValidator(20)])
+    pond_max = models.IntegerField(verbose_name=_("Maximum number of ponds"), validators=[MinValueValidator(1), MaxValueValidator(20)])
     pond_sizes = [
-    ('small', 'Small'),
+    ('small', _('Small')),
     ('average', 'Average'),
     ('big','Big'),
     ]
 
-    pond_size = models.CharField(max_length=255, choices = pond_sizes,default='none' )
+    pond_size = models.CharField(max_length=255, choices = pond_sizes,default='none',verbose_name=_("Pond Size") )
     analysis_run = models.ForeignKey(AnalysisRun, on_delete=models.CASCADE)
 
 # to be discussed with WP3 
@@ -127,7 +131,7 @@ class scenario(models.Model):
 
 class scenario_user(models.Model):
     #scenario = models.ForeignKey(scenario, on_delete=models.CASCADE)
-    scenario_type = models.ForeignKey(scenario, on_delete=models.CASCADE)
+    scenario_type = models.ForeignKey(scenario, on_delete=models.CASCADE, verbose_name=_("Scenario Type"))
     analysis_run = models.ForeignKey(AnalysisRun, on_delete=models.CASCADE)
 
 class modeling_result(models.Model):

@@ -32,6 +32,10 @@
 .same_lenght{
   width: 150px;
 }
+
+
+
+
 .navbar-brand img.brandsize {
     background-color: transparent; /* Ensures no background color */
     width: auto; /* Adjust to your needs, keeps the image's aspect ratio */
@@ -39,12 +43,21 @@
     object-fit: contain; /* Keeps the image's aspect ratio without cropping */
 }
 
+
+
+
+
+
+
 </style>
 <body class="coverMap">
 
   <!-- adding navbar -->
 
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+    
+
       <span class="navbar-brand mb-0 h1">
         <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
       </span>
@@ -69,10 +82,10 @@
                       <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
                           <span class="navbar-text">
-                            Hi {{ user.username }}!
+                            {% translate "Hi" %} {{ user.username }}!
                           </span>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">logout</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">{% translate "logout" %}</a></li>
                         </ul>
 
                         {% else %}
@@ -80,39 +93,61 @@
                         <ul class="navbar-nav mr-auto">
                           <li class="nav-item">
                             <span class="navbar-text">
-                              You are not logged in:
+                              {% translate "You are not logged in:" %}
                             </span>
                           </li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">{% translate "login" %}</a></li>
                         <li class="nav-item">
                           <span class="navbar-text">
                               |
                           </span>
                         </li>
-                          <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">signup</a></li>
+                          <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">{% translate "signup" %}</a></li>
                         </ul>
                       {% endif %}
                     {% endblock %}
+
+
                   </div>
+
+                  <div>
+                    <form action="{% url 'set_language' %}" method="post">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ redirect_to }}" />
+                        <select name="language" onchange="this.form.submit();">
+                            {% get_current_language as LANGUAGE_CODE %}
+                            {% get_available_languages as LANGUAGES %}
+                            {% for lang in LANGUAGES %}
+                            <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>
+                                {{ lang.1 }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+
         </div>
+
+        
+        
 
         
   </nav>
 
   <div class="div1">
     <p>
-      The Ponderful project is dedicated to empowering decision-makers in pond management and policy development with a  decision support tool. This tool assists the decision makers in selecting the most strategic direction—whether to maintain the status quo, moderately increase, or significantly boost the number of ponds—by assessing the effects of diverse <b>Nature Based Solutions (NBS)</b> on <b>Nature Contribution to People (NCP)</b>, within specific climate change and land use scenarios, and thus predict the trends or values for different NCP indicators for the year 2050.
-  <p><b>Objectives of the decision support tool:</b></p>
-  <p class="text-p">Using the scientific outcomes from the project, this tool is designed to facilitate decision-makers in evaluating and comparing different NBS approaches based on a range of NCP indicators.</p> 
-  <p class="text-p">The tool offers users the flexibility to contextualize the analysis by setting a number of parameters such as the choice of NCP indicators and their weighting. 
+      {% translate "The Ponderful project is dedicated to empowering decision-makers in pond management and policy development with a  decision support tool. This tool assists the decision makers in selecting the most strategic direction—whether to maintain the status quo, moderately increase, or significantly boost the number of ponds—by assessing the effects of diverse <b>Nature Based Solutions (NBS)</b> on <b>Nature Contribution to People (NCP)</b>, within specific climate change and land use scenarios, and thus predict the trends or values for different NCP indicators for the year 2050." %}
+  <p><b>{% translate "Objectives of the decision support tool:" %}</b></p>
+  <p class="text-p">{% translate "Using the scientific outcomes from the project, this tool is designed to facilitate decision-makers in evaluating and comparing different NBS approaches based on a range of NCP indicators." %}</p> 
+  <p class="text-p">{% translate "The tool offers users the flexibility to contextualize the analysis by setting a number of parameters such as the choice of NCP indicators and their weighting." %}
     </p>
   <div class="button">
     
         
         {% if user.is_authenticated %}
-        <a href="{% url 'start_analysis' %}"><button type="button" class="btn btn-success btn-lg">Start</button></a>
+        <a href="{% url 'start_analysis' %}"><button type="button" class="btn btn-success btn-lg">{% translate "Start" %}</button></a>
         {% else %}
-        <a href="{% url 'login' %}"><button type="button" class="btn btn-success btn-lg">Start</button></a>
+        <a href="{% url 'login' %}"><button type="button" class="btn btn-success btn-lg">{% translate "Start" %}</button></a>
         {% endif %}
         
   </div>

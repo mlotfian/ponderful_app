@@ -18,11 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import TemplateView
 
-urlpatterns = i18n_patterns(
+
+urlpatterns =  i18n_patterns(
     path("home/", TemplateView.as_view(template_name="home.html"), name="home"),
     #path('criteria/',TemplateView.as_view(template_name="criteria.html"), name='criteria'),
     #path('index', TemplateView.as_view(template_name='index.html'), name='index'),
     path('admin/', admin.site.urls),
     path("ponderful_mcda/", include("ponderful_mcda.urls")),
     path("ponderful_mcda/", include("django.contrib.auth.urls")),
+    path('i18n/', include('django.conf.urls.i18n')),
 )
