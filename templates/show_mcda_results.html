@@ -224,7 +224,7 @@
                             {% for alternative, details in scenario_data.items %}
                                 <tr>
                                     <td>{{ alternative }}</td>
-                                    {% for value in details.values %}
+                                    {% for value in details.values2 %}
                                         <td class="{% if value <= 20 %}bad{% elif value <= 40 %}weak{% elif value <= 60 %}average{% elif value <= 80 %}good{% else %}excellent{% endif %}">{{ value|floatformat:0 }}%</td>
                                     {% endfor %}
                                     <td class="{% if details.sum <= 20 %}bad{% elif details.sum <= 40 %}weak{% elif details.sum <= 60 %}average{% elif details.sum <= 80 %}good{% else %}excellent{% endif %}">{{ details.sum|floatformat:0 }}%</td>

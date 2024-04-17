@@ -413,12 +413,14 @@ def show_results(request):
     
     for scen in scenarios:
         results = mcda_result.objects.filter(scenario=scen, analysis_run=analysis_run_id).select_related('criteria')
-        scenario_data = {alternative: {'values': [], 'sum': 0} for alternative in alternatives}
+        scenario_data = {alternative: {'values': [], 'values2': [], 'sum': 0} for alternative in alternatives}
         for alternative in alternatives:
             sum_values = 0
             for title in criteria_titles:
                 result = next((r.weighted_avg for r in results if r.alternative == alternative and r.criteria.name == title), 'N/A')
                 scenario_data[alternative]['values'].append(result)
+                partial_s = next((r.partial_satisfaction for r in results if r.alternative == alternative and r.criteria.name == title), 'N/A')
+                scenario_data[alternative]['values2'].append(partial_s)
                 if isinstance(result, (int, float)):
                     sum_values += result
             scenario_data[alternative]['sum'] = sum_values
