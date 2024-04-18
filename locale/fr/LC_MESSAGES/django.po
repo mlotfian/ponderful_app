@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-16 16:06+0000\n"
+"POT-Creation-Date: 2024-04-17 23:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,6 +34,26 @@ msgstr "Sélectionnez les indicateurs du NCP qui vous intéressent :"
 msgid "Landuse Intensity"
 msgstr ""
 
+#: ponderful_mcda/models.py:87
+msgid "Creation"
+msgstr "Création"
+
+#: ponderful_mcda/models.py:88
+msgid "Restoration"
+msgstr "Restauration"
+
+#: ponderful_mcda/models.py:89
+msgid "Water management"
+msgstr "Gestion de l'eau"
+
+#: ponderful_mcda/models.py:90
+msgid "Land management"
+msgstr "Gestion des terres"
+
+#: ponderful_mcda/models.py:91
+msgid "No action"
+msgstr "Ne rien faire"
+
 #: ponderful_mcda/models.py:100
 msgid "NBS implementation type"
 msgstr "Type de mise en œuvre des NBS"
@@ -50,6 +70,14 @@ msgstr "Nombre maximal d'étangs"
 msgid "Small"
 msgstr "Petit"
 
+#: ponderful_mcda/models.py:106 templates/show_mcda_results.html:204
+msgid "Average"
+msgstr "Moyenne"
+
+#: ponderful_mcda/models.py:107
+msgid "Big"
+msgstr "Grande"
+
 #: ponderful_mcda/models.py:110
 msgid "Pond Size"
 msgstr "Taille des étangs"
@@ -58,23 +86,36 @@ msgstr "Taille des étangs"
 msgid "Scenario Type"
 msgstr "Type de scénario"
 
+#: ponderful_mcda/views.py:341
+msgid "Creation of "
+msgstr "Création de "
+
+#: ponderful_mcda/views.py:341
+msgid " Ponds"
+msgstr " étangs"
+
 #: templates/alternatives.html:72 templates/map.html:119
-#: templates/scenario_user.html:79 templates/step1.html:103
+#: templates/results.html:68 templates/scenario_user.html:97
+#: templates/show_mcda_results.html:157 templates/step1.html:119
 #: templates/step2.html:173
 msgid "Home"
 msgstr "Accueil"
 
 #: templates/alternatives.html:97
+msgid "Setting up nature-based solutions (NBS)"
+msgstr "Paramétrage des solutions basées sur la nature (NBS)"
+
+#: templates/alternatives.html:98
 msgid "Add the Nature Based Solutions (NBS) that you want to implement."
 msgstr ""
-"Ajoutez les solutions basées sur la nature (NBS) que vous souhaitez mettre "
-"en œuvre."
+"Combien de nouveaux étangs pourraient être construits au moins, et au plus, "
+"d’ici à 2050 ?"
 
-#: templates/alternatives.html:112
+#: templates/alternatives.html:113
 msgid "Add Another NBS"
 msgstr "Ajouter un autre NBS"
 
-#: templates/alternatives.html:113
+#: templates/alternatives.html:114
 msgid "Submit Selected NBS"
 msgstr "Soumettre les NBS sélectionnés"
 
@@ -109,16 +150,19 @@ msgid ""
 "within specific climate change and land use scenarios, and thus predict the "
 "trends or values for different NCP indicators for the year 2050."
 msgstr ""
-"Le projet Ponderful est dédié à habiliter les décideurs dans la gestion des "
-"étangs et l'élaboration de politiques avec un outil de soutien à la "
-"décision. Cet outil assiste les décideurs dans le choix de la direction la "
-"plus stratégique—que ce soit pour maintenir le statu quo, augmenter "
-"modérément, ou augmenter significativement le nombre d'étangs—en évaluant "
-"les effets de diverses <b>Solutions Basées sur la Nature (NBS)</b> sur <b>la "
-"Contribution de la Nature aux Personnes (NCP)</b>, dans des scénarios "
-"spécifiques de changement climatique et d'utilisation des terres, et ainsi "
-"prédire les tendances ou les valeurs pour différents indicateurs NCP pour "
-"l'année 2050."
+"Le projet Ponderful vise à aider les décideurs politiques, propriétaires ou "
+"citoyens dans le développement d’étangs. Il encourage  ainsi à mieux "
+"valoriser les <b>Solutions Basées sur la Nature (NBS).</b><br>L’outil d’aide "
+"à la décision de Ponderful aide les décideurs dans le choix de grandes "
+"orientations, que ce soit pour maintenir ou augmenter modérément ou "
+"significativement, le nombre d'étangs. Les critères de choix (indicateurs) "
+"se basent sur l’évaluation des Contributions de la <b>Nature aux Personnes "
+"(NCP)</b>. L’outil permet aussi à l’utilisateur de considérer différents "
+"scénarios à 2050, d’une part de changement climatique et d’autre part, "
+"d’occupation du territoire.<br>L’outil a été conçu pour que l’utilisateur "
+"puisse effectuer facilement plusieurs analyses en modifiant leurs "
+"paramètres. Il a ainsi la possibilité de voir comment ses choix (de "
+"pondération ou de scénarios) influencent les résultats."
 
 #: templates/home.html:140
 msgid "Objectives of the decision support tool:"
@@ -130,9 +174,10 @@ msgid ""
 "facilitate decision-makers in evaluating and comparing different NBS "
 "approaches based on a range of NCP indicators."
 msgstr ""
-"À partir des résultats scientifiques du projet, cet outil est conçu pour "
-"faciliter les décideurs dans l'évaluation et la comparaison des différentes "
-"approches NBS basées sur une gamme d'indicateurs NCP."
+"À partir des résultats scientifiques du projet, cet outil aide les décideurs "
+"dans l'évaluation et la comparaison des différentes stratégies de "
+"développement des étangs (approches NBS) basées sur une gamme d'indicateurs "
+"(NCP)."
 
 #: templates/home.html:142
 msgid ""
@@ -140,9 +185,8 @@ msgid ""
 "setting a number of parameters such as the choice of NCP indicators and "
 "their weighting."
 msgstr ""
-"L'outil offre aux utilisateurs la flexibilité de contextualiser l'analyse en "
-"définissant un certain nombre de paramètres tels que le choix des "
-"indicateurs NCP et leur pondération."
+"L’utilisateur a la possibilité de choisir les indicateurs qu’il souhaite "
+"prendre en considération et de les pondérer selon leur importance relative."
 
 #: templates/home.html:148 templates/home.html:150
 msgid "Start"
@@ -164,55 +208,139 @@ msgstr "Affichage"
 msgid "Next"
 msgstr "Suivant"
 
-#: templates/scenario_user.html:105
+#: templates/results.html:94
+msgid ""
+"At this point, you have provided all of the required input parameters to run "
+"the multi-criteria decision analysis. <br>You can then run the analysis, see "
+"the results, and redo the process by modifying the input parameters.</p>"
+msgstr ""
+"À ce stade, vous avez fourni tous les paramètres nécessaires à l'exécution "
+"de l'analyse décisionnelle multicritère.</br>Vous pouvez maintenant exécuter "
+"l'analyse, consulter les résultats et recommencer le processus en modifiant "
+"les paramètres d'entrée (vos réponses aux questions précédentes)."
+
+#: templates/results.html:99
+msgid "Run Muti-Criteria Analysis"
+msgstr "Lancer l'analyse multicritères"
+
+#: templates/scenario_user.html:123
+msgid "Choice of climate and land-use scenarios"
+msgstr "Choix des scénarios d’évolution du territoire et du climat"
+
+#: templates/scenario_user.html:124
 msgid ""
 "Select The Land Use and Climate Change Scenario, Under Which You Want to "
 "Measure the Impact:"
 msgstr ""
-"Sélectionnez le scénario d'utilisation des sols et de changement climatique "
-"dans lequel vous souhaitez mesurer l'impact :"
+"Pour quels scénarios d’évolution de l’occupation du sol et de changement "
+"climatique souhaitez-vous effectuer l’analyse ?"
 
-#: templates/scenario_user.html:109
-msgid "Submit Scenario"
-msgstr "Soumettre le scénario"
-
-#: templates/step1.html:125
-msgid "Choice of NCP indicators (Nature's Contribution to People)"
-msgstr "Choix des indicateurs (NCP - Contribution de la Nature aux Personnes)"
-
-#: templates/step1.html:126
-msgid "Which NCP indicators do you want to take into account in your analysis?"
-msgstr "Quels indicateurs souhaitez-vous prendre en considération dans l’analyse ?"
-
-#: templates/step1.html:133
+#: templates/scenario_user.html:130 templates/step1.html:149
 msgid "Select"
 msgstr "Sélectionner"
 
-#: templates/step1.html:134
+#: templates/scenario_user.html:132
+#, fuzzy
+#| msgid "Restoration"
+msgid "Description"
+msgstr "Description"
+
+#: templates/scenario_user.html:133
+msgid "Name"
+msgstr "Nom"
+
+#: templates/scenario_user.html:153
+msgid "Submit Scenario"
+msgstr "Soumettre le scénario"
+
+#: templates/show_mcda_results.html:179
+msgid ""
+"Objective Achievements Per NBS And For Each NCP, Based on Model Predictions "
+"for 2050"
+msgstr "Niveau d’atteinte des objectifs par indicateur et globalement"
+
+#: templates/show_mcda_results.html:182
+msgid "Select Scenarios"
+msgstr "Sélectionner les scénarios"
+
+#: templates/show_mcda_results.html:193
+msgid "Compare Results for Scenarios"
+msgstr "Comparer les résultats des scénarios"
+
+#: templates/show_mcda_results.html:194
+msgid "Start a New Analysis"
+msgstr "Commencer une nouvelle analyse"
+
+#: templates/show_mcda_results.html:200
+#, python-format
+msgid ""
+"The table presents a score (%%) that evaluates the level of achievement of "
+"the ponds' development strategies (NBS), for each indicator (PCN), then "
+"globally, considering the conditions of evolution of the territory and "
+"climate in 2050. The order of priority of the indicators is indicated by a "
+"weight (%%)."
+msgstr ""
+"Ce tableau présente une note (%%) qui évalue le niveau d’atteinte des "
+"stratégies de développement des étangs (NBS), pour chaque indicateur (PCN), "
+"puis globalement, en considérant les conditions d’évolution du territoire et "
+"du climat à 2050. L’ordre de priorité des indicateurs est indiqué par un "
+"poids (%%)."
+
+#: templates/show_mcda_results.html:202
+msgid "Poor"
+msgstr "Mauvais"
+
+#: templates/show_mcda_results.html:203
+msgid "Weak"
+msgstr "Faible"
+
+#: templates/show_mcda_results.html:205
+msgid "Good"
+msgstr "Bonne"
+
+#: templates/show_mcda_results.html:206
+msgid "Excellent"
+msgstr "Excellente"
+
+#: templates/step1.html:141
+msgid "Choice of NCP indicators (Nature's Contribution to People)"
+msgstr "Choix des indicateurs (NCP - Contribution de la Nature aux Personnes)"
+
+#: templates/step1.html:142
+msgid "Which NCP indicators do you want to take into account in your analysis?"
+msgstr ""
+"Quels indicateurs souhaitez-vous prendre en considération dans l’analyse ?"
+
+#: templates/step1.html:150
 msgid "NCP Indicator"
 msgstr "Indicateur NCP"
 
-#: templates/step1.html:135
+#: templates/step1.html:151
 msgid "Unit of Measure"
 msgstr "Unité de mesure"
 
-#: templates/step1.html:148
+#: templates/step1.html:164
 msgid "Submit Selection and Rank the Selected Indicators"
 msgstr "Soumettre la sélection et passer à l’étape suivante."
 
 #: templates/step2.html:199
+msgid "Rank the priority of the NCP indicators"
+msgstr ""
+"Ordre de priorité des indicateurs (NCP - Contribution de la Nature aux "
+"Personnes)"
+
+#: templates/step2.html:200
 msgid ""
 "Rank the selected NCP indicators based on their level of importance "
 "(management priority) from <b>left: <i>very important</i></b> to <b>right: "
 "<i>least important</i></b>"
 msgstr ""
-"Classez les indicateurs NCP sélectionnés selon leur niveau d'importance "
-"(priorité de gestion) de <b>gauche : <i>très important</i></b> à <b>droite : "
-"<i>moins important</i></b>"
+"Quel est l’ordre de priorité des indicateurs sélectionnés ?<br> L'ordre de "
+"L’ordre de priorité augmente de gauche à droite. Il est possible d’attribuer le même ordre de priorité à plusieurs voire tous les indicateurs."
 
-#: templates/step2.html:222
+#: templates/step2.html:223
 msgid "Submit Ranking"
-msgstr "Soumettre le classement"
+msgstr "Soumettre le rangement"
 
 #: venv/lib/python3.8/site-packages/click/_termui_impl.py:518
 #, python-brace-format
@@ -1686,3 +1814,29 @@ msgstr ""
 #: venv/lib/python3.8/site-packages/django/views/templates/default_urlconf.html:249
 msgid "Connect, get help, or contribute"
 msgstr ""
+
+#~ msgid "Land Use: SSP1, Climate Change: SSP1"
+#~ msgstr "Utilisation des sols : SSP1, Changement climatique : SSP1"
+
+#~ msgid "Land Use: SSP3, Climate Change: SSP3"
+#~ msgstr "Utilisation des sols : SSP3, Changement climatique : SSP3"
+
+#~ msgid "Land Use: SSP5, Climate Change: SSP5"
+#~ msgstr "Utilisation des sols : SSP5, Changement climatique : SSP5"
+
+#~ msgid "Land Use: No Change, Climate Change: SSP1"
+#~ msgstr ""
+#~ "Utilisation des sols : Pas de changement, changement climatique : SSP1"
+
+#~ msgid "Land Use: No Change, Climate Change: SSP3"
+#~ msgstr ""
+#~ "Utilisation des sols : Pas de changement, changement climatique : SSP3"
+
+#~ msgid "Land Use: No Change, Climate Change: SSP5"
+#~ msgstr ""
+#~ "Utilisation des sols : Pas de changement, changement climatique : SSP5"
+
+#~ msgid "Land Use: No Change, Climate Change: No Change"
+#~ msgstr ""
+#~ "Utilisation des sols : Pas de changement, changement climatique : Pas de "
+#~ "changement"

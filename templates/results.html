@@ -65,7 +65,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         
-        <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);"><i class="fa fa-fw fa-home"></i> Home</a></div>
+        <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);"><i class="fa fa-fw fa-home"></i> {%translate "Home" %}</a></div>
         <span class="navbar-brand mb-0 h1">
           <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
         </span>
@@ -90,12 +90,13 @@
         
         <div class="form-container">
             <div class="centered-text-container">
-                <p>At this point, you have provided all of the required input parameters to run the multi-criteria decision analysis. <br>You can then run the analysis, see the results, and redo the process by modifying the input parameters.</p>
+                
+                <p>{% translate "At this point, you have provided all of the required input parameters to run the multi-criteria decision analysis. <br>You can then run the analysis, see the results, and redo the process by modifying the input parameters.</p>" %}
             </div>
 
           <form action="{% url 'mcda_result' %}" method="post">
             {% csrf_token %}
-           <button type="submit" class="btn btn-success btn-lg">Run Muti-Criteria Analysis</button>
+           <button type="submit" class="btn btn-success btn-lg">{% translate "Run Muti-Criteria Analysis" %}</button>
          </form>
         </div>
     </div>

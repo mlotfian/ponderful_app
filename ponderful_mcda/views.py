@@ -25,7 +25,7 @@ from django.shortcuts import get_object_or_404
 
 from collections import defaultdict
 from django.db.models import F
-
+from django.utils.translation import gettext_lazy as _
 
 
 # Create your views here.
@@ -182,10 +182,10 @@ def add_params(request):
                     #weight_range=weight_range,
                 )
                 if rank_data[i]==max(rank_data):
-                    instance.weight = min(rank_data) # least important criteria
+                    instance.weight = rank_data[i] #min(rank_data) # least important criteria
                     all_weights.append(instance.weight)
                 elif rank_data[i]==min(rank_data):
-                    instance.weight = max(rank_data) # most important criteria
+                    instance.weight = rank_data[i] #max(rank_data) # most important criteria
                     all_weights.append(instance.weight)
                 else:
                     instance.weight = 1 + ((max(rank_data)-1)*(max(rank_data)-rank_data[i])/(max(rank_data)-min(rank_data)))
@@ -338,7 +338,7 @@ def mcda_results(request):
                 
                     output = modeling_result.objects.filter(action=ap[0],criteria=indicator, pond_num=ap[1], scenario=scenario_id).values_list('output', flat=True).distinct().first()
                     #print("here", ap[0])
-                    all_values.append((indicator,"Creation of " + str(ap[1]) + " Ponds", output, satisfaction_c, satisfaction_n, weight, scenario_id))
+                    all_values.append((indicator,_("Creation of ") + str(ap[1]) + _(" Ponds"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
                 else:
                     output = modeling_result.objects.filter(action=ap[0],criteria=indicator, scenario=scenario_id).values_list('output', flat=True).distinct().first()
                     #print(ap[0])
@@ -353,7 +353,7 @@ def mcda_results(request):
                 partial_satisfaction = 0
                 weighted_avg = partial_satisfaction * element[5]
             elif (element[2]>element[4] and element[2]<element[3]):
-                partial_satisfaction = (element[2]-element[4])/(element[3]-element[4])*100
+                partial_satisfaction = (abs(element[2])-abs(element[4]))/(abs(element[3])-abs(element[4]))*100
                 weighted_avg = partial_satisfaction * element[5]/100
             else:
                 partial_satisfaction = 100

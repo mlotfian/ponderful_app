@@ -84,11 +84,11 @@ class satisfaction_threshold(models.Model):
 # add discription to the NBS 
 class action_types(models.Model):
     actions_types = [
-    ('Creation', 'Creation'),
-    ('Restoration', 'Restoration'),
-    ('Water management','Water management'), # quantity 
-    ('Land management','Land management'), # pollution? or change the land cover?  
-    ('No action','No action'),
+    ('Creation', _('Creation')),
+    ('Restoration', _('Restoration')),
+    ('Water management',_('Water management')), # quantity 
+    ('Land management',_('Land management')), # pollution? or change the land cover?  
+    ('No action',_('No action')),
     ]
     name = models.CharField(max_length=255, choices = actions_types, verbose_name="Action Name")
     
@@ -103,8 +103,8 @@ class alternatives_params(models.Model):
     pond_max = models.IntegerField(verbose_name=_("Maximum number of ponds"), validators=[MinValueValidator(1), MaxValueValidator(20)])
     pond_sizes = [
     ('small', _('Small')),
-    ('average', 'Average'),
-    ('big','Big'),
+    ('average', _('Average')),
+    ('big',_('Big')),
     ]
 
     pond_size = models.CharField(max_length=255, choices = pond_sizes,default='none',verbose_name=_("Pond Size") )
@@ -114,13 +114,13 @@ class alternatives_params(models.Model):
 # add without land use change to all the other scenarios, e.g., sus + without lu change..
 class scenario(models.Model):
     scenario_category = [
-    ('Land Use: SSP1, Climate Change: SSP1', 'Land Use: SSP1, Climate Change: SSP1'),
-    ('Land Use: SSP3, Climate Change: SSP3', 'Land Use: SSP3, Climate Change: SSP3'),
-    ('Land Use: SSP5, Climate Change: SSP5','Land Use: SSP5, Climate Change: SSP5'),
-    ('Land Use: No Change, Climate Change: SSP1','Land Use: No Change, Climate Change: SSP1'),
-    ('Land Use: No Change, Climate Change: SSP3','Land Use: No Change, Climate Change: SSP3'),
-    ('Land Use: No Change, Climate Change: SSP5','Land Use: No Change, Climate Change: SSP5'),
-    ('Land Use: No Change, Climate Change: No Change','Land Use: No Change, Climate Change: No Change')]
+    ('Utilisation des sols : SSP1, Changement climatique : SSP1', 'Land Use: SSP1, Climate Change: SSP1'),
+    ('Utilisation des sols : SSP3, Changement climatique : SSP3', 'Land Use: SSP3, Climate Change: SSP3'),
+    ('Utilisation des sols : SSP5, Changement climatique : SSP5','Land Use: SSP5, Climate Change: SSP5'),
+    ('Utilisation des sols : Pas de changement, changement climatique : SSP1','Land Use: No Change, Climate Change: SSP1'),
+    ('Utilisation des sols : Pas de changement, changement climatique : SSP3','Land Use: No Change, Climate Change: SSP3'),
+    ('Utilisation des sols : Pas de changement, changement climatique : SSP5','Land Use: No Change, Climate Change: SSP5'),
+    ('Utilisation des sols : Pas de changement, changement climatique : Pas de changement','Land Use: No Change, Climate Change: No Change')]
     #'With land use improvement? check with WP3']
 
     name = models.CharField(max_length=255, choices = scenario_category, verbose_name="Climate Change Scenario")

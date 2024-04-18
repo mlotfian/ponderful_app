@@ -94,6 +94,7 @@
     
     <div class="form-container">
     {% block content %}
+    <h5>{%translate "Setting up nature-based solutions (NBS)" %}</h5>
     <p>{% translate "Add the Nature Based Solutions (NBS) that you want to implement." %}</p>
     <form method="post" action="{% url 'create_alternatives' %}">
         {% csrf_token %}

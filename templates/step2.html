@@ -196,6 +196,7 @@
                 
                 <div class="form-container">
                     <div class="centered-text-container">
+                        <h5>{% translate "Rank the priority of the NCP indicators" %}</h5>
                         <p>{% translate "Rank the selected NCP indicators based on their level of importance (management priority) from <b>left: <i>very important</i></b> to <b>right: <i>least important</i></b>" %}</p>
                     </div>
             <form method="post" action="{% url 'add_params' %}">
@@ -212,9 +213,9 @@
             <div class="criteria-name">{{ form.initial.criteria_name }}</div>
             <!-- Slider and Labels -->
             <div class="slider-container">
-                <span class="importance-label-plus"><strong>+</strong></span> <!-- Left label -->
+                <span class="importance-label-minus"><strong>-</strong></span> <!-- Left label -->
                 {{ form.rank }} <!-- Slider -->
-                <span class="importance-label-minus"><strong>-</strong></span> <!-- Right label -->
+                <span class="importance-label-plus"><strong>+</strong></span> <!-- Right label -->
             </div>
         </div>
                 {% endfor %}
@@ -240,26 +241,26 @@
         });
     
         function updateSliderColor(slider) {
-        const valueRatio = (slider.value - slider.min) / (slider.max - slider.min);
-        let color;
-
-        // Sharpening the color change
-        if(valueRatio <= 0.5) {
-            // Transition from green to yellow (0 - 0.5)
-            const r = Math.round(255 * (valueRatio * 2));
-            const g = 255;
-            const b = 0;
-            color = `rgb(${r}, ${g}, ${b})`;
-        } else {
-            // Transition from yellow to red (0.5 - 1)
-            const r = 255;
-            const g = Math.round(255 * ((1 - valueRatio) * 2));
-            const b = 0;
-            color = `rgb(${r}, ${g}, ${b})`;
+            const valueRatio = (slider.value - slider.min) / (slider.max - slider.min);
+            let color;
+    
+            // Reversing the color change
+            if(valueRatio <= 0.5) {
+                // Transition from red to yellow (0 - 0.5)
+                const r = 255;
+                const g = Math.round(255 * (valueRatio * 2));
+                const b = 0;
+                color = `rgb(${r}, ${g}, ${b})`;
+            } else {
+                // Transition from yellow to green (0.5 - 1)
+                const r = Math.round(255 * ((1 - valueRatio) * 2));
+                const g = 255;
+                const b = 0;
+                color = `rgb(${r}, ${g}, ${b})`;
+            }
+    
+            slider.style.setProperty('--thumb-color', color);
         }
-
-        slider.style.setProperty('--thumb-color', color);
-    }
     });
     </script>
 

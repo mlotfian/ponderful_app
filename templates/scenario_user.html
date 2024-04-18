@@ -35,6 +35,7 @@
     justify-content: center; /* Center children horizontally */
     align-items: center; /* Center children vertically */
     height: 100vh; /* Use the full height of the viewport */
+    
 }
 
 .navbar {
@@ -63,8 +64,10 @@
     padding: 20px; /* Add some padding around the form */
     border-radius: 5px; /* Optional: rounds the corners of the form container */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow for better aesthetics */
-    width: auto; /* Adjust width as needed */
+    width: 100%; /* Adjust width as needed */
     max-width: 90%; /* Prevents the form from becoming too wide on larger screens */
+    margin-top: 20px;  
+    
 }
 
 
@@ -76,11 +79,13 @@
 table {
         width: 100%;
         border-collapse: collapse;
+        font-size: 14px; 
     }
     th, td {
-        padding: 8px;
+        padding: 4px;
         text-align: left;
         border-bottom: 1px solid #ddd;
+        
     }
     .scenario-input, .scenario-name, .scenario-description {
         padding: 10px;
@@ -115,15 +120,17 @@ table {
       
       <div class="form-container">
     {% block content %}
+    <h5>{% translate "Choice of climate and land-use scenarios" %}</h5>
     <p>{% translate "Select The Land Use and Climate Change Scenario, Under Which You Want to Measure the Impact:" %} </p>
 <form method="post" action="{% url 'select_scenario' %}">
     {% csrf_token %}
     <table>
       <thead>
           <tr>
-              <th>Select</th>
-              <th>Name</th>
-              <th>Description</th>
+              <th>{% translate "Select" %}</th>
+              
+              <th>{% translate "Description" %}</th>
+              <th>{% translate "Name" %}</th>
           </tr>
       </thead>
       <tbody>
@@ -132,17 +139,18 @@ table {
               <td class="scenario-input">
                   {{ item.radio_html|safe }}
               </td>
-              <td class="scenario-name">
-                  {{ item.name }}
-              </td>
+              
               <td class="scenario-description">
                   {{ item.description }}
               </td>
+              <td class="scenario-name">
+                {{ item.name }}
+            </td>
           </tr>
           {% endfor %}
       </tbody>
   </table>
-    <button type="submit" class="btn btn-success btn-lg">{% translate "Submit Scenario" %}</button>
+    <button type="submit" class="btn btn-success btn-lg" style="margin-top: 5px;">{% translate "Submit Scenario" %}</button>
 </form>
 {% endblock %}
 </div>
