@@ -6,6 +6,7 @@ from .views import *
 
 urlpatterns = [
     path("signup/", SignUpView.as_view(), name="signup"),
+    path('map2/', map_view, name='map2'),
     path('map/', study_area_detail, name='map'),
     path('select_criteria/', select_criteria, name='select_criteria'),
     path('add_params/', add_params, name='add_params'),

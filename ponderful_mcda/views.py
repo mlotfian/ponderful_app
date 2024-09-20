@@ -52,12 +52,12 @@ def start_analysis(request):
         # add analysis run number to session
         request.session['analysis_run_id'] = new_run.id 
         # Redirect to the first step of the analysis or a management page
-        return redirect(reverse('map'))  # Adjust the redirection as needed
+        return redirect(reverse('map2'))  # Adjust the redirection as needed
     else:
         # Redirect back or show an error if the method is not GET
         return redirect('/')
 
-@login_required
+"""@login_required
 def map_view(request):
     
     form = StudyAreaForm()
@@ -70,40 +70,49 @@ def map_view(request):
             study_area.save()
             return HttpResponseRedirect(reverse('criteria'))
 
-    return render(request, 'map.html', {'form': form})
+    return render(request, 'map.html', {'form': form})"""
+
+@login_required
+def map_view(request):
+    form = StudyAreaForm()
+
+    if request.method == 'POST':
+        form = StudyAreaForm(request.POST)
+
+        if form.is_valid():
+            study_area = form.save(commit=False)
+            study_area.user = CustomUser.objects.get(username=request.user)
+
+            # Capture the geometry from the form (GeoJSON) and convert it to a GEOSGeometry object
+            geom_json = request.POST.get('geom')
+            if geom_json:
+                geom = GEOSGeometry(geom_json)
+                study_area.geom = geom
+
+            study_area.save()
+            return HttpResponseRedirect(reverse('select_criteria'))
+
+    return render(request, 'map2.html', {'form': form})
 
 @login_required
 def study_area_detail(request):
     study_area_all_names = studyarea.objects.values_list('name', flat=True)
-    #study_area_id = studyarea.objects.values_list('id', flat=True)
-    #print(type(study_area_all_names))
+    
     study_area_all_names = list(study_area_all_names)
     if request.method == 'POST':
         study_area_name = request.POST.get('study_area_name')
         data = serialize("json", studyarea.objects.all())
         data_dict = json.loads(data)
-        #print(data_dict)
+        
         try:
-            #study_area = studyarea.objects.get(name=study_area_name)
-            #polygon_geometry = serialize('geojson', [study_area], geometry_field='geom')
-            #print(study_area.geom)
+       
             for element in data_dict:
                 if element['fields']['name'] == study_area_name:
-                    #get study area id in the session
                     study_area_id = element['pk']
                     request.session['study_area_id'] = study_area_id
-
-
                     polygon_geometry = element['fields']['geom']
-                    #print(polygon_geometry)
-                    #polygon_geometry = serialize('geojson', polygon_geometry)
                     polygon_geometry = GEOSGeometry(polygon_geometry).geojson
-                    #polygon_geometry = polygon_geometry.exterior
-                    #polygon_geometry = polygon_geometry.to_wkt()
-                    #print(polygon_geometry)
-            
-    
-            
+
             return render(request, 'map.html', {'polygon_geometry': polygon_geometry, 'study_area_all_names': study_area_all_names})
         except studyarea.DoesNotExist:
             error_message = 'Study area not found.'

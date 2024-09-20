@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Digitize Study Area</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!--<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+</head>
+<body>
+    <h1>Draw Your Study Area</h1>
+    
+    <div id="map" style="height: 500px;"></div>
+
+    <!-- Hidden modal for the form -->
+    <div class="modal fade" id="studyAreaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Study Area Information</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="study-area-form" method="POST" action="{% url 'map2' %}">
+                {% csrf_token %}
+
+                <label for="name">Name:</label>
+                {{ form.name }}
+
+                <label for="landuseintensity">Land Use Intensity:</label>
+                {{ form.landuseintensity }}
+
+                <label for="num_small_pond">Number of Small Ponds:</label>
+                {{ form.num_small_pond }}
+
+                <label for="num_avg_pond">Number of Average Ponds:</label>
+                {{ form.num_avg_pond }}
+
+                <label for="num_big_pond">Number of Big Ponds:</label>
+                {{ form.num_big_pond }}
+
+                <!-- Hidden field to store the polygon geometry -->
+                <input type="hidden" id="id_geom" name="geom" />
+
+                <button type="submit" class="btn btn-primary">Submit Study Area</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        var map = L.map('map').setView([0, 0], 2);  // Set initial view, customize this to your region
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    
+        // Initialize the FeatureGroup to store editable layers
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+    
+        // Initialize the draw control, enabling only the polygon tool
+        var drawControl = new L.Control.Draw({
+            draw: {
+                marker: false,   // Disable marker
+                polyline: false, // Disable polylines
+                
+                circlemarker: false, // Disable circle markers
+                polygon: {       // Enable polygon with optional settings
+                    allowIntersection: false, // Prevent self-intersecting polygons
+                    showArea: true            // Show the area of the drawn polygon
+                }
+            },
+            edit: {
+                featureGroup: drawnItems
+            }
+        });
+        map.addControl(drawControl);
+    
+        // Event when a polygon is created
+        map.on(L.Draw.Event.CREATED, function (event) {
+            var layer = event.layer;
+            drawnItems.addLayer(layer);
+    
+            // Get the GeoJSON representation of the polygon
+            var geom = layer.toGeoJSON().geometry;
+            document.getElementById('id_geom').value = JSON.stringify(geom);
+    
+            // Open the modal after drawing the polygon
+            var studyAreaModal = new bootstrap.Modal(document.getElementById('studyAreaModal'), {
+                backdrop: 'static'
+            });
+            studyAreaModal.show();
+        });
+    </script>
+</body>
+</html>

@@ -32,7 +32,7 @@ class CustomUserChangeForm(UserChangeForm):
 class StudyAreaForm(ModelForm):
     class Meta:
         model = studyarea
-        fields = ['landuseintensity', 'num_small_pond', 'num_avg_pond', 'num_big_pond', 'geom']
+        fields = ['name','landuseintensity', 'num_small_pond', 'num_avg_pond', 'num_big_pond', 'geom']
         widgets = {'geom': gis_forms.OSMWidget}
 
 class StudyAreaSelectionForm(forms.Form):
