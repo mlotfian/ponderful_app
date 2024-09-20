@@ -26,6 +26,7 @@ from django.shortcuts import get_object_or_404
 from collections import defaultdict
 from django.db.models import F
 from django.utils.translation import gettext_lazy as _
+from django.utils import translation
 
 
 # Create your views here.
@@ -256,6 +257,8 @@ def select_scenario(request):
             'radio_html': radio_html,
             'name': s.name,
             'description': s.description,
+            'landuse': s.landuse,
+            'climate': s.climate,
         })
 
     return render(request, 'scenario_user.html', {'scenario_data': scenario_data})
@@ -292,6 +295,9 @@ def create_alternatives(request):
             return redirect('mcda_result')  # Redirect to a success page after submission
     else:
         formset = AlternativesParamsFormSet(queryset = alternatives_params.objects.exclude(pk__in=alternatives_params.objects.all()))
+        # this is done to switch the translation of actions between french and english, other languages can be added later on 
+        for form in formset:
+            form.fields['action'].choices = [(choice[0], _(choice[1])) for choice in form.fields['action'].choices]
 
     return render(request, 'alternatives.html', {'formset': formset})
 

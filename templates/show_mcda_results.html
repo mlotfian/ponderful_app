@@ -186,7 +186,7 @@
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="scenario_ids" value="{{ scenario.id }}" id="scenario{{ scenario.id }}">
                     <label class="form-check-label" for="scenario{{ scenario.id }}">
-                        {{ scenario.name }}
+                        {% translate scenario.name %}
                     </label>
                 </div>
                 {% endfor %}
@@ -197,7 +197,7 @@
             </form>
         </div>
         <div class="legend">
-            <h3>Légende</h3>
+            <h3>{% translate "Legend" %}</h3>
             <div><p>{% translate "The table presents a score (%) that evaluates the level of achievement of the ponds' development strategies (NBS), for each indicator (PCN), then globally, considering the conditions of evolution of the territory and climate in 2050. The order of priority of the indicators is indicated by a weight (%)." %}</p>
             </div>
             <div><span class="bad">&nbsp;&nbsp;&nbsp;&nbsp;</span> 0%-20%: {%translate "Poor" %}</div>
@@ -211,7 +211,7 @@
         {% if selected_scenarios %}
             {% for scenario_key, scenario_data in data.items %}
                 <div>
-                    <h4 class="table-caption">{{ scenario_key.0 }}</h4>
+                    <h4 class="table-caption">{% translate scenario_key.0 %}</h4>
                     <table class="table table-bordered">
                         <thead>
                             <tr>

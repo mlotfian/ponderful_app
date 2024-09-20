@@ -11,7 +11,7 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Display Polygon</title>
+  <title>Scenario</title>
   
 
   <!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />-->
@@ -59,16 +59,16 @@
     object-fit: contain; /* Keeps the image's aspect ratio without cropping */
 }
 
-.form-container {
-    background-color: white; /* White background */
-    padding: 20px; /* Add some padding around the form */
-    border-radius: 5px; /* Optional: rounds the corners of the form container */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow for better aesthetics */
-    width: 100%; /* Adjust width as needed */
-    max-width: 90%; /* Prevents the form from becoming too wide on larger screens */
-    margin-top: 20px;  
-    
-}
+ /* Adjust the form container size */
+ .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: auto;
+            max-width: 800px; /* Limits the max width of the form */
+            margin: 0 auto;
+        }
 
 
 
@@ -76,20 +76,47 @@
     text-align: center;
 }
 
+table thead tr {
+            background-color: navy;
+            color: white;
+        }
+
+       /* Lighter Conditional color coding */
+       .climate-change-strong, .land-use-strong {
+            background-color: #ff9999; /* Light Red */
+        }
+
+        .climate-change-moderate, .land-use-moderate {
+            background-color: #ffcc99; /* Light Orange */
+        }
+
+        .climate-change-slight, .land-use-slight {
+            background-color: #ffff99; /* Light Yellow */
+        }
+
+        .climate-change-no-change, .land-use-no-change {
+            background-color: #ccffcc; /* Light Green */
+        }
 table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 14px; 
+    width: auto; /* Auto width based on content */
+    border-collapse: collapse;
+    font-size: 14px;
     }
     th, td {
         padding: 4px;
         text-align: left;
-        border-bottom: 1px solid #ddd;
+        border: 1px solid #ddd;
         
     }
     .scenario-input, .scenario-name, .scenario-description {
         padding: 10px;
     }
+
+    /* Center table horizontally */
+    .table-container {
+            display: flex;
+            justify-content: center;
+        }
 </style>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -122,6 +149,7 @@ table {
     {% block content %}
     <h5>{% translate "Choice of climate and land-use scenarios" %}</h5>
     <p>{% translate "Select The Land Use and Climate Change Scenario, Under Which You Want to Measure the Impact:" %} </p>
+    <div class="table-container">
 <form method="post" action="{% url 'select_scenario' %}">
     {% csrf_token %}
     <table>
@@ -129,7 +157,8 @@ table {
           <tr>
               <th>{% translate "Select" %}</th>
               
-              <th>{% translate "Description" %}</th>
+              <th>{% translate "Land use" %}</th>
+              <th>{% translate "Climate Change" %}</th>
               <th>{% translate "Name" %}</th>
           </tr>
       </thead>
@@ -140,11 +169,14 @@ table {
                   {{ item.radio_html|safe }}
               </td>
               
-              <td class="scenario-description">
-                  {{ item.description }}
-              </td>
+              <td class="scenario-description {% if item.landuse == 'No Change' %}land-use-no-change{% elif item.landuse == 'Slight' %}land-use-slight{% elif item.landuse == 'Moderate' %}land-use-moderate{% elif item.landuse == 'Strong' %}land-use-strong{% endif %}">
+                {% trans item.landuse %}
+            </td>
+            <td class="scenario-description {% if item.climate == 'No Change' %}climate-change-no-change{% elif item.climate == 'Slight' %}climate-change-slight{% elif item.climate == 'Moderate' %}climate-change-moderate{% elif item.climate == 'Strong' %}climate-change-strong{% endif %}">
+                {% trans item.climate %}
+            </td>
               <td class="scenario-name">
-                {{ item.name }}
+                {% trans item.name %}
             </td>
           </tr>
           {% endfor %}
@@ -153,6 +185,7 @@ table {
     <button type="submit" class="btn btn-success btn-lg" style="margin-top: 5px;">{% translate "Submit Scenario" %}</button>
 </form>
 {% endblock %}
+    </div>
 </div>
 </div>
   </body>

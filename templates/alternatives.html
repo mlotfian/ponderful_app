@@ -104,6 +104,7 @@
         <div id="form-container">
           <table>
             {% for form in formset %}
+            
             {{ form.as_table }}
           {% endfor %}
           </table>
@@ -133,7 +134,7 @@ function disableNonCreationOptions() {
           var actionSelect = document.querySelectorAll('select[name$="action"]');
           actionSelect.forEach(function(select) {
               for (var i = 0; i < select.options.length; i++) {
-                  if (select.options[i].text !== 'Creation') {
+                  if (select.options[i].text !== '{% translate "Creation" %}') {
                       select.options[i].disabled = true;
                   }
               }

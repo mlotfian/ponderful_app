@@ -113,18 +113,28 @@ class alternatives_params(models.Model):
 # to be discussed with WP3 
 # add without land use change to all the other scenarios, e.g., sus + without lu change..
 class scenario(models.Model):
+     
     scenario_category = [
-    ('Utilisation des sols : SSP1, Changement climatique : SSP1', 'Land Use: SSP1, Climate Change: SSP1'),
-    ('Utilisation des sols : SSP3, Changement climatique : SSP3', 'Land Use: SSP3, Climate Change: SSP3'),
-    ('Utilisation des sols : SSP5, Changement climatique : SSP5','Land Use: SSP5, Climate Change: SSP5'),
-    ('Utilisation des sols : Pas de changement, changement climatique : SSP1','Land Use: No Change, Climate Change: SSP1'),
-    ('Utilisation des sols : Pas de changement, changement climatique : SSP3','Land Use: No Change, Climate Change: SSP3'),
-    ('Utilisation des sols : Pas de changement, changement climatique : SSP5','Land Use: No Change, Climate Change: SSP5'),
-    ('Utilisation des sols : Pas de changement, changement climatique : Pas de changement','Land Use: No Change, Climate Change: No Change')]
+    ('Land Use: SSP1, Climate Change: SSP1', _('Land Use: SSP1, Climate Change: SSP1')),
+    ('Land Use: SSP3, Climate Change: SSP3', _('Land Use: SSP3, Climate Change: SSP3')),
+    ('Land Use: SSP5, Climate Change: SSP5',_('Land Use: SSP5, Climate Change: SSP5')),
+    ('Land Use: No Change, Climate Change: SSP1',_('Land Use: No Change, Climate Change: SSP1')),
+    ('Land Use: No Change, Climate Change: SSP3',_('Land Use: No Change, Climate Change: SSP3')),
+    ('Land Use: No Change, Climate Change: SSP5',_('Land Use: No Change, Climate Change: SSP5')),
+    ('Land Use: No Change, Climate Change: No Change',_('Land Use: No Change, Climate Change: No Change'))]
     #'With land use improvement? check with WP3']
+
+    level_category= [
+        ('No Change', _('No Change')),
+        ('Slight', _('Slight')),
+        ('Moderate', _('Moderate')),
+        ('Strong', _('Strong'))
+    ]
 
     name = models.CharField(max_length=255, choices = scenario_category, verbose_name="Climate Change Scenario")
     description = models.TextField(null=True, blank=True)
+    landuse = models.CharField(max_length=255, choices = level_category, verbose_name="Land Use", null=True, blank=True)
+    climate = models.CharField(max_length=255, choices = level_category, verbose_name="Climate Change", null=True, blank=True)
     
     def __str__(self):
         return self.name

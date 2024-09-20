@@ -117,6 +117,38 @@ th, td {
         
     }
 
+/* Background Cover Overlay */
+#overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Transparent gray color */
+            display: none; /* Hidden by default */
+            z-index: 999; /* Ensure it covers all other elements */
+        }
+
+        /* Info Box */
+        #info-box {
+            display: none; /* Hidden by default */
+            position: fixed;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ccc;
+            width: 300px;
+            z-index: 1000; /* On top of the overlay */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Center the info box */
+        .centered {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+
 </style>
 
         <body>
@@ -145,8 +177,20 @@ th, td {
             </nav>
             <div class="content-container cover">
             <div class="form-container">
-                <h5 style="text-align: center;">{% translate "Choice of NCP indicators (Nature's Contribution to People)" %}</h5>
+                <h5 style="text-align: center;">{% translate "Choice of NCP indicators (Nature's Contribution to People)" %}
+                    <i id="info-icon" class="fas fa-info-circle"></i>
+                </h5>
                 <p>{%translate "Which NCP indicators do you want to take into account in your analysis?" %}</p>
+
+                <!-- Overlay -->
+            <div id="overlay"></div>
+
+            <!-- Info Box -->
+            <div id="info-box" class="centered">
+                {% translate "Explain the justification behind the choice of the indicators listed here" %}
+                <img src="{% static 'images/test.jpg' %}" alt="">
+                <button id="close-info-box" style="display: block; margin-top: 10px;">{% translate "Close" %}</button>
+            </div>
                 <form method="post" action="{% url 'select_criteria' %}">
                     {% csrf_token %}
                     <!--{{ form.as_p }}-->
@@ -174,5 +218,24 @@ th, td {
             </div>
         </div>
         </body>
+
+        <script>
+            // the function for the text box popup each time the i icon is clicked
+    document.getElementById('info-icon').addEventListener('click', function() {
+            var overlay = document.getElementById('overlay');
+            var infoBox = document.getElementById('info-box');
+
+            overlay.style.display = 'block'; // Show the overlay
+            infoBox.style.display = 'block'; // Show the text box
+        });
+
+        document.getElementById('close-info-box').addEventListener('click', function() {
+            var overlay = document.getElementById('overlay');
+            var infoBox = document.getElementById('info-box');
+
+            overlay.style.display = 'none'; // Hide the overlay
+            infoBox.style.display = 'none'; // Hide the text box
+        });
+        </script>
     
 </html>
