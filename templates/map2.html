@@ -1,106 +1,386 @@
-{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    {% load static %}
+    {% load i18n %}
     <meta charset="UTF-8">
     <title>Digitize Study Area</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <script src="https://unpkg.com/shpjs@latest/dist/shp.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'index.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <!--<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  
 </head>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    #map {
+        width: 100%;
+        height: calc(100vh - 50px);
+    }
+
+    .modal-body p {
+        margin-bottom: 1rem;
+    }
+       /* Ensuring the navbar contents are flexibly aligned */
+.navbar {
+    display: flex;
+    justify-content: space-between; /* This will place items on both ends */
+}
+
+.nav-left, .navbar-brand {
+    display: flex;
+    align-items: center; /* This ensures the items are vertically centered */
+}
+
+.nav-left a {
+    color: green; /* Keeping your color requirement */
+    text-decoration: none; /* Optional: Removes underline from the link */
+}
+.navbar-brand img.brandsize {
+    background-color: transparent; /* Ensures no background color */
+    width: auto; /* Adjust to your needs, keeps the image's aspect ratio */
+    height: 30px; /* Example height; adjust as necessary without scaling too much */
+    object-fit: contain; /* Keeps the image's aspect ratio without cropping */
+}
+
+.modal-header {
+        background-color: #007bff; /* Bootstrap primary color */
+        color: white;
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-header .modal-title {
+        font-weight: bold;
+        font-size: 1.25rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+        font-size: 1rem;
+    }
+
+    .modal-body p {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-footer {
+        padding: 1rem;
+        border-top: 1px solid #dee2e6;
+        text-align: right;
+    }
+
+    .modal-footer .btn {
+        margin-left: 0.5rem;
+    }
+
+    .form-label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    #study-area-form input, 
+    #study-area-form select {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+
+    .btn-close {
+        background: transparent;
+        border: none;
+        font-size: 1.5rem;
+        opacity: 0.5;
+    }
+
+    .btn-close:hover {
+        opacity: 1;
+    }
+
+    .modal-content {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+
+    .modal-dialog {
+        max-width: 600px;
+    }
+
+    .btn-minimize {
+        background-color: transparent;
+        border: none;
+        font-size: 1.5rem;
+        opacity: 0.7;
+        margin-right: 10px;
+    }
+
+    .btn-minimize:hover {
+        opacity: 1;
+    }
+
+    #reopenModalBtn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1050; /* Make sure it's on top */
+    }
+</style>
 <body>
-    <h1>Draw Your Study Area</h1>
-    
-    <div id="map" style="height: 500px;"></div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);">
+            <i class="fa fa-fw fa-home"></i> {% translate "Home" %}</a></div>
+        <span class="navbar-brand mb-0 h1">
+            <img class="brandsize" src="{% static 'images/logo.png' %}" alt="">
+        </span>
+    </nav>
 
-    <!-- Hidden modal for the form -->
-    <div class="modal fade" id="studyAreaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
+    <div id="map"></div>
+
+    <!-- Initial choice modal -->
+<div class="modal fade" id="choiceModal" tabindex="-1" aria-labelledby="choiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Study Area Information</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form id="study-area-form" method="POST" action="{% url 'map2' %}">
-                {% csrf_token %}
-
-                <label for="name">Name:</label>
-                {{ form.name }}
-
-                <label for="landuseintensity">Land Use Intensity:</label>
-                {{ form.landuseintensity }}
-
-                <label for="num_small_pond">Number of Small Ponds:</label>
-                {{ form.num_small_pond }}
-
-                <label for="num_avg_pond">Number of Average Ponds:</label>
-                {{ form.num_avg_pond }}
-
-                <label for="num_big_pond">Number of Big Ponds:</label>
-                {{ form.num_big_pond }}
-
-                <!-- Hidden field to store the polygon geometry -->
-                <input type="hidden" id="id_geom" name="geom" />
-
-                <button type="submit" class="btn btn-primary">Submit Study Area</button>
-            </form>
-          </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="choiceModalLabel">Define Your Management Area</h5>
+            </div>
+            <div class="modal-body">
+                <p>How would you like to add the boundary of your management area?</p>
+                <div class="d-grid gap-2">
+                    <button id="draw-zone-btn" class="btn btn-primary btn-lg">Draw Your Zone</button>
+                    <button id="upload-shapefile-btn" class="btn btn-secondary btn-lg">Upload Shapefile</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
+</div>
+
+<!-- Shapefile upload modal -->
+<div class="modal fade" id="uploadShapefileModal" tabindex="-1" aria-labelledby="uploadShapefileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadShapefileModalLabel">Upload Shapefile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Please ensure the .shp and its dependencies (.shx, .dbf, .prj) are included in a single .zip file.</p>
+                <div class="form-group">
+                    <label class="form-label" for="shapefileUpload">Upload Shapefile (.zip):</label>
+                    <input type="file" id="shapefileUpload" class="form-control" accept=".zip" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden modal for the form after drawing -->
+<div class="modal fade" id="studyAreaModal" tabindex="-1" aria-labelledby="studyAreaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="studyAreaModalLabel">Management Area Information</h5>
+                <button type="button" class="btn btn-sm btn-minimize" id="minimizeModalBtn">&minus;</button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="study-area-form" method="POST" action="{% url 'map2' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="form-label" for="name">Name:</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="landuseintensity">Land Use Intensity:</label>
+                        {{ form.landuseintensity }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="num_small_pond">Number of Small Ponds:</label>
+                        {{ form.num_small_pond }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="num_avg_pond">Number of Average Ponds:</label>
+                        {{ form.num_avg_pond }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="num_big_pond">Number of Big Ponds:</label>
+                        {{ form.num_big_pond }}
+                    </div>
+                    <!-- Hidden field to store the polygon geometry -->
+                    <input type="hidden" id="id_geom" name="geom" />
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Submit Study Area</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reopen Button -->
+<button id="reopenModalBtn" class="btn btn-primary" style="display:none; position: fixed; bottom: 20px; right: 20px;">
+    Reopen Information
+</button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        var map = L.map('map').setView([0, 0], 2);  // Set initial view, customize this to your region
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-    
+        var map = L.map('map').setView([48.5260, 20.2551], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
         // Initialize the FeatureGroup to store editable layers
         var drawnItems = new L.FeatureGroup();
         map.addLayer(drawnItems);
-    
+
         // Initialize the draw control, enabling only the polygon tool
         var drawControl = new L.Control.Draw({
             draw: {
-                marker: false,   // Disable marker
-                polyline: false, // Disable polylines
-                
-                circlemarker: false, // Disable circle markers
-                polygon: {       // Enable polygon with optional settings
-                    allowIntersection: false, // Prevent self-intersecting polygons
-                    showArea: true            // Show the area of the drawn polygon
+                marker: false,
+                polyline: false,
+                circlemarker: false,
+                polygon: {
+                    allowIntersection: false,
+                    showArea: true
                 }
             },
             edit: {
-                featureGroup: drawnItems
-            }
+                featureGroup: drawnItems  // Enable editing of drawn and uploaded polygons
+            },
+            remove: true  // Enable the removal of polygons
         });
-        map.addControl(drawControl);
-    
-        // Event when a polygon is created
+        map.addControl(drawControl); // Enable control right away
+
+        var drawControlAdded = false;  // Control the draw tool only when needed
+
+        // Event when a polygon is created or edited
         map.on(L.Draw.Event.CREATED, function (event) {
             var layer = event.layer;
             drawnItems.addLayer(layer);
-    
+
             // Get the GeoJSON representation of the polygon
             var geom = layer.toGeoJSON().geometry;
             document.getElementById('id_geom').value = JSON.stringify(geom);
-    
+
             // Open the modal after drawing the polygon
             var studyAreaModal = new bootstrap.Modal(document.getElementById('studyAreaModal'), {
                 backdrop: 'static'
             });
             studyAreaModal.show();
         });
+
+        map.on('draw:edited', function (event) {
+            var layers = event.layers;
+            layers.eachLayer(function (layer) {
+                var geom = layer.toGeoJSON().geometry;
+                document.getElementById('id_geom').value = JSON.stringify(geom);
+            });
+        });
+
+        // Handle shapefile upload
+        document.getElementById('shapefileUpload').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var arrayBuffer = e.target.result;
+                    shp(arrayBuffer).then(function(geojson) {
+                        drawnItems.clearLayers();  // Clear any existing layers
+                        var layer = L.geoJSON(geojson).addTo(drawnItems);
+                        map.fitBounds(layer.getBounds());
+
+                        // Enable editing for the uploaded polygon
+                        drawnItems.addLayer(layer);
+
+                        // Save the shapefile's GeoJSON to the hidden field
+                        var geom = layer.toGeoJSON().features[0].geometry;
+                        document.getElementById('id_geom').value = JSON.stringify(geom);
+
+                        // Open the form modal after the shapefile is uploaded
+                        var studyAreaModal = new bootstrap.Modal(document.getElementById('studyAreaModal'), {
+                            backdrop: 'static'
+                        });
+                        studyAreaModal.show();
+                    });
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+
+        // Show the initial choice modal on page load
+        window.onload = function() {
+            var choiceModal = new bootstrap.Modal(document.getElementById('choiceModal'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+            choiceModal.show();
+
+            // Handle draw zone button
+            document.getElementById('draw-zone-btn').addEventListener('click', function() {
+                choiceModal.hide();
+                if (!drawControlAdded) {
+                    map.addControl(drawControl);  // Add draw control only after choice
+                    drawControlAdded = true;
+                }
+            });
+
+            // Handle upload shapefile button
+            document.getElementById('upload-shapefile-btn').addEventListener('click', function() {
+                choiceModal.hide();
+                var uploadShapefileModal = new bootstrap.Modal(document.getElementById('uploadShapefileModal'), {
+                    backdrop: 'static'
+                });
+                uploadShapefileModal.show();
+            });
+        };
+
+
+        // Function to minimize the modal
+    document.getElementById('minimizeModalBtn').addEventListener('click', function() {
+        var studyAreaModal = bootstrap.Modal.getInstance(document.getElementById('studyAreaModal'));
+        studyAreaModal.hide();  // Hide the modal
+
+        // Show the reopen button
+        document.getElementById('reopenModalBtn').style.display = 'block';
+    });
+
+    // Function to reopen the modal
+    document.getElementById('reopenModalBtn').addEventListener('click', function() {
+        var studyAreaModal = new bootstrap.Modal(document.getElementById('studyAreaModal'), {
+            backdrop: 'static'
+        });
+        studyAreaModal.show();  // Show the modal
+
+        // Hide the reopen button
+        document.getElementById('reopenModalBtn').style.display = 'none';
+    });
     </script>
 </body>
 </html>

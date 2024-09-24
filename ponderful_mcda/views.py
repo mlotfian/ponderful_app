@@ -85,8 +85,36 @@ def map_view(request):
 
             # Capture the geometry from the form (GeoJSON) and convert it to a GEOSGeometry object
             geom_json = request.POST.get('geom')
+            print(geom_json)
             if geom_json:
                 geom = GEOSGeometry(geom_json)
+                
+            
+             # Check if the geometry has a Z dimension and remove it
+                 # Remove Z-dimension if present
+                if geom.hasz:
+                    if geom.geom_type == 'Polygon':
+                        new_rings = []
+                        for ring in geom.coords:
+                            # Remove Z-dimension from the coordinates
+                            new_ring = [(x, y) for x, y, *rest in ring]
+
+                            # Ensure the first and last points are the same to form a valid LinearRing
+                            if new_ring[0] != new_ring[-1]:
+                                new_ring.append(new_ring[0])
+
+                            # Ensure the ring has at least 4 points
+                            if len(new_ring) >= 4:
+                                new_rings.append(new_ring)
+                            else:
+                                print(f"Skipping invalid ring with {len(new_ring)} points.")
+
+                        # Reconstruct the Polygon with the new rings
+                        if new_rings:
+                            geom = Polygon(*new_rings, srid=geom.srid)
+                        else:
+                            raise ValueError("Polygon has no valid rings.")
+                
                 study_area.geom = geom
 
             study_area.save()

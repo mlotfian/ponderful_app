@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Digitize Study Area</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <script src="https://unpkg.com/shpjs@latest/dist/shp.min.js"></script>
+</head>
+<body>
+    <h1>Draw or Upload Your Study Area</h1>
+    
+    <div id="map" style="height: 500px;"></div>
+
+    <!-- Upload shapefile button -->
+    <div>
+        <label for="shapefileUpload">Upload Shapefile:</label>
+        <input type="file" id="shapefileUpload" accept=".zip,.shp,.dbf,.prj" />
+    </div>
+
+    <!-- Hidden modal for the form -->
+    <div class="modal fade" id="studyAreaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Study Area Information</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="study-area-form" method="POST" action="{% url 'map2' %}">
+                {% csrf_token %}
+                <label for="landuseintensity">Land Use Intensity:</label>
+                {{ form.landuseintensity }}
+
+                <label for="num_small_pond">Number of Small Ponds:</label>
+                {{ form.num_small_pond }}
+
+                <label for="num_avg_pond">Number of Average Ponds:</label>
+                {{ form.num_avg_pond }}
+
+                <label for="num_big_pond">Number of Big Ponds:</label>
+                {{ form.num_big_pond }}
+
+                <!-- Hidden field to store the polygon geometry -->
+                <input type="hidden" id="id_geom" name="geom" />
+
+                <button type="submit" class="btn btn-primary">Submit Study Area</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        var map = L.map('map').setView([0, 0], 2);  // Set initial view, customize this to your region
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        // Initialize the FeatureGroup to store editable layers
+        var drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+
+        // Initialize the draw control, enabling only the polygon tool
+        var drawControl = new L.Control.Draw({
+            draw: {
+                marker: false,   // Disable marker
+                polyline: false, // Disable polylines
+                circle: false,   // Disable circles
+                rectangle: false, // Disable rectangles
+                circlemarker: false, // Disable circle markers
+                polygon: {       // Enable polygon
+                    allowIntersection: false, // Prevent self-intersecting polygons
+                    showArea: true            // Show the area of the drawn polygon
+                }
+            },
+            edit: {
+                featureGroup: drawnItems
+            }
+        });
+        map.addControl(drawControl);
+
+        // Event when a polygon is created
+        map.on(L.Draw.Event.CREATED, function (event) {
+            var layer = event.layer;
+            drawnItems.addLayer(layer);
+
+            // Get the GeoJSON representation of the polygon
+            var geom = layer.toGeoJSON().geometry;
+            document.getElementById('id_geom').value = JSON.stringify(geom);
+
+            // Open the modal after drawing the polygon
+            var studyAreaModal = new bootstrap.Modal(document.getElementById('studyAreaModal'), {
+                backdrop: 'static'
+            });
+            studyAreaModal.show();
+        });
+
+        // Handle shapefile upload
+        document.getElementById('shapefileUpload').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            if (file) {
+                // Use shp.js to load and display the shapefile on the map
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var arrayBuffer = e.target.result;
+                    shp(arrayBuffer).then(function(geojson) {
+                        // Remove any existing layers
+                        drawnItems.clearLayers();
+
+                        // Add the shapefile's polygon to the map
+                        var layer = L.geoJSON(geojson).addTo(drawnItems);
+
+                        // Set the map's view to the shapefile bounds
+                        map.fitBounds(layer.getBounds());
+
+                        // Save the shapefile's GeoJSON to the hidden field
+                        var geom = layer.toGeoJSON().features[0].geometry;
+                        document.getElementById('id_geom').value = JSON.stringify(geom);
+
+                        // Show the modal to fill in other details
+                        var studyAreaModal = new bootstrap.Modal(document.getElementById('studyAreaModal'), {
+                            backdrop: 'static'
+                        });
+                        studyAreaModal.show();
+                    });
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+    </script>
+</body>
+</html>
