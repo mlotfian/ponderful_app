@@ -33,12 +33,31 @@ class studyarea(models.Model):
     ('average', 'Average'),
     ('high','High'),
 ]
+
+    trophic_choices = [
+    ('oligotrophic', 'Oligotrophic'),
+    ('mesotrophic', 'Mesotrophic'),
+    ('eutrophic','Eutrophic'),
+    ('hypertrophic','Hypertrophic'),
+    ('highly hypertrophic','Highly hypertrophic'),
+    ('I do not know','I do not know'),#I do not know = eutrophe
+    
+]
     name = models.CharField(max_length=255, verbose_name="Study Area Name", unique=True)
     landuseintensity = models.CharField(max_length=255, choices = landuseintensity_choices,blank=True, verbose_name=_('Landuse Intensity'))
+    trophic_state = models.CharField(max_length=255, choices = trophic_choices,blank=True, verbose_name=_('Trophic Status'))
+    total_pond = models.IntegerField(verbose_name="Total number of existing ponds", blank=True, null=True)
     num_small_pond = models.IntegerField(verbose_name="Number of curret small size ponds", blank=True, null=True)
     num_avg_pond = models.IntegerField(verbose_name="Number of curret average size ponds", blank=True, null=True)
     num_big_pond = models.IntegerField(verbose_name="Number of curret big size ponds", blank=True, null=True)
+    Amphibia_ssp1 = models.FloatField(verbose_name="Amphibia SSP1", blank=True, null=True)
+    Amphibia_ssp3 = models.FloatField(verbose_name="Amphibia SSP3", blank=True, null=True)
+    Amphibia_ssp5 = models.FloatField(verbose_name="Amphibia SSP5", blank=True, null=True)
+    CO2_ssp1 = models.FloatField(verbose_name="CO2 SSP1", blank=True, null=True)
+    CO2_ssp3 = models.FloatField(verbose_name="CO2 SSP3", blank=True, null=True)
+    CO2_ssp5 = models.FloatField(verbose_name="CO2 SSP5", blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    country = models.CharField(max_length=100, null=True, blank=True)
     geom = models.PolygonField(srid=4326)
 
     def __str__(self):

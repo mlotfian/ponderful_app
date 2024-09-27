@@ -20,18 +20,24 @@
         margin: 0;
         padding: 0;
         height: 100%;
+        overflow: hidden; /* Prevents any scroll from being needed */
     }
 
     #map {
-        width: 100%;
-        height: calc(100vh - 50px);
-    }
+    width: 100%;
+    /* Calculate height: 100% of viewport height minus navbar height minus bottom bar height */
+    height: calc(100vh - 56px); /* Adjust 50px and 70px based on actual heights of your navbar and bottom bar */
+    position: relative;
+    top: 0;
+    left: 0;
+}
 
     .modal-body p {
         margin-bottom: 1rem;
     }
        /* Ensuring the navbar contents are flexibly aligned */
 .navbar {
+    height: 56px;
     display: flex;
     justify-content: space-between; /* This will place items on both ends */
 }
@@ -151,15 +157,68 @@
         right: 20px;
         z-index: 1050; /* Make sure it's on top */
     }
+
+        /* Minimize button style */
+        .btn-minimize {
+        background-color: transparent;
+        border: none;
+        font-size: 1.2rem;
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        margin-right: 10px; /* Adds some space between the minimize and close button */
+    }
+
+    /* Hover effect */
+    .btn-minimize:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        transform: scale(1.1);
+    }
+
+    /* Icon inside the minimize button */
+    .btn-minimize i {
+        font-size: 1.2rem;
+        color: #333;
+    }
+
+    /* Align the minimize and close buttons */
+    .modal-header .d-flex {
+        margin-left: auto; /* Moves the buttons to the right */
+    }
 </style>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);">
-            <i class="fa fa-fw fa-home"></i> {% translate "Home" %}</a></div>
-        <span class="navbar-brand mb-0 h1">
-            <img class="brandsize" src="{% static 'images/logo.png' %}" alt="">
-        </span>
-    </nav>
+      <!-- adding navbar -->
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    
+    <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);"><i class="fa fa-fw fa-home"></i> {% translate "Home" %}</a></div>
+
+    <span class="navbar-brand mb-0 h1">
+        <img class="brandsize" src="{% static 'images/logo.png' %}" alt="">
+      </span>
+
+
+      <div>
+        <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ redirect_to }}" />
+            <select name="language" onchange="this.form.submit();">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% for lang in LANGUAGES %}
+                <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>
+                    {{ lang.1 }}
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+</nav>
 
     <div id="map"></div>
 
@@ -206,8 +265,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="studyAreaModalLabel">Management Area Information</h5>
-                <button type="button" class="btn btn-sm btn-minimize" id="minimizeModalBtn">&minus;</button>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-minimize" id="minimizeModalBtn">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
             </div>
             <div class="modal-body">
                 <form id="study-area-form" method="POST" action="{% url 'map2' %}">
@@ -217,21 +280,14 @@
                         {{ form.name }}
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="landuseintensity">Land Use Intensity:</label>
-                        {{ form.landuseintensity }}
+                        <label class="form-label" for="trophic_state">Trophic Status:</label>
+                        {{ form.trophic_state }}
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="num_small_pond">Number of Small Ponds:</label>
-                        {{ form.num_small_pond }}
+                        <label class="form-label" for="total_pond">Total Number of Existing Ponds:</label>
+                        {{ form.total_pond }}
                     </div>
-                    <div class="form-group">
-                        <label class="form-label" for="num_avg_pond">Number of Average Ponds:</label>
-                        {{ form.num_avg_pond }}
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="num_big_pond">Number of Big Ponds:</label>
-                        {{ form.num_big_pond }}
-                    </div>
+                    
                     <!-- Hidden field to store the polygon geometry -->
                     <input type="hidden" id="id_geom" name="geom" />
                     <div class="modal-footer">

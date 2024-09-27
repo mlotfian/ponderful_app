@@ -1,3 +1,4 @@
+import requests
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
@@ -27,6 +28,13 @@ from collections import defaultdict
 from django.db.models import F
 from django.utils.translation import gettext_lazy as _
 from django.utils import translation
+
+import rasterio
+import numpy as np
+from shapely.geometry import shape
+from rasterio.mask import mask
+from django.contrib.gis.gdal import SpatialReference
+from shapely.geometry import box
 
 
 # Create your views here.
@@ -72,6 +80,60 @@ def map_view(request):
 
     return render(request, 'map.html', {'form': form})"""
 
+def calculate_avg_raster_value(raster_path, geom):
+    # Open the raster file to get its CRS
+    with rasterio.open(raster_path) as src:
+        raster_crs = src.crs
+        raster_epsg = int(raster_crs.to_epsg()) 
+        print(raster_epsg) # Convert the CRS to EPSG integer
+        print(f"Raster NoData value: {src.nodata}")
+        
+    
+    # Get the current CRS of the polygon (assuming it's defined in geom.srid)
+    geom_crs = geom.srid
+
+    # Reproject the geometry to match the raster CRS if necessary
+    if geom_crs != raster_epsg:
+        geom.transform(raster_epsg)  # Reproject to match the raster's CRS
+
+    with rasterio.open(raster_path) as src:
+        # Convert the GEOSGeometry to a Shapely geometry
+        geom_shape = shape(json.loads(geom.geojson))
+
+        # Clip the raster with the polygon geometry
+        out_image, out_transform = mask(src, [geom_shape], crop=True)
+
+        # Check the NoData value
+        nodata_value = src.nodata
+        print(f"NoData value in the raster: {nodata_value}")
+
+        # Mask NaN values explicitly
+        out_image = np.ma.masked_invalid(out_image)
+        print(f"Masked image (with NaNs removed): {out_image}")
+        print(out_image)
+
+        # Calculate the mean, ignoring NaN and 0 values
+        mean_value = out_image.mean()
+        print(f"Mean pixel value: {mean_value}")
+
+    return mean_value
+def reverse_geocode_country(lat, lon):
+    """
+    Use Nominatim (OpenStreetMap) to reverse geocode the latitude and longitude
+    to get the country name.
+    """
+    try:
+        url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&zoom=5&addressdetails=1"
+        response = requests.get(url, headers={'User-Agent': 'your-app-name'})
+        if response.status_code == 200:
+            data = response.json()
+            country = data.get('address', {}).get('country')
+            return country
+        return None
+    except Exception as e:
+        print(f"Error during reverse geocoding: {e}")
+        return None
+
 @login_required
 def map_view(request):
     form = StudyAreaForm()
@@ -85,7 +147,7 @@ def map_view(request):
 
             # Capture the geometry from the form (GeoJSON) and convert it to a GEOSGeometry object
             geom_json = request.POST.get('geom')
-            print(geom_json)
+            #print(geom_json)
             if geom_json:
                 geom = GEOSGeometry(geom_json)
                 
@@ -114,10 +176,45 @@ def map_view(request):
                             geom = Polygon(*new_rings, srid=geom.srid)
                         else:
                             raise ValueError("Polygon has no valid rings.")
+
+                 # Calculate the centroid of the polygon
+                centroid = geom.centroid
+
+                # Use the centroid to find the country using reverse geocoding
+                country_name = reverse_geocode_country(centroid.y, centroid.x)  # Latitude and Longitude
+
+                if country_name:
+                    study_area.country = country_name
                 
                 study_area.geom = geom
+                # Assuming you have your raster file path accessible
+                variables = {
+                    'Amphibia': {
+                        'ssp1': '/app/raster_files/Amphibia_percent_difference_SSP1.tif',
+                        'ssp3': '/app/raster_files/Amphibia_percent_difference_SSP2.tif',
+                        'ssp5': '/app/raster_files/Amphibia_percent_difference_SSP3.tif'
+                                },
+                    'CO2': {
+                        'ssp1': '/app/raster_files/CO2_percent_difference_SSP1.tif',
+                        'ssp3': '/app/raster_files/CO2_percent_difference_SSP2.tif',
+                        'ssp5': '/app/raster_files/CO2_percent_difference_SSP3.tif'
+                    }
+                }
+
+                # Loop over the variables and SSPs to calculate and assign average raster values
+                for variable, ssps in variables.items():
+                    for ssp, raster_path in ssps.items():
+                        # Calculate the average raster value for the specific variable and SSP
+                        avg_value = calculate_avg_raster_value(raster_path, geom)
+        
+                        # Dynamically create the attribute name for study_area (e.g., Amphibia_ssp1, CO2_ssp1)
+                        attribute_name = f'{variable}_{ssp}'
+        
+                        # Assign the calculated value to the corresponding attribute in study_area
+                        setattr(study_area, attribute_name, avg_value)
 
             study_area.save()
+            request.session['study_area_id'] = study_area.id
             return HttpResponseRedirect(reverse('select_criteria'))
 
     return render(request, 'map2.html', {'form': form})
@@ -372,8 +469,8 @@ def mcda_results(request):
     for indicator in selected_criteria:
         weight = criteria_params.objects.filter(criteria=indicator, analysis_run=analysis_run_id).values_list('weight_percentage', flat=True).distinct().first()
         
-        satisfaction_n = satisfaction_threshold.objects.filter(study_area=study_area_id,criteria_id=indicator).values_list('threshold_min', flat=True).distinct().first()
-        satisfaction_c = satisfaction_threshold.objects.filter(study_area=study_area_id,criteria_id=indicator).values_list('threshold_max', flat=True).distinct().first()
+        satisfaction_n = satisfaction_threshold.objects.filter(criteria_id=indicator).values_list('threshold_min', flat=True).distinct().first()
+        satisfaction_c = satisfaction_threshold.objects.filter(criteria_id=indicator).values_list('threshold_max', flat=True).distinct().first()
                 
         for ap in action_pond:
             for scenario_id in all_scenario_ids:
@@ -391,7 +488,7 @@ def mcda_results(request):
     if request.method == 'POST':
 
         for element in all_values:
-            #print(element[2], element[3], element[4])
+            print(element[2], element[3], element[4])
             if element[2]<=element[4]:
                 partial_satisfaction = 0
                 weighted_avg = partial_satisfaction * element[5]
