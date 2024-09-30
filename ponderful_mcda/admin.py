@@ -32,7 +32,6 @@ admin.site.register(studyarea, LeafletGeoAdmin)
 admin.site.register(criteria)
 
 
-
 class CriteriaParamsAdmin(admin.ModelAdmin):
     list_display = ['id', 'criteria','weight_percentage' ,'analysis_run', 'rank']  # Adapt field names as needed
     
@@ -80,5 +79,16 @@ admin.site.register(mcda_result, MCDAResultAdmin)
 
 #@admin.register(scenario)
 
+class Amph_accuAdmin(admin.ModelAdmin):
+    list_display = ['id', 'country', 'sp_richness','pond_num']
+admin.site.register(amphi_accumulation, Amph_accuAdmin)
+
+class MI_accuAdmin(admin.ModelAdmin):
+    list_display = ['id', 'country', 'sp_richness','pond_num']
+admin.site.register(MI_accumulation, MI_accuAdmin)
+
+class Macrophyte_accuAdmin(admin.ModelAdmin):
+    list_display = ['id', 'country', 'sp_richness','pond_num']
+admin.site.register(macrophyte_accumulation, Macrophyte_accuAdmin)   
 
 

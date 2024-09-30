@@ -50,12 +50,42 @@ class studyarea(models.Model):
     num_small_pond = models.IntegerField(verbose_name="Number of curret small size ponds", blank=True, null=True)
     num_avg_pond = models.IntegerField(verbose_name="Number of curret average size ponds", blank=True, null=True)
     num_big_pond = models.IntegerField(verbose_name="Number of curret big size ponds", blank=True, null=True)
+
     Amphibia_ssp1 = models.FloatField(verbose_name="Amphibia SSP1", blank=True, null=True)
     Amphibia_ssp3 = models.FloatField(verbose_name="Amphibia SSP3", blank=True, null=True)
     Amphibia_ssp5 = models.FloatField(verbose_name="Amphibia SSP5", blank=True, null=True)
+    Amphibia_ssp1_LU = models.FloatField(verbose_name="Amphibia LUOnly SSP1", blank=True, null=True)
+    Amphibia_ssp3_LU = models.FloatField(verbose_name="Amphibia LUOnly SSP3", blank=True, null=True)
+    Amphibia_ssp5_LU = models.FloatField(verbose_name="Amphibia LUOnly SSP5", blank=True, null=True)
+
+    MI_ssp1 = models.FloatField(verbose_name="MI SSP1", blank=True, null=True)
+    MI_ssp3 = models.FloatField(verbose_name="MI SSP3", blank=True, null=True)
+    MI_ssp5 = models.FloatField(verbose_name="MI SSP5", blank=True, null=True)
+    MI_ssp1_LU = models.FloatField(verbose_name="MI LUOnly SSP1", blank=True, null=True)
+    MI_ssp3_LU = models.FloatField(verbose_name="MI LUOnly SSP3", blank=True, null=True)
+    MI_ssp5_LU = models.FloatField(verbose_name="MI LUOnly SSP5", blank=True, null=True)
+
+    Macrophyte_ssp1 = models.FloatField(verbose_name="Macrophyte SSP1", blank=True, null=True)
+    Macrophyte_ssp3 = models.FloatField(verbose_name="Macrophyte SSP3", blank=True, null=True)
+    Macrophyte_ssp5 = models.FloatField(verbose_name="Macrophyte SSP5", blank=True, null=True)
+    Macrophyte_ssp1_LU = models.FloatField(verbose_name="Macrophyte LUOnly SSP1", blank=True, null=True)
+    Macrophyte_ssp3_LU = models.FloatField(verbose_name="Macrophyte LUOnly SSP3", blank=True, null=True)
+    Macrophyte_ssp5_LU = models.FloatField(verbose_name="Macrophyte LUOnly SSP5", blank=True, null=True)
+
     CO2_ssp1 = models.FloatField(verbose_name="CO2 SSP1", blank=True, null=True)
     CO2_ssp3 = models.FloatField(verbose_name="CO2 SSP3", blank=True, null=True)
     CO2_ssp5 = models.FloatField(verbose_name="CO2 SSP5", blank=True, null=True)
+    CO2_ssp1_LU = models.FloatField(verbose_name="CO2 LUOnly SSP1", blank=True, null=True)
+    CO2_ssp3_LU = models.FloatField(verbose_name="CO2 LUOnly SSP3", blank=True, null=True)
+    CO2_ssp5_LU = models.FloatField(verbose_name="CO2 LUOnly SSP5", blank=True, null=True)
+
+    GHG_ssp1 = models.FloatField(verbose_name="GHG SSP1", blank=True, null=True)
+    GHG_ssp3 = models.FloatField(verbose_name="GHG SSP3", blank=True, null=True)
+    GHG_ssp5 = models.FloatField(verbose_name="GHG SSP5", blank=True, null=True)
+    GHG_ssp1_LU = models.FloatField(verbose_name="GHG LUOnly SSP1", blank=True, null=True)
+    GHG_ssp3_LU = models.FloatField(verbose_name="GHG LUOnly SSP3", blank=True, null=True)
+    GHG_ssp5_LU = models.FloatField(verbose_name="GHG LUOnly SSP5", blank=True, null=True)
+    
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     country = models.CharField(max_length=100, null=True, blank=True)
     geom = models.PolygonField(srid=4326)
@@ -104,9 +134,7 @@ class satisfaction_threshold(models.Model):
 class action_types(models.Model):
     actions_types = [
     ('Creation', _('Creation')),
-    ('Restoration', _('Restoration')),
-    ('Water management',_('Water management')), # quantity 
-    ('Land management',_('Land management')), # pollution? or change the land cover?  
+    ('Water Quality Management',_('Water Quality Management')), # quantity  
     ('No action',_('No action')),
     ]
     name = models.CharField(max_length=255, choices = actions_types, verbose_name="Action Name")
@@ -180,3 +208,18 @@ class mcda_result(models.Model):
     weight = models.FloatField(verbose_name="weight")
     partial_satisfaction = models.FloatField(verbose_name="Partial satisfaction")
     weighted_avg = models.FloatField(verbose_name="Partial weighted average")
+
+class amphi_accumulation(models.Model):
+    country = models.CharField(max_length=255)
+    sp_richness = models.IntegerField()
+    pond_num = models.IntegerField()
+
+class MI_accumulation(models.Model):
+    country = models.CharField(max_length=255)
+    sp_richness = models.IntegerField()
+    pond_num = models.IntegerField()
+
+class macrophyte_accumulation(models.Model):
+    country = models.CharField(max_length=255)
+    sp_richness = models.IntegerField()
+    pond_num = models.IntegerField()

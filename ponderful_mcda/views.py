@@ -123,7 +123,7 @@ def reverse_geocode_country(lat, lon):
     to get the country name.
     """
     try:
-        url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&zoom=5&addressdetails=1"
+        url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&zoom=5&addressdetails=1&accept-language=en"
         response = requests.get(url, headers={'User-Agent': 'your-app-name'})
         if response.status_code == 200:
             data = response.json()
@@ -190,15 +190,29 @@ def map_view(request):
                 # Assuming you have your raster file path accessible
                 variables = {
                     'Amphibia': {
-                        'ssp1': '/app/raster_files/Amphibia_percent_difference_SSP1.tif',
-                        'ssp3': '/app/raster_files/Amphibia_percent_difference_SSP2.tif',
-                        'ssp5': '/app/raster_files/Amphibia_percent_difference_SSP3.tif'
+                        'ssp1': '/app/combinedCC_LU/Amphibia_SSP1_percent_difference.tif',
+                        'ssp3': '/app/combinedCC_LU/Amphibia_SSP3_percent_difference.tif',
+                        'ssp5': '/app/combinedCC_LU/Amphibia_SSP5_percent_difference.tif',
+                        'ssp1_LU': '/app/only_LU/Amphibia_LU_SSP1_percent_difference.tif',
+                        'ssp3_LU': '/app/only_LU/Amphibia_LU_SSP3_percent_difference.tif',
+                        'ssp5_LU': '/app/only_LU/Amphibia_LU_SSP5_percent_difference.tif',
+
                                 },
-                    'CO2': {
-                        'ssp1': '/app/raster_files/CO2_percent_difference_SSP1.tif',
-                        'ssp3': '/app/raster_files/CO2_percent_difference_SSP2.tif',
-                        'ssp5': '/app/raster_files/CO2_percent_difference_SSP3.tif'
-                    }
+                    'Macrophyte':
+                        {'ssp1': '/app/combinedCC_LU/Macrophyte_SSP1_percent_difference.tif',
+                        'ssp3': '/app/combinedCC_LU/Macrophyte_SSP3_percent_difference.tif',
+                        'ssp5': '/app/combinedCC_LU/Macrophyte_SSP5_percent_difference.tif',
+                        'ssp1_LU': '/app/only_LU/Macrophyte_LU_SSP1_percent_difference.tif',
+                        'ssp3_LU': '/app/only_LU/Macrophyte_LU_SSP3_percent_difference.tif',
+                        'ssp5_LU': '/app/only_LU/Macrophyte_LU_SSP5_percent_difference.tif',},
+                    
+                    'MI':
+                        {'ssp1': '/app/combinedCC_LU/MI_Biofam_SSP1_percent_difference.tif',
+                        'ssp3': '/app/combinedCC_LU/MI_Biofam_SSP3_percent_difference.tif',
+                        'ssp5': '/app/combinedCC_LU/MI_Biofam_SSP5_percent_difference.tif',
+                        'ssp1_LU': '/app/only_LU/MI_Biofam_LU_SSP1_percent_difference.tif',
+                        'ssp3_LU': '/app/only_LU/MI_Biofam_LU_SSP3_percent_difference.tif',
+                        'ssp5_LU': '/app/only_LU/MI_Biofam_LU_SSP5_percent_difference.tif',},
                 }
 
                 # Loop over the variables and SSPs to calculate and assign average raster values
