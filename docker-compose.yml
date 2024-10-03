@@ -8,8 +8,9 @@ services:
     volumes:
       - .:/app
       - /mnt/e/Maryam/Ponderful/Percent_changes_CombinedCC_LU:/app/combinedCC_LU
-      - /mnt/e/Maryam/Ponderful/OnlyLUPercentChange:/app/only_LU
+      - /mnt/e/Maryam/Ponderful/OnlyCCPercentChange:/app/only_CC
       - /mnt/e/Maryam/Ponderful/accumulation_curve:/app/accumulation
+      - /mnt/e/Maryam/Ponderful/trophic_state:/app/trophic_state
     ports:
       - 8000:8000
     env_file:

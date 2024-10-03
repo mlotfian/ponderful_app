@@ -5,74 +5,110 @@
     {% load static %}
     {% load i18n %}
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Display Polygon</title>
-  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Polygon</title>
 
-  <!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />-->
-  
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <link rel="stylesheet" href="{% static 'index.css' %}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  
-
-    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <style>
-
   .cover {
-      background-color: beige; 
+      background-color: beige;
       background-size: cover;
       background-repeat: no-repeat;
       display: flex;
-      justify-content: center; /* Center children horizontally */
-      align-items: center; /* Center children vertically */
-      height: 100vh; /* Use the full height of the viewport */
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
   }
-  
-     /* Ensuring the navbar contents are flexibly aligned */
-.navbar {
-    display: flex;
-    justify-content: space-between; /* This will place items on both ends */
-}
 
-.nav-left, .navbar-brand {
-    display: flex;
-    align-items: center; /* This ensures the items are vertically centered */
-}
+  .navbar {
+      display: flex;
+      justify-content: space-between;
+  }
 
-.nav-left a {
-    color: green; /* Keeping your color requirement */
-    text-decoration: none; /* Optional: Removes underline from the link */
-}
+  .navbar-brand img.brandsize {
+      width: auto;
+      height: 30px;
+      object-fit: contain;
+  }
 
-.navbar-brand img.brandsize {
-    background-color: transparent; /* Ensures no background color */
-    width: auto; /* Adjust to your needs, keeps the image's aspect ratio */
-    height: 30px; /* Example height; adjust as necessary without scaling too much */
-    object-fit: contain; /* Keeps the image's aspect ratio without cropping */
-}
-  
+  /* Form container styles */
   .form-container {
-      background-color: white; /* White background */
-      padding: 20px; /* Add some padding around the form */
-      border-radius: 5px; /* Optional: rounds the corners of the form container */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow for better aesthetics */
-      width: auto; /* Adjust width as needed */
-      max-width: 90%; /* Prevents the form from becoming too wide on larger screens */
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 900px;
+      width: 100%;
   }
-  
-  
-  </style>
+
+  .card {
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .card-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+  }
+
+  /* Hide fields by default */
+  .hidden-field {
+      display: none;
+  }
+
+  /* Button styles */
+  .btn-primary {
+      background-color: #007bff;
+      border: none;
+  }
+
+  .btn-primary:hover {
+      background-color: #0056b3;
+  }
+
+  .btn-success {
+      background-color: #28a745;
+      border: none;
+  }
+
+  .btn-danger {
+      margin-top: 10px;
+  }
+
+  .button-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+  }
+
+  /* Refine the button styles */
+  .btn-danger {
+    margin-top: 10px;
+    padding: 5px 15px;  /* Compact padding */
+    font-size: 14px;  /* Reduce the font size */
+    width: auto;  /* Set width to auto to avoid full-width */
+    display: inline-block;
+    align-self: center;  /* Align to the center of the flex container */
+}
+</style>
+
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    
+   
     <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0)"><i class="fa fa-fw fa-home"></i> {% translate "Home" %}</a></div>
     <span class="navbar-brand mb-0 h1">
       <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
     </span>
+
 
     <form action="{% url 'set_language' %}" method="post">
       {% csrf_token %}
@@ -91,66 +127,122 @@
 </nav>
 
 <div class="content-container cover">
-    
-    <div class="form-container">
-    {% block content %}
-    <h5>{%translate "Setting up nature-based solutions (NBS)" %}</h5>
-    <p>{% translate "Add the Nature Based Solutions (NBS) that you want to implement." %}</p>
-    <form method="post" action="{% url 'create_alternatives' %}">
-        {% csrf_token %}
+  <div class="form-container">
+  {% block content %}
+  <h5>{%translate "Setting up nature-based solutions (NBS)" %}</h5>
+  <p>{% translate "Add the Nature Based Solutions (NBS) that you want to implement." %}</p>
+  
+  <form method="post" action="{% url 'create_alternatives' %}">
+      {% csrf_token %}
 
-        {{ formset.management_form }}
-        
-        <div id="form-container">
-          <table>
-            {% for form in formset %}
-            
-            {{ form.as_table }}
+      {{ formset.management_form }}
+
+      <div id="form-container">
+          {% for form in formset %}
+          <div class="card form-entry mb-3">
+              <div class="card-header">
+                  <strong>{% translate "NBS Action" %}</strong>
+              </div>
+              <div class="card-body">
+                  <table class="table table-borderless">
+                      {{ form.as_table }}
+                  </table>
+              </div>
+          </div>
           {% endfor %}
-          </table>
-          
-        </div>
-
-        <button type="button" class="btn btn-primary btn-lg" id="add_more">{% translate "Add Another NBS" %}</button>
-        <button type="submit" class="btn btn-success btn-lg">{% translate "Submit Selected NBS" %}</button>
-
-        <div id="empty_form" style="display:none">
-          <table class='no_error'>
-              {{ formset.empty_form.as_table }}
-          </table>
       </div>
-    </form>
 
-    <script>
-      $('#add_more').click(function() {
-          var form_idx = $('#id_form-TOTAL_FORMS').val();
-          $('#form-container').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-          $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-      });
+      <div class="button-container">
+          <button type="button" class="btn btn-primary btn-lg" id="add_more"><i class="fas fa-plus-circle"></i> {% translate "Add Another NBS" %}</button>
+          <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-check-circle"></i> {% translate "Submit Selected NBS" %}</button>
+      </div>
 
+      <div id="empty_form" style="display:none">
+          <div class="card form-entry mb-3">
+              <div class="card-header">
+                  <strong>{% translate "NBS Action" %}</strong>
+              </div>
+              <div class="card-body">
+                  <table class="table table-borderless">
+                      {{ formset.empty_form.as_table }}
+                  </table>
+              </div>
+              <!-- Add this button inside the card body -->
+                <button type="button" class="remove-form btn btn-danger btn-sm ml-3 mb-3">{% translate "Remove" %}</button>
+          </div>
+      </div>
+  </form>
 
-// New function to disable options
-function disableNonCreationOptions() {
-          var actionSelect = document.querySelectorAll('select[name$="action"]');
-          actionSelect.forEach(function(select) {
-              for (var i = 0; i < select.options.length; i++) {
-                  if (select.options[i].text !== '{% translate "Creation" %}') {
-                      select.options[i].disabled = true;
-                  }
+  <script>
+    $(document).ready(function () {
+
+      // Function to toggle visibility of pond_min and pond_max fields based on action selection
+      function togglePondFields() {
+          var formsetForms = document.querySelectorAll('#form-container .form-entry');
+
+          formsetForms.forEach(function (form) {
+              var actionSelect = form.querySelector('select[name$="action"]'); // Get the action select field
+              var pondMinField = form.querySelector('input[name$="pond_min"]'); // Get the pond_min input field
+              var pondMaxField = form.querySelector('input[name$="pond_max"]'); // Get the pond_max input field
+
+              // Replace '7' with the actual ID for "Creation" from your database
+              if (actionSelect.value === '7') {  // Adjust the value to match "Creation" action's ID
+                  pondMinField.closest('tr').style.display = ''; // Show pond_min row
+                  pondMaxField.closest('tr').style.display = ''; // Show pond_max row
+                  // Make pond_min and pond_max fields required
+                  pondMinField.setAttribute('required', 'required');
+                  pondMaxField.setAttribute('required', 'required');
+              } else {
+                  pondMinField.closest('tr').style.display = 'none'; // Hide pond_min row
+                  pondMaxField.closest('tr').style.display = 'none'; // Hide pond_max row
+                  // Remove required attribute if the action is not 'Creation'
+                  pondMinField.removeAttribute('required');
+                  pondMaxField.removeAttribute('required');
               }
           });
       }
 
-      // Disable non-creation options on initial load and after adding new forms
-      document.addEventListener('DOMContentLoaded', function() {
-          disableNonCreationOptions();
+      // Add a new NBS form when the "Add Another NBS" button is clicked
+      $('#add_more').click(function () {
+          var form_idx = $('#id_form-TOTAL_FORMS').val(); // Get the current number of forms
+          var newForm = $('#empty_form').html().replace(/__prefix__/g, form_idx); // Create the new form HTML
+          $('#form-container').append(newForm); // Append new form to form container
+          $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1); // Increment the TOTAL_FORMS counter
+
+          // Re-apply the event listener for action selection after adding a new form
+          bindActionSelectEvent();
       });
-    </script>
 
+      // Function to bind event listener to the action select fields
+      function bindActionSelectEvent() {
+          document.querySelectorAll('select[name$="action"]').forEach(function (select) {
+              select.addEventListener('change', function () {
+                  togglePondFields(); // Call toggle function when the action select is changed
+              });
+          });
+
+          togglePondFields(); // Run the toggle function initially to check the state of the current forms
+      }
+
+      // Remove a form when the "Remove" button is clicked
+      $(document).on('click', '.remove-form', function () {
+          if ($('#form-container .form-entry').length > 1) {
+              $(this).closest('.form-entry').remove(); // Remove the form entry from the DOM
+
+              // Update the TOTAL_FORMS count
+              var formCount = $('#form-container .form-entry').length; // Count remaining form entries
+              $('#id_form-TOTAL_FORMS').val(formCount); // Update the TOTAL_FORMS field to the new count
+          } else {
+              alert("You must keep at least one NBS.");
+          }
+      });
+
+      // Initial binding of event listeners when the page loads
+      bindActionSelectEvent();
+    });
   </script>
-
-    {% endblock %}
-    </div>
-    </div>
+  {% endblock %}
+  </div>
+</div>
 </body>
 </html>

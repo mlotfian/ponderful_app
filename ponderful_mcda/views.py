@@ -187,49 +187,62 @@ def map_view(request):
                     study_area.country = country_name
                 
                 study_area.geom = geom
+
+                study_area.save()
                 # Assuming you have your raster file path accessible
                 variables = {
-                    'Amphibia': {
-                        'ssp1': '/app/combinedCC_LU/Amphibia_SSP1_percent_difference.tif',
-                        'ssp3': '/app/combinedCC_LU/Amphibia_SSP3_percent_difference.tif',
-                        'ssp5': '/app/combinedCC_LU/Amphibia_SSP5_percent_difference.tif',
-                        'ssp1_LU': '/app/only_LU/Amphibia_LU_SSP1_percent_difference.tif',
-                        'ssp3_LU': '/app/only_LU/Amphibia_LU_SSP3_percent_difference.tif',
-                        'ssp5_LU': '/app/only_LU/Amphibia_LU_SSP5_percent_difference.tif',
+                    'Amphibian species': {
+                        'Land Use: SSP1, Climate Change: SSP1': '/app/combinedCC_LU/Amphibia_SSP1_percent_difference.tif',
+                        'Land Use: SSP3, Climate Change: SSP3': '/app/combinedCC_LU/Amphibia_SSP3_percent_difference.tif',
+                        'Land Use: SSP5, Climate Change: SSP5': '/app/combinedCC_LU/Amphibia_SSP5_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP1': '/app/only_CC/Amphibia_CC_SSP1_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP3': '/app/only_CC/Amphibia_CC_SSP3_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP5': '/app/only_CC/Amphibia_CC_SSP5_percent_difference.tif',
 
                                 },
-                    'Macrophyte':
-                        {'ssp1': '/app/combinedCC_LU/Macrophyte_SSP1_percent_difference.tif',
-                        'ssp3': '/app/combinedCC_LU/Macrophyte_SSP3_percent_difference.tif',
-                        'ssp5': '/app/combinedCC_LU/Macrophyte_SSP5_percent_difference.tif',
-                        'ssp1_LU': '/app/only_LU/Macrophyte_LU_SSP1_percent_difference.tif',
-                        'ssp3_LU': '/app/only_LU/Macrophyte_LU_SSP3_percent_difference.tif',
-                        'ssp5_LU': '/app/only_LU/Macrophyte_LU_SSP5_percent_difference.tif',},
+                    'Aquatic plant species':
+                        {'Land Use: SSP1, Climate Change: SSP1': '/app/combinedCC_LU/Macrophyte_SSP1_percent_difference.tif',
+                        'Land Use: SSP3, Climate Change: SSP3': '/app/combinedCC_LU/Macrophyte_SSP3_percent_difference.tif',
+                        'Land Use: SSP5, Climate Change: SSP5': '/app/combinedCC_LU/Macrophyte_SSP5_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP1': '/app/only_CC/Macrophyte_CC_SSP1_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP3': '/app/only_CC/Macrophyte_CC_SSP3_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP5': '/app/only_CC/Macrophyte_CC_SSP5_percent_difference.tif',},
                     
-                    'MI':
-                        {'ssp1': '/app/combinedCC_LU/MI_Biofam_SSP1_percent_difference.tif',
-                        'ssp3': '/app/combinedCC_LU/MI_Biofam_SSP3_percent_difference.tif',
-                        'ssp5': '/app/combinedCC_LU/MI_Biofam_SSP5_percent_difference.tif',
-                        'ssp1_LU': '/app/only_LU/MI_Biofam_LU_SSP1_percent_difference.tif',
-                        'ssp3_LU': '/app/only_LU/MI_Biofam_LU_SSP3_percent_difference.tif',
-                        'ssp5_LU': '/app/only_LU/MI_Biofam_LU_SSP5_percent_difference.tif',},
+                    'Macroinvertebrates':
+                        {'Land Use: SSP1, Climate Change: SSP1': '/app/combinedCC_LU/MI_Biofam_SSP1_percent_difference.tif',
+                        'Land Use: SSP3, Climate Change: SSP3': '/app/combinedCC_LU/MI_Biofam_SSP3_percent_difference.tif',
+                        'Land Use: SSP5, Climate Change: SSP5': '/app/combinedCC_LU/MI_Biofam_SSP5_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP1': '/app/only_CC/MI_Biofam_CC_SSP1_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP3': '/app/only_CC/MI_Biofam_CC_SSP3_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP5': '/app/only_CC/MI_Biofam_CC_SSP5_percent_difference.tif',},
+                
+                    'GHG emission (CH4, CO2)':
+                        {'Land Use: SSP1, Climate Change: SSP1': '/app/combinedCC_LU/GHG_SSP1_percent_difference.tif',
+                        'Land Use: SSP3, Climate Change: SSP3': '/app/combinedCC_LU/GHG_SSP3_percent_difference.tif',
+                        'Land Use: SSP5, Climate Change: SSP5': '/app/combinedCC_LU/GHG_SSP5_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP1': '/app/only_CC/GHG_CC_SSP1_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP3': '/app/only_CC/GHG_CC_SSP3_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP5': '/app/only_CC/GHG_CC_SSP5_percent_difference.tif',},
                 }
 
-                # Loop over the variables and SSPs to calculate and assign average raster values
+                # Iterate over the variables and SSPs to calculate average raster values
                 for variable, ssps in variables.items():
+                    criteria_name = criteria.objects.get(name=variable)
                     for ssp, raster_path in ssps.items():
-                        # Calculate the average raster value for the specific variable and SSP
+                        scenario_name = scenario.objects.get(name=ssp)  # Assuming your scenario names match the keys
                         avg_value = calculate_avg_raster_value(raster_path, geom)
-        
-                        # Dynamically create the attribute name for study_area (e.g., Amphibia_ssp1, CO2_ssp1)
-                        attribute_name = f'{variable}_{ssp}'
-        
-                        # Assign the calculated value to the corresponding attribute in study_area
-                        setattr(study_area, attribute_name, avg_value)
 
-            study_area.save()
+                        # Save the result in the new StudyAreaResult model
+                        StudyAreaResult.objects.create(
+                            study_area=study_area,
+                            scenario=scenario_name,
+                            criteria=criteria_name,
+                            average_value=avg_value
+                        )
+
+            
             request.session['study_area_id'] = study_area.id
-            return HttpResponseRedirect(reverse('select_criteria'))
+            return HttpResponseRedirect(reverse('create_alternatives'))
 
     return render(request, 'map2.html', {'form': form})
 
@@ -259,6 +272,44 @@ def study_area_detail(request):
     else:
         return render(request, 'map.html', {'study_area_all_names': study_area_all_names})
 
+# create alternatives 
+
+@login_required
+def create_alternatives(request):
+    
+    analysis_run_id = request.session.get('analysis_run_id')
+
+    if analysis_run_id is not None:
+        # Get the AnalysisRun instance from the database
+        analysis_run = get_object_or_404(AnalysisRun, id=analysis_run_id)
+
+    AlternativesParamsFormSet = modelformset_factory(alternatives_params, fields = ['action','pond_min', 'pond_max'], extra=1)
+
+    if request.method == 'POST':
+        formset = AlternativesParamsFormSet(request.POST)
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+
+            for inst in instances:
+                instance = alternatives_params(
+                    action = inst.action,
+                    pond_min = inst.pond_min,
+                    pond_max = inst.pond_max,
+                    user = request.user,
+                    analysis_run=analysis_run,
+
+                )
+                instance.save()
+
+
+            return redirect('select_criteria')  # Redirect to a success page after submission
+    else:
+        formset = AlternativesParamsFormSet(queryset = alternatives_params.objects.exclude(pk__in=alternatives_params.objects.all()))
+        # this is done to switch the translation of actions between french and english, other languages can be added later on 
+        for form in formset:
+            form.fields['action'].choices = [(choice[0], _(choice[1])) for choice in form.fields['action'].choices]
+
+    return render(request, 'alternatives.html', {'formset': formset})
 # the criteria params form
 
 @login_required
@@ -349,7 +400,7 @@ def add_params(request):
             # Redirect to the appropriate view after successful form submission
             print(len(rank_data))
             if len(rank_data) == len(selected_criteria):
-                return redirect('select_scenario')
+                return redirect('add_thresholds')
             else:
                 print("not right length")
                 formset_data = [{'criteria_name': criteria.objects.get(pk=criterion_id).name} for criterion_id in selected_criteria]
@@ -367,6 +418,42 @@ def add_params(request):
         
         return render(request, 'step2.html', {'formset': formset, 'selected_criteria': selected_criteria})
 
+@login_required
+def add_thresholds(request):
+    selected_criteria = request.session.get('selected_criteria', [])
+    analysis_run_id = request.session.get('analysis_run_id')
+
+    # Ensure the necessary session variables are available
+    if not selected_criteria or not analysis_run_id:
+        return redirect('select_criteria')
+
+    # Get the `criteria_params` for the selected criteria, user, and analysis run
+    criteria_params_queryset = criteria_params.objects.filter(
+        criteria_id__in=selected_criteria, 
+        user=request.user,
+        analysis_run_id=analysis_run_id
+    )
+    print(criteria_params_queryset)
+
+    # Formset for updating the `threshold_min` and `threshold_max`
+    CriteriaThresholdFormSet = modelformset_factory(criteria_params, form=CriteriaThresholdForm, extra=0)
+    
+
+    if request.method == 'POST':
+        # Process the submitted formset
+        formset = CriteriaThresholdFormSet(request.POST, queryset=criteria_params_queryset)
+        print(formset)
+        if formset.is_valid():
+            formset.save()  # Save the updated threshold values to the existing `criteria_params` records
+            return redirect('select_scenario')  # Redirect to the next step
+        else:
+            # If the formset is invalid, re-render the page with errors
+            return render(request, 'step3_thresholds.html', {'formset': formset})
+    else:
+        # Initialize the formset for the existing `criteria_params` records
+        formset = CriteriaThresholdFormSet(queryset=criteria_params_queryset)
+
+        return render(request, 'step3_thresholds.html', {'formset': formset})
 
 @login_required
 def select_scenario(request):
@@ -387,7 +474,7 @@ def select_scenario(request):
                 print(selected_scenario)
                 instance.analysis_run = analysis_run
                 instance.save()  # Commit changes only after successful validation
-                return redirect('create_alternatives')
+                return redirect('mcda_result')
             except Exception as e:
                 print(f"Error saving scenario_user instance: {e}")
                 form.add_error(None, "An error occurred. Please try again.")  # Inform user
@@ -411,43 +498,7 @@ def select_scenario(request):
 
     return render(request, 'scenario_user.html', {'scenario_data': scenario_data})
 
-@login_required
-def create_alternatives(request):
-    
-    analysis_run_id = request.session.get('analysis_run_id')
 
-    if analysis_run_id is not None:
-        # Get the AnalysisRun instance from the database
-        analysis_run = get_object_or_404(AnalysisRun, id=analysis_run_id)
-
-    AlternativesParamsFormSet = modelformset_factory(alternatives_params, fields = ['action','pond_min', 'pond_max', 'pond_size'], extra=1)
-
-    if request.method == 'POST':
-        formset = AlternativesParamsFormSet(request.POST)
-        if formset.is_valid():
-            instances = formset.save(commit=False)
-
-            for inst in instances:
-                instance = alternatives_params(
-                    action = inst.action,
-                    pond_min = inst.pond_min,
-                    pond_max = inst.pond_max,
-                    pond_size = inst.pond_size,
-                    user = request.user,
-                    analysis_run=analysis_run,
-
-                )
-                instance.save()
-
-
-            return redirect('mcda_result')  # Redirect to a success page after submission
-    else:
-        formset = AlternativesParamsFormSet(queryset = alternatives_params.objects.exclude(pk__in=alternatives_params.objects.all()))
-        # this is done to switch the translation of actions between french and english, other languages can be added later on 
-        for form in formset:
-            form.fields['action'].choices = [(choice[0], _(choice[1])) for choice in form.fields['action'].choices]
-
-    return render(request, 'alternatives.html', {'formset': formset})
 
 @login_required
 def mcda_results(request):
@@ -456,58 +507,169 @@ def mcda_results(request):
     analysis_run_id = request.session.get('analysis_run_id')
     analysis_run = get_object_or_404(AnalysisRun, id=analysis_run_id)
 
-    # getting scenario_id from analysis_run_id
-    #scenario_id = scenario_user.objects.filter(analysis_run=analysis_run_id).values_list('scenario_type_id', flat=True).distinct().first()
-    #scenario_instance = scenario.objects.get(pk=scenario_id)
-    #print("scenario, ", scenario_id)
-    all_scenario_ids = scenario.objects.all().values_list('id', flat=True)
-    #request.session['scenario_ids']=all_scenario_ids
-    # get action, pund min and pund max values from alternative params
+    # get the country name, current ponds, and trophic state
 
+    study_area = studyarea.objects.get(id=study_area_id)
+    country = study_area.country
+    current_ponds = study_area.total_pond
+    trophic_state = study_area.trophic_state
+
+    
+    # getting all scenario ids
+    all_scenario_ids = scenario.objects.all().values_list('id', flat=True)
+    
+    # get action, pund min and pund max values from alternative params
     alt_param = alternatives_params.objects.filter(analysis_run=analysis_run_id).values_list('action','pond_min','pond_max').distinct()
     print("alt_param, ", list(alt_param))
 
     action_pond = []
     for ac in alt_param:
-        if ac[0] != 11:
+        # if it is creation
+        if ac[0] == 7:
             pond_avg = round((ac[1]+ac[2])/2)
             action_pond.append((ac[0],ac[1]))
             action_pond.append((ac[0],ac[2]))
             action_pond.append((ac[0],pond_avg))
         else:
             action_pond.append((ac[0], 'None'))
-            
+
     
     # getting output from modeling_result table per criteria
     all_values = []
     for indicator in selected_criteria:
-        weight = criteria_params.objects.filter(criteria=indicator, analysis_run=analysis_run_id).values_list('weight_percentage', flat=True).distinct().first()
+        #weight = criteria_params.objects.filter(criteria=indicator, analysis_run=analysis_run_id).values_list('weight_percentage', flat=True).distinct().first()
         
-        satisfaction_n = satisfaction_threshold.objects.filter(criteria_id=indicator).values_list('threshold_min', flat=True).distinct().first()
-        satisfaction_c = satisfaction_threshold.objects.filter(criteria_id=indicator).values_list('threshold_max', flat=True).distinct().first()
-                
-        for ap in action_pond:
+        #satisfaction_n = criteria_params.objects.filter(criteria_id=indicator, analysis_run=analysis_run_id).values_list('threshold_min', flat=True).distinct().first()
+        #satisfaction_c = criteria_params.objects.filter(criteria_id=indicator, analysis_run=analysis_run_id).values_list('threshold_max', flat=True).distinct().first()
+            # Fetch the weight and thresholds for the current indicator and analysis run
+        criteria_param = criteria_params.objects.filter(criteria=indicator, analysis_run=analysis_run_id).first()
+    
+    # If a matching criteria_params record exists, retrieve the weight and thresholds
+        if criteria_param:
+            weight = criteria_param.weight_percentage
+            satisfaction_n = criteria_param.threshold_min  # Minimum satisfaction threshold
+            satisfaction_c = criteria_param.threshold_max  # Maximum satisfaction threshold
+        
+        # Debugging: print the values to verify
+            print(f"Indicator {indicator}: Threshold Min {satisfaction_n}, Threshold Max {satisfaction_c}, Weight {weight}")
+    
+        else:
+            # Handle the case where no criteria_params record is found for this indicator and analysis run
+            print(f"No criteria_params found for Indicator {indicator} and Analysis Run {analysis_run_id}")
+            continue  # Skip to the next indicator if no data is found
+                        
+        #satisfaction_n = satisfaction_threshold.objects.filter(criteria_id=indicator).values_list('threshold_min', flat=True).distinct().first()
+        print("satmin",satisfaction_n)
+        #satisfaction_c = satisfaction_threshold.objects.filter(criteria_id=indicator).values_list('threshold_max', flat=True).distinct().first()
+        print("satmax",satisfaction_c)
+
+        for nbs_action in action_pond:
             for scenario_id in all_scenario_ids:
-                if ap[0] != 11:
+                #creation
+                if nbs_action[0] == 7:
+                    #print(indicator)
+                    if indicator not in [19,18]: #['GHG emission (CH4, CO2)', 'Water quantity']:
+                        #ncp_indicator = criteria.objects.get(name=indicator)
+                        ncp_current = accumulation.objects.get(country = country, pond_num = current_ponds, indicator = indicator)
+                        ncp_future = accumulation.objects.get(country = country, pond_num = nbs_action[1]+current_ponds, indicator = indicator)
+                        
+                        current_richness = ncp_current.sp_richness
+                        future_richness = ncp_future.sp_richness
+                        # get average values for scenario
+                        scenario_change_obj = StudyAreaResult.objects.get(study_area = study_area_id, scenario = scenario_id, criteria = indicator)
+                        scenario_change = scenario_change_obj.average_value
+
+                        # calculate output 
+                        output = ((future_richness + (future_richness*scenario_change/100))-current_richness)/current_richness*100
+                        #print(output)
+                        all_values.append((indicator,_("Creation of ") + str(nbs_action[1]) + _(" Clean Water Ponds"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
+                    # water quantity
+                    if indicator == 19:
+                        output = ((nbs_action[1]+current_ponds)-current_ponds)/current_ponds*100
+                        #print(output)
+                        all_values.append((indicator,_("Creation of ") + str(nbs_action[1]) + _(" Clean Water Ponds"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
+
                 
-                    output = modeling_result.objects.filter(action=ap[0],criteria=indicator, pond_num=ap[1], scenario=scenario_id).values_list('output', flat=True).distinct().first()
+                    #output = modeling_result.objects.filter(action=nbs_action[0],criteria=indicator, pond_num=ap[1], scenario=scenario_id).values_list('output', flat=True).distinct().first()
                     #print("here", ap[0])
-                    all_values.append((indicator,_("Creation of ") + str(ap[1]) + _(" Ponds"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
+                    
+                # water management
+                elif nbs_action[0] == 12:
+                    if indicator not in [19,18]:
+
+                        # Get the IndicatorTrophicData record for the indicator and trophic state
+                        current_ncp_wq = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=trophic_state.id)
+        
+                        # Get the current trophic state's rank
+                        current_trophic_state = TrophicState.objects.get(id=trophic_state.id)
+                        current_rank = current_trophic_state.rank
+                        print('trohic', trophic_state.degree)
+                        previous_trophic_state = TrophicState.objects.get(degree=current_rank - 1)
+                        print('trohic_oneback', previous_trophic_state.degree)
+                        future_ncp_wq = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=previous_trophic_state.id)
+
+                        scenario_change_obj = StudyAreaResult.objects.get(study_area = study_area_id, scenario = scenario_id, criteria = indicator)
+                        scenario_change = scenario_change_obj.average_value
+
+                        # calculate output 
+                        output = (((future_ncp_wq.average + (future_ncp_wq.average*(scenario_change/100)))-current_ncp_wq.average)/current_ncp_wq.average)*100
+                        all_values.append((indicator,_("Water Quality Management"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
+                        #print(output)
+                        # if emmissions
+                    if indicator==18:
+                        current_ncp_wq = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=trophic_state.id)
+        
+                        # Get the current trophic state's rank
+                        current_trophic_state = TrophicState.objects.get(id=trophic_state.id)
+                        current_rank = current_trophic_state.rank
+                        print('trohic', trophic_state.degree)
+                        previous_trophic_state = TrophicState.objects.get(degree=current_rank - 1)
+                        print('trohic_oneback', previous_trophic_state.degree)
+                        future_ncp_wq = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=previous_trophic_state.id)
+
+                        scenario_change_obj = StudyAreaResult.objects.get(study_area = study_area_id, scenario = scenario_id, criteria = indicator)
+                        scenario_change = scenario_change_obj.average_value
+
+                        # calculate output 
+                        output = (((future_ncp_wq.average + (future_ncp_wq.average*(scenario_change/100)))-current_ncp_wq.average)/current_ncp_wq.average)*100
+                        #output = output*(-1)
+                            #satisfaction_c = satisfaction_c*(-1)
+                            #satisfaction_n = satisfaction_n*(-1)
+
+                        all_values.append((indicator,_("Water Quality Management"), output*(-1), satisfaction_c, satisfaction_n, weight, scenario_id))
+        
+
+                # no action
                 else:
-                    output = modeling_result.objects.filter(action=ap[0],criteria=indicator, scenario=scenario_id).values_list('output', flat=True).distinct().first()
-                    #print(ap[0])
-                    all_values.append((indicator,"No action", output, satisfaction_c, satisfaction_n, weight, scenario_id))
+                    if indicator not in [19,18]:
+                        scenario_change_obj = StudyAreaResult.objects.get(study_area = study_area_id, scenario = scenario_id, criteria = indicator)
+                        scenario_change = scenario_change_obj.average_value
+                        output = scenario_change
+                        all_values.append((indicator,_("No action"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
+                        # if emmissions
+                    if indicator==18:
+                        scenario_change_obj = StudyAreaResult.objects.get(study_area = study_area_id, scenario = scenario_id, criteria = indicator)
+                        scenario_change = scenario_change_obj.average_value
+                        output = scenario_change
+                        
+                            #satisfaction_c = satisfaction_c*(-1)
+                            #satisfaction_n = satisfaction_n*(-1)
+                        #print(ap[0])
+                        all_values.append((indicator,"No action", output*(-1), satisfaction_c, satisfaction_n, weight, scenario_id))
     
 
     if request.method == 'POST':
 
         for element in all_values:
-            print(element[2], element[3], element[4])
+            print(element[1], element[2], element[3], element[4], element[6])
+            # element[2] = model output
+            # element[4] = satisfaction _n
+            # element[3] = satisfaction_c
             if element[2]<=element[4]:
                 partial_satisfaction = 0
                 weighted_avg = partial_satisfaction * element[5]
             elif (element[2]>element[4] and element[2]<element[3]):
-                partial_satisfaction = (abs(element[2])-abs(element[4]))/(abs(element[3])-abs(element[4]))*100
+                partial_satisfaction = (element[2]-element[4])/(element[3]-element[4])*100
                 weighted_avg = partial_satisfaction * element[5]/100
             else:
                 partial_satisfaction = 100

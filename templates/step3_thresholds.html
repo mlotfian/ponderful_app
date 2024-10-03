@@ -1,0 +1,249 @@
+<html>
+    <head>
+        {% load static %}
+        {% load i18n %}
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Display Polygon</title>
+  
+
+  <!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />-->
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'index.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <!-- Javascript -->
+  <script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+
+
+</head>
+<style>
+    /* Page Background */
+    .cover {
+    background-color: beige; center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center; /* Center children horizontally */
+    align-items: center; /* Center children vertically */
+    height: 100vh; /* Use the full height of the viewport */
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between; /* This will place items on both ends */
+}
+
+.nav-left, .navbar-brand {
+    display: flex;
+    align-items: center; /* This ensures the items are vertically centered */
+}
+
+.nav-left a {
+    color: green; /* Keeping your color requirement */
+    text-decoration: none; /* Optional: Removes underline from the link */
+}
+
+.navbar-brand img.brandsize {
+    background-color: transparent; /* Ensures no background color */
+    width: auto; /* Adjust to your needs, keeps the image's aspect ratio */
+    height: 30px; /* Example height; adjust as necessary without scaling too much */
+    object-fit: contain; /* Keeps the image's aspect ratio without cropping */
+}
+    /* Form Container Styling */
+    .form-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        max-width: 80%; /* Adaptable for larger screens */
+    }
+
+    /* Table Styling */
+    table {
+        width: 100%;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f8f9fa;
+    }
+
+    td input {
+        width: 100%;
+    }
+
+    /* Error Message Styling */
+    .errorlist {
+        color: red;
+        margin-top: 5px;
+    }
+
+    /* Button Styling */
+    .btn-lg {
+        width: 100%;
+        padding: 10px;
+        font-size: 1.2em;
+        margin-top: 20px;
+    }
+
+    /* Info Box Overlay */
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 999;
+    }
+   
+.centered-text-container {
+    text-align: center;
+}
+
+    /* Info Box Styling */
+    /* Info Box Styling */
+#info-box {
+    display: none;
+    position: fixed;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ccc;
+    width: 400px; /* Make sure the width is large enough */
+    max-width: 90%; /* Ensures it fits on smaller screens */
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    border-radius: 8px;
+    overflow-y: auto; /* Adds a scroll bar if the content is too tall */
+    max-height: 80vh; /* Ensures the box never exceeds 80% of the viewport height */
+    word-wrap: break-word; /* Ensures that the text wraps inside the box */
+}
+
+    /* Center the Info Box */
+    .centered {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Navbar Styling */
+    .navbar {
+        background-color: #e9ecef;
+    }
+
+    .navbar-brand img {
+        height: 40px;
+    }
+</style>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                
+        <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);"><i class="fa fa-fw fa-home"></i> {% translate "Home" %}</a></div>
+        <span class="navbar-brand mb-0 h1">
+            <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
+          </span>
+
+        
+          <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ redirect_to }}" />
+            <select name="language" onchange="this.form.submit();">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% for lang in LANGUAGES %}
+                <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>
+                    {{ lang.1 }}
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+    </nav>
+
+    <div class="content-container cover">
+        <div class="form-container">
+            <div class="centered-text-container">
+                <h5>{% translate "Define Management Objectives" %}
+                    <i id="info-icon" class="fas fa-info-circle"></i>
+                </h5>
+                <div style="max-width: 650px;">
+                <p>{% translate "The management objectives represent the decision maker's expectations regarding the increase or decrease of a specific indicator as a result of actions, such pond creation." %}</p>
+               </div>
+            </div>
+
+            <!-- Info Overlay and Box -->
+            <div id="overlay"></div>
+            <div id="info-box" class="centered">
+                {% translate "The management objectives represent the decision maker's expectations regarding the increase or decrease of a specific indicator as a result of actions, such pond creation." %}
+                <button id="close-info-box" class="btn btn-secondary btn-sm mt-2">{% translate "Close" %}</button>
+            </div>
+
+            <form method="POST" action="{% url 'add_thresholds' %}">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                <table class="table table-striped">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>{% translate "Indicator" %}</th>
+                            <th>{% translate "Minimum Satisfying Objective in %" %} <span style="color: red">*</span></th>
+                            <th>{% translate "Fully Satisfying Objective in %" %} <span style="color: red">*</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for form in formset %}
+                        <tr>
+                            <td>{{ form.instance.criteria.name|default:"No Criteria" }}</td>
+                            <td>
+                                {{ form.threshold_min }}
+                                {% if form.threshold_min.errors %}
+                                    <div class="errorlist">{{ form.threshold_min.errors }}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ form.threshold_max }}
+                                {% if form.threshold_max.errors %}
+                                    <div class="errorlist">{{ form.threshold_max.errors }}</div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">{{ form.id }}</td> <!-- Hidden ID Field -->
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-success btn-lg">Save Thresholds</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript for Info Box -->
+    <script>
+        document.getElementById('info-icon').addEventListener('click', function() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('info-box').style.display = 'block';
+        });
+
+        document.getElementById('close-info-box').addEventListener('click', function() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('info-box').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

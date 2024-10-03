@@ -33,7 +33,7 @@ admin.site.register(criteria)
 
 
 class CriteriaParamsAdmin(admin.ModelAdmin):
-    list_display = ['id', 'criteria','weight_percentage' ,'analysis_run', 'rank']  # Adapt field names as needed
+    list_display = ['id', 'criteria','weight_percentage' ,'analysis_run', 'rank', 'threshold_min', 'threshold_max']  # Adapt field names as needed
     
 admin.site.register(criteria_params, CriteriaParamsAdmin)
 
@@ -43,6 +43,8 @@ admin.site.register(action_types)
 admin.site.register(alternatives_params)
 
 admin.site.register(scenario)
+
+admin.site.register(TrophicState)
 
 
 admin.site.register(scenario_user)
@@ -91,4 +93,14 @@ class Macrophyte_accuAdmin(admin.ModelAdmin):
     list_display = ['id', 'country', 'sp_richness','pond_num']
 admin.site.register(macrophyte_accumulation, Macrophyte_accuAdmin)   
 
+class studyAreaResultAdmin(admin.ModelAdmin):
+    list_display = ['id', 'study_area','scenario', 'criteria','average_value']
+admin.site.register(StudyAreaResult, studyAreaResultAdmin)   
 
+class IndicatorTrophicDataAdmin(admin.ModelAdmin):
+    list_display = ['id', 'indicator','trophic_state', 'average']
+admin.site.register(IndicatorTrophicData, IndicatorTrophicDataAdmin) 
+
+class AccumulationAdmin(admin.ModelAdmin): 
+    list_display = ['id', 'country', 'sp_richness','pond_num', 'indicator'] 
+admin.site.register(accumulation, AccumulationAdmin) 

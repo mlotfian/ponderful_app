@@ -35,6 +35,8 @@ class StudyAreaForm(ModelForm):
         fields = ['name','total_pond', 'trophic_state', 'geom']
         widgets = {'geom': gis_forms.OSMWidget}
 
+    
+
 class StudyAreaSelectionForm(forms.Form):
     study_area_name = forms.ModelChoiceField(
         queryset=studyarea.objects.all(),
@@ -101,7 +103,7 @@ class RangeSliderWidget(forms.MultiWidget):
 class AlternativesParamsForm(forms.ModelForm):
     class Meta:
         model = alternatives_params
-        fields = ['action','pond_min', 'pond_max', 'pond_size']
+        fields = ['action','pond_min', 'pond_max']
 
 class ScenarioForm(forms.ModelForm):
     class Meta:
@@ -117,3 +119,15 @@ class ScenarioForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ScenarioForm, self).__init__(*args, **kwargs)
         self.fields['scenario_type'].queryset = scenario.objects.all().order_by('-id')
+
+
+class CriteriaThresholdForm(forms.ModelForm):
+    class Meta:
+        model = criteria_params
+        fields = ['threshold_min', 'threshold_max']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make threshold_min and threshold_max mandatory
+        self.fields['threshold_min'].required = True
+        self.fields['threshold_max'].required = True
