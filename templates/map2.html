@@ -190,6 +190,20 @@
     .modal-header .d-flex {
         margin-left: auto; /* Moves the buttons to the right */
     }
+
+    .btn-submit {
+            background-color: #28a745;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            background-color: #218838;
+        }
+    
 </style>
 <body>
       <!-- adding navbar -->
@@ -291,7 +305,7 @@
                     <!-- Hidden field to store the polygon geometry -->
                     <input type="hidden" id="id_geom" name="geom" />
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Submit Study Area</button>
+                        <button type="submit" class="btn btn-success btn-submit">Submit Study Area</button>
                     </div>
                 </form>
             </div>

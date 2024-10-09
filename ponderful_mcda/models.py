@@ -63,7 +63,7 @@ class studyarea(models.Model):
     ('high','High'),
 ]
 
-    name = models.CharField(max_length=255, verbose_name="Study Area Name", unique=True)
+    name = models.CharField(max_length=255, verbose_name="Study Area Name")
     landuseintensity = models.CharField(max_length=255, choices = landuseintensity_choices,blank=True, verbose_name=_('Landuse Intensity'))
     trophic_state = models.ForeignKey(TrophicState, on_delete=models.CASCADE)
     total_pond = models.IntegerField(verbose_name="Total number of existing ponds", blank=True, null=True)
@@ -82,6 +82,7 @@ class studyarea(models.Model):
 class criteria(models.Model):
 
     name = models.CharField(max_length=255, verbose_name="Criteria Name")
+    ncp = models.CharField(max_length=255, verbose_name="NCP Name", blank=True, null=True)
     unit_of_measure = models.CharField(max_length=255, verbose_name="Unit of Measure")
 
     def __str__(self):

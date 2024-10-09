@@ -276,36 +276,43 @@ def study_area_detail(request):
 
 @login_required
 def create_alternatives(request):
-    
     analysis_run_id = request.session.get('analysis_run_id')
 
     if analysis_run_id is not None:
         # Get the AnalysisRun instance from the database
         analysis_run = get_object_or_404(AnalysisRun, id=analysis_run_id)
 
-    AlternativesParamsFormSet = modelformset_factory(alternatives_params, fields = ['action','pond_min', 'pond_max'], extra=1)
+    AlternativesParamsFormSet = modelformset_factory(alternatives_params, fields=['action', 'pond_min', 'pond_max'], extra=1)
 
     if request.method == 'POST':
         formset = AlternativesParamsFormSet(request.POST)
+
+        # Validate that at least one action is selected
         if formset.is_valid():
+            has_action = False
             instances = formset.save(commit=False)
 
             for inst in instances:
-                instance = alternatives_params(
-                    action = inst.action,
-                    pond_min = inst.pond_min,
-                    pond_max = inst.pond_max,
-                    user = request.user,
-                    analysis_run=analysis_run,
+                if inst.action:  # If there's an action selected
+                    has_action = True
+                    instance = alternatives_params(
+                        action=inst.action,
+                        pond_min=inst.pond_min,
+                        pond_max=inst.pond_max,
+                        user=request.user,
+                        analysis_run=analysis_run,
+                    )
+                    instance.save()
 
-                )
-                instance.save()
+            # If no action is selected, prevent submission
+            if not has_action:
+                formset._non_form_errors = ['Please select at least one action.']
+            else:
+                return redirect('select_criteria')  # Redirect to next step if valid
 
-
-            return redirect('select_criteria')  # Redirect to a success page after submission
     else:
-        formset = AlternativesParamsFormSet(queryset = alternatives_params.objects.exclude(pk__in=alternatives_params.objects.all()))
-        # this is done to switch the translation of actions between french and english, other languages can be added later on 
+        formset = AlternativesParamsFormSet(queryset=alternatives_params.objects.none())
+        # Translate actions based on language preference
         for form in formset:
             form.fields['action'].choices = [(choice[0], _(choice[1])) for choice in form.fields['action'].choices]
 
@@ -334,6 +341,7 @@ def select_criteria(request):
         checkbox_html = f'<input type="checkbox" name="criteria_choices" value="{crt.id}" id="id_criteria_choices_{crt.id}">'
         criteria_data.append({
             'checkbox_html': checkbox_html,
+            'ncp': crt.ncp,
             'name': crt.name,
             'unit_of_measure': crt.unit_of_measure,
         })
@@ -723,6 +731,14 @@ def show_results(request):
     results_sample = mcda_result.objects.filter(scenario=scenarios[0], analysis_run=analysis_run_id).select_related('criteria')
     criteria_titles = sorted({result.criteria.name for result in results_sample})
     alternatives = sorted(set(result.alternative for result in results_sample))
+    # order alternatives
+    prioritized_order = ['No action', 'Water Quality Management']
+    existing_prioritized = [alt for alt in prioritized_order if alt in alternatives]  # Only include if they exist
+    remaining_alternatives = [alt for alt in alternatives if alt not in prioritized_order]
+    
+    # Combine the prioritized and remaining alternatives
+    alternatives = existing_prioritized + remaining_alternatives
+    print(alternatives)
     
     # Fetch mcda_result entries for selected scenarios within the analysis_run
     results_by_scenario = {}
@@ -730,6 +746,7 @@ def show_results(request):
     for scen in scenarios:
         results = mcda_result.objects.filter(scenario=scen, analysis_run=analysis_run_id).select_related('criteria')
         scenario_data = {alternative: {'values': [], 'values2': [], 'sum': 0} for alternative in alternatives}
+        
         for alternative in alternatives:
             sum_values = 0
             for title in criteria_titles:

@@ -34,10 +34,11 @@
     display: flex;
     justify-content: center; /* Center children horizontally */
     align-items: center; /* Center children vertically */
-    height: 100vh; /* Use the full height of the viewport */
+    height: calc(100vh - 56px); /* Use the full height of the viewport */
 }
 
 .navbar {
+    height: 56px;
     display: flex;
     justify-content: space-between; /* This will place items on both ends */
 }
@@ -60,144 +61,150 @@
 }
 
 .form-container {
-    background-color: white; /* White background */
-    padding: 10px; /* Add some padding around the form */
-    border-radius: 5px; /* Optional: rounds the corners of the form container */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow for better aesthetics */
-    width: auto; /* Adjust width as needed */
-    max-width: 70%; /* Prevents the form from becoming too wide on larger screens */
-}
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
 
-.criteria-container {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
+        .centered-text-container h5 {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #007bff;
+        }
 
-.criteria-name {
-    flex-grow: 1;
-}
+        .centered-text-container p {
+            text-align: center;
+            font-size: 1rem;
+            color: #555;
+        }
 
-.rank-fields {
-    width: 1000px; /* Adjust the width as needed */
-}
-.slider {
-  -webkit-appearance: none;
-  width: 75%;
-  height: 25px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
-}
-
-.slider:hover {
-  opacity: 1;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2); /* Increase the size */
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: var(--thumb-color, #04AA6D); /* Default color, updated by JS */
-  cursor: pointer;
-  border-radius: 50%;
-  border: var(--thumb-border, 1px solid black); /* Default border */
-  
-}
-
-.slider::-moz-range-thumb {
-  width: 25px;
-  height: 25px;
-  background: var(--thumb-color, #04AA6D); /* Default color, updated by JS */
-  cursor: pointer;
-  border: var(--thumb-border, 1px solid black); /* Default border */
-}
-
-
-
-.centered-text-container {
-    text-align: center;
-}
-
-
-.importance-label-plus {
+        .criteria-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
     
-    padding: 1px;
-    color: green;
-    
-}
-.importance-label-minus {
-    
-    padding: 1px;
-    color: red;
-    
-}
-.slider-container {
-    display: flex;
-    align-items: center; /* Center items vertically */
-    justify-content: space-between; /* Spread the children (+, slider, -) */
-    width: 100%; /* Ensure the container takes the full width of its parent */
-    padding: 0 10px; /* Add padding to prevent the slider from touching the container edges */
-}
 
-.criteria-container {
-    display: flex;
-    flex-direction: column; /* Ensure the name and slider are stacked */
-    align-items: center; /* Center the content */
-    margin-bottom: 20px; /* Space between each slider group */
-}
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px 0;
+        }
 
-.slider {
-    -webkit-appearance: none;
-    width: calc(100% - 20px); /* Adjust width to leave space for + and - */
-    height: 10px; /* Making the slider thinner */
-    background: #d3d3d3;
-    outline: none;
-    transition: opacity .2s;
-    cursor: pointer;
-}
+        /* Light blue for Least Important */
+        .importance-label-minus {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #87ceeb;  /* Light blue */
+            width: 100px;
+            text-align: center;
+        }
 
-/* Background Cover Overlay */
-#overlay {
+        /* Dark blue for Most Important */
+        .importance-label-plus {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #007bff; /* Dark blue */
+            width: 100px;
+            text-align: center;
+        }
+
+        .criteria-name {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* Slider Styling */
+        .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 70%;
+            height: 15px;
+            background: linear-gradient(to right, #add8e6, #007bff);
+            border-radius: 10px;
+            outline: none;
+            opacity: 0.9;
+            transition: opacity .2s, box-shadow .2s;
+            cursor: pointer;
+        }
+
+        .slider:hover {
+            opacity: 1;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            background: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            background: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Green Submit Button */
+        .btn-lg {
+            background-color: #28a745;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .btn-lg:hover {
+            background-color: #218838;
+        }
+
+        #info-icon {
+            color: #007bff;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        #overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Transparent gray color */
-            display: none; /* Hidden by default */
-            z-index: 999; /* Ensure it covers all other elements */
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
         }
 
-        /* Info Box */
         #info-box {
-            display: none; /* Hidden by default */
+            display: none;
             position: fixed;
             background-color: #f9f9f9;
             padding: 20px;
             border: 1px solid #ccc;
             width: 300px;
-            z-index: 1000; /* On top of the overlay */
+            z-index: 1000;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
         }
 
-        /* Center the info box */
         .centered {
             top: 50%;
             left: 50%;
@@ -231,28 +238,25 @@
             </nav>
             
             <div class="content-container cover">
-                
                 <div class="form-container">
-                    <div class="centered-text-container">
-                        <h5>{% translate "Rank the priority of the NCP indicators" %}
-                            <i id="info-icon" class="fas fa-info-circle"></i>
-    
-                        </h5>
-                        <p>{% translate "Rank the selected NCP indicators based on their level of importance (management priority) from <b>left: <i>very important</i></b> to <b>right: <i>least important</i></b>" %}</p>
-                    </div>
-                    <!-- Overlay -->
-            <div id="overlay"></div>
-
-            <!-- Info Box -->
-            <div id="info-box" class="centered">
-                {% translate "This task involves ranking the indicators based on their importance. Make sure to consider each indicator carefully before making your decision." %}
-                <button id="close-info-box" style="display: block; margin-top: 10px;">{% translate "Close" %}</button>
-            </div>
-
-            <form method="post" action="{% url 'add_params' %}">
-                {% csrf_token %}
-                    
-                    
+                  <div class="centered-text-container">
+                    <h5>Rank the priority of the NCP indicators
+                      <i id="info-icon" class="fas fa-info-circle"></i>
+                    </h5>
+                    <p>Rank the selected NCP indicators based on their level of importance from <strong>Least Important</strong> to <strong>Most Important</strong>.</p>
+                  </div>
+            
+                  <!-- Overlay -->
+                  <div id="overlay"></div>
+            
+                  <!-- Info Box -->
+                  <div id="info-box" class="centered">
+                    Make sure to consider each indicator carefully before making your decision.
+                    <button id="close-info-box" style="display: block; margin-top: 10px;">Close</button>
+                  </div>
+            
+                  <form method="post" action="#">
+                    {% csrf_token %}
                     {{ formset.management_form }}
     
                     
@@ -263,75 +267,30 @@
             <div class="criteria-name">{{ form.initial.criteria_name }}</div>
             <!-- Slider and Labels -->
             <div class="slider-container">
-                <span class="importance-label-minus"><strong>-</strong></span> <!-- Left label -->
+                <span class="importance-label-minus"><strong>Least Important</strong></span> <!-- Left label -->
                 {{ form.rank }} <!-- Slider -->
-                <span class="importance-label-plus"><strong>+</strong></span> <!-- Right label -->
+                <span class="importance-label-plus"><strong>Most Important</strong></span> <!-- Right label -->
             </div>
         </div>
                 {% endfor %}
-                
-                <button type="submit" class="btn btn-success btn-lg">{% translate "Submit Ranking" %}</button>
-            </form>
-</div>
-</div>
-
-
             
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Find all sliders in the document
-        const sliders = document.querySelectorAll('.slider');
-    
-        sliders.forEach(function(slider) {
-            // Initialize color based on the current value
-            updateSliderColor(slider);
-    
-            // Add an event listener for when the slider value changes
-            slider.addEventListener('input', function() {
-                updateSliderColor(slider);
-            });
-        });
-    
-        function updateSliderColor(slider) {
-            const valueRatio = (slider.value - slider.min) / (slider.max - slider.min);
-            let color;
-    
-            // Reversing the color change
-            if(valueRatio <= 0.5) {
-                // Transition from red to yellow (0 - 0.5)
-                const r = 255;
-                const g = Math.round(255 * (valueRatio * 2));
-                const b = 0;
-                color = `rgb(${r}, ${g}, ${b})`;
-            } else {
-                // Transition from yellow to green (0.5 - 1)
-                const r = Math.round(255 * ((1 - valueRatio) * 2));
-                const g = 255;
-                const b = 0;
-                color = `rgb(${r}, ${g}, ${b})`;
-            }
-    
-            slider.style.setProperty('--thumb-color', color);
-        }
-    });
-
-    // the function for the text box popup each time the i icon is clicked
-    document.getElementById('info-icon').addEventListener('click', function() {
-            var overlay = document.getElementById('overlay');
-            var infoBox = document.getElementById('info-box');
-
-            overlay.style.display = 'block'; // Show the overlay
-            infoBox.style.display = 'block'; // Show the text box
-        });
-
-        document.getElementById('close-info-box').addEventListener('click', function() {
-            var overlay = document.getElementById('overlay');
-            var infoBox = document.getElementById('info-box');
-
-            overlay.style.display = 'none'; // Hide the overlay
-            infoBox.style.display = 'none'; // Hide the text box
-        });
-    </script>
+                    <button type="submit" class="btn btn-success btn-lg">Submit Ranking</button>
+                  </form>
+                </div>
+              </div>
+            
+              <script>
+                // Info box toggle
+                document.getElementById('info-icon').addEventListener('click', function () {
+                  document.getElementById('overlay').style.display = 'block';
+                  document.getElementById('info-box').style.display = 'block';
+                });
+            
+                document.getElementById('close-info-box').addEventListener('click', function () {
+                  document.getElementById('overlay').style.display = 'none';
+                  document.getElementById('info-box').style.display = 'none';
+                });
+              </script>
 
         </body>
     

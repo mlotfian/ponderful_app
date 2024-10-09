@@ -149,6 +149,10 @@
     .form-buttons .btn-success {
         margin-left: auto; /* Pushes the second button to the right */
     }
+    .na {
+    background-color: gray;
+    color: white;
+}
     </style>
 </head>
 <body>
@@ -198,7 +202,7 @@
         </div>
         <div class="legend">
             <h3>{% translate "Legend" %}</h3>
-            <div><p>{% translate "The table presents a score (%) that evaluates the level of achievement of the ponds' development strategies (NBS), for each indicator (PCN), then globally, considering the conditions of evolution of the territory and climate in 2050. The order of priority of the indicators is indicated by a weight (%)." %}</p>
+            <div><p>{% translate "The results illustrate computed scores(%) presenting at what level the decision-maker's management objectives is reached for each NBS implementation and per each selected NCP indicator, considering the conditions of evolution of the territory and climate in 2050. The global score illustrates the weighted average score." %}</p>
             </div>
             <div><span class="bad">&nbsp;&nbsp;&nbsp;&nbsp;</span> 0%-20%: {%translate "Poor" %}</div>
             <div><span class="weak">&nbsp;&nbsp;&nbsp;&nbsp;</span> 20%-40%: {%translate "Weak" %}</div>
@@ -219,6 +223,7 @@
                                 {% for title in criteria_titles %}
                                     <th>{{ title }}</th>
                                 {% endfor %}
+                                <!--<th style="border:none;"></th>-->
                                 <th>Global</th>
                             </tr>
                         </thead>
@@ -227,9 +232,18 @@
                                 <tr>
                                     <td>{{ alternative }}</td>
                                     {% for value in details.values2 %}
-                                        <td class="{% if value <= 20 %}bad{% elif value <= 40 %}weak{% elif value <= 60 %}average{% elif value <= 80 %}good{% else %}excellent{% endif %}">{{ value|floatformat:0 }}%</td>
+                                        <td class="{% if value == 'N/A' %}na{% elif value < 20 and value >= 0 %}bad{% elif value < 40 and value >= 20 %}weak{% elif value < 60 and value >= 40 %}average{% elif value < 80 and value >= 60 %}good{% else %}excellent{% endif %}">
+                                            {% if value == 'N/A' %}
+                                            <strong>N/A</strong>
+                                            {% else %}
+                                            <strong>{{ value|floatformat:0 }}%</strong>
+                                            {% endif %}
+                                        </td>
                                     {% endfor %}
-                                    <td class="{% if details.sum <= 20 %}bad{% elif details.sum <= 40 %}weak{% elif details.sum <= 60 %}average{% elif details.sum <= 80 %}good{% else %}excellent{% endif %}">{{ details.sum|floatformat:0 }}%</td>
+                                    <!--<td style="border:none;"></td> --> <!-- This cell creates the gap -->
+                                    <td class="{% if details.sum < 20 %}bad{% elif details.sum <= 40 %}weak{% elif details.sum <= 60 %}average{% elif details.sum <= 80 %}good{% else %}excellent{% endif %}">
+                                        <strong>{{ details.sum|floatformat:0 }}%</strong>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

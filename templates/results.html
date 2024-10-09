@@ -23,15 +23,16 @@
 <style>
 
 .cover {
-    background-color: beige; center center;
+    background-color: beige; 
     background-size: cover;
     background-repeat: no-repeat;
     display: flex;
     justify-content: center; /* Center children horizontally */
     align-items: center; /* Center children vertically */
-    height: 100vh; /* Use the full height of the viewport */
+    height: calc(100vh - 56px); /* Use the full height of the viewport */
 }
 .navbar {
+    height: 56px;
     display: flex;
     justify-content: space-between; /* This will place items on both ends */
 }
@@ -60,7 +61,33 @@
       width: auto; /* Adjust width as needed */
       max-width: 90%; /* Prevents the form from becoming too wide on larger screens */
   }
-  
+
+  .centered-text-container h5 {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #007bff;
+        }
+
+        .centered-text-container p {
+            text-align: center;
+            font-size: 1rem;
+            color: #555;
+        }
+  /* Green Submit Button */
+  .btn-lg {
+            background-color: #28a745;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .btn-lg:hover {
+            background-color: #218838;
+        }
 </style>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -90,7 +117,7 @@
         
         <div class="form-container">
             <div class="centered-text-container">
-                
+                <h5>Run Multi-Criteria Analysis</h5>
                 <p>{% translate "At this point, you have provided all of the required input parameters to run the multi-criteria decision analysis. <br>You can then run the analysis, see the results, and redo the process by modifying the input parameters.</p>" %}
             </div>
 

@@ -34,10 +34,11 @@
     display: flex;
     justify-content: center; /* Center children horizontally */
     align-items: center; /* Center children vertically */
-    height: 100vh; /* Use the full height of the viewport */
+    height: calc(100vh - 56px); /* Use the full height of the viewport */
 }
 
 .navbar {
+    height: 56px;
     display: flex;
     justify-content: space-between; /* This will place items on both ends */
 }
@@ -91,13 +92,19 @@
         margin-top: 5px;
     }
 
-    /* Button Styling */
+    /* Green Submit Button */
     .btn-lg {
-        width: 100%;
-        padding: 10px;
-        font-size: 1.2em;
-        margin-top: 20px;
-    }
+            background-color: #28a745;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .btn-lg:hover {
+            background-color: #218838;
+        }
 
     /* Info Box Overlay */
     #overlay {
@@ -111,9 +118,18 @@
         z-index: 999;
     }
    
-.centered-text-container {
-    text-align: center;
-}
+    .centered-text-container h5 {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #007bff;
+        }
+        .centered-text-container p {
+            text-align: center;
+            font-size: 1rem;
+            color: #555;
+        }
 
     /* Info Box Styling */
     /* Info Box Styling */
@@ -182,7 +198,7 @@
                 <h5>{% translate "Define Management Objectives" %}
                     <i id="info-icon" class="fas fa-info-circle"></i>
                 </h5>
-                <div style="max-width: 650px;">
+                <div style="max-width: 700px;">
                 <p>{% translate "The management objectives represent the decision maker's expectations regarding the increase or decrease of a specific indicator as a result of actions, such pond creation." %}</p>
                </div>
             </div>
