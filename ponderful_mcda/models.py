@@ -8,6 +8,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator 
 from django.utils.translation import gettext_lazy as _
 from modeltranslation.translator import register, TranslationOptions
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -75,6 +76,7 @@ class studyarea(models.Model):
     country = models.CharField(max_length=100, null=True, blank=True)
     geom = models.PolygonField(srid=4326)
 
+
     def __str__(self):
         return self.name
 
@@ -84,6 +86,8 @@ class criteria(models.Model):
     name = models.CharField(max_length=255, verbose_name="Criteria Name")
     ncp = models.CharField(max_length=255, verbose_name="NCP Name", blank=True, null=True)
     unit_of_measure = models.CharField(max_length=255, verbose_name="Unit of Measure")
+    s_threshold_min = models.FloatField(verbose_name="default minimum satisfaction threshold", blank=True, null=True)
+    s_threshold_max = models.FloatField(verbose_name="default maximum satisfaction threshold", blank=True, null=True)
 
     def __str__(self):
         return self.name

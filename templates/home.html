@@ -12,7 +12,7 @@
 
 
     <!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />-->
-    <link rel="stylesheet" href="{% static 'index.css' %}">
+    <!--<link rel="stylesheet" href="{% static 'index.css' %}">-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     
@@ -23,6 +23,25 @@
 </head>
 <style>
 
+body {
+  
+  height: 100%;
+  width: 100%;
+z-index: -1;
+}
+.coverMap {
+
+background: url('/static/images/pond.jpg') center center;
+background-size: cover;
+background-repeat: no-repeat;
+
+   
+}
+
+.brandsize {
+height: 30px;
+width: 100px;
+}
 .btn-margin-left {
     margin-left: 2px;
 }
@@ -34,8 +53,6 @@
 }
 
 
-
-
 .navbar-brand img.brandsize {
     background-color: transparent; /* Ensures no background color */
     width: auto; /* Adjust to your needs, keeps the image's aspect ratio */
@@ -44,6 +61,49 @@
 }
 
 
+/* Wrapper for centering div1 below navbar */
+.wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding-top: 60px; /* Space for the fixed navbar */
+    }
+
+    /* Styling for the centered content box */
+    .div1 {
+        max-width: 800px;
+        padding: 20px;
+        text-align: center;
+        background: #ffffff;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+    .intro-section {
+        display: none;
+    }
+    .intro-section.active {
+        display: block;
+    }
+    /* Improved text styling */
+    .div1 p, .div1 ul {
+        font-size: 1.1em;
+        line-height: 1.6;
+        color: #333;
+    }
+    .div1 ul {
+        text-align: left;
+        padding-left: 20px;
+        margin: 20px 0;
+    }
+    .div1 p {
+        text-align: justify;
+    }
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
 
 
 
@@ -134,30 +194,55 @@
         
   </nav>
 
+     <!-- Intro sections with Next, Skip, Back, and Start buttons -->
+<!-- Wrapper div for centering content below navbar -->
+<div class="wrapper">
   <div class="div1">
-    <p>
-      {% translate "The Ponderful project is dedicated to empowering decision-makers in pond management and policy development with a  decision support tool. This tool assists the decision makers in selecting the most strategic direction—whether to maintain the status quo, moderately increase, or significantly boost the number of ponds—by assessing the effects of diverse <b>Nature Based Solutions (NBS)</b> on <b>Nature Contribution to People (NCP)</b>, within specific climate change and land use scenarios, and thus predict the trends or values for different NCP indicators for the year 2050." %}
-  <p><b>{% translate "Objectives of the decision support tool:" %}</b></p>
-  <p class="text-p">{% translate "Using the scientific outcomes from the project, this tool is designed to facilitate decision-makers in evaluating and comparing different NBS approaches based on a range of NCP indicators." %}</p> 
-  <p class="text-p">{% translate "The tool offers users the flexibility to contextualize the analysis by setting a number of parameters such as the choice of NCP indicators and their weighting." %}
-    </p>
-  <div class="button">
+    <!-- Introduction Part 1 -->
+    <div id="introPart1" class="intro-section active">
+      <p>{% translate "This tool is designed to assist decision-makers in understanding the benefits of ponds for biodiversity, climate change mitigation, and ecosystem, encouraging them to increase the presence of ponds in their regions.</br>Developed as part of the EU Horizon 2020 project, " %} <a href="https://ponderful.eu/" target="_blank">PONDERFUL</a> {% translate ", the tool explores the role of ponds and pond landscapes (pondscapes) as Nature-Based Solutions (NBS). It enables decision-makers to evaluate diverse NBS strategies, including pond creation and water quality management, assessing their impacts on various Nature's Contributions to People (NCP) indicators such as biodiversity and climate resilience. Additionally, the tool allows for scenario analysis, evaluating outcomes under different climate change and land use projections for 2050." %}</p>
+      
+      <div class="button-container">
+        <a href="{% url 'start_analysis' %}" class="btn btn-secondary btn-lg">{% translate "Skip Introduction" %}</a>
+        <button onclick="showNextPart()" class="btn btn-primary btn-lg">{% translate "Next" %}</button>
+      </div>
+    </div>
     
-        
-        {% if user.is_authenticated %}
-        <a href="{% url 'start_analysis' %}"><button type="button" class="btn btn-success btn-lg">{% translate "Start" %}</button></a>
-        {% else %}
-        <a href="{% url 'login' %}"><button type="button" class="btn btn-success btn-lg">{% translate "Start" %}</button></a>
-        {% endif %}
-        
-  </div>
-  </div>
+    <!-- Introduction Part 2 -->
+    <div id="introPart2" class="intro-section">
+      <p>{% translate "The Ponderful decision support tool assists you in conducting a multi-criteria analysis. A multi-criteria analysis allows for the comparison of the advantages and disadvantages of a set of actions considered by the decision-maker, based on a range of criteria. The decision support tool enables you to choose:" %}</p>
 
+      <ul>
+          <li>{% translate "Your study area (or define it spatially if it is not yet available)" %}</li>
+          <li>{% translate "The actions you wish to implement in your area (NBS): maintain the status quo, moderately or significantly increase the number of ponds, or management of water quality?" %}</li>
+          <li>{% translate "The ecological indicators that are most important to you (NCP)" %}</li>
+          <li>{% translate "The climate and land-use scenarios for the year 2050 under which you would like to perform the multi-criteria analysis." %}</li>
+      </ul>
   
+      <p>{% translate "The results of the multi-criteria analysis are based on measurements and models produced within the Ponderful project. However, they should be interpreted as indicative. A more precise analysis based on local data will be needed afterward to define an operational and contextualized strategy for each area." %}</p>
+  
+      <div class="button-container">
+        <button onclick="showPreviousPart()" class="btn btn-secondary btn-lg">{% translate "Back" %}</button>
+        {% if user.is_authenticated %}
+        <a href="{% url 'start_analysis' %}" class="btn btn-success btn-lg">{% translate "Start" %}</a>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-success btn-lg">{% translate "Start" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
 
-
-
-
+  <script>
+    function showNextPart() {
+        document.getElementById('introPart1').classList.remove('active');
+        document.getElementById('introPart2').classList.add('active');
+    }
+    function showPreviousPart() {
+        document.getElementById('introPart2').classList.remove('active');
+        document.getElementById('introPart1').classList.add('active');
+    }
+  </script>
 
 
 

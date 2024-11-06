@@ -2,6 +2,7 @@
     <head>
         {% load static %}
         {% load i18n %}
+        {% load custom_filters %}
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -165,6 +166,15 @@
     .navbar-brand img {
         height: 40px;
     }
+
+    .example-box {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-top: 5px;
+    text-align: left;
+    font-size: 0.9rem;
+}
 </style>
 
 <body>
@@ -199,7 +209,7 @@
                     <i id="info-icon" class="fas fa-info-circle"></i>
                 </h5>
                 <div style="max-width: 700px;">
-                <p>{% translate "The management objectives represent the decision maker's expectations regarding the increase or decrease of a specific indicator as a result of actions, such pond creation." %}</p>
+                <p>{% translate "The management objectives represent the decision maker's expectations regarding the increase or decrease of a specific indicator as a result of actions, such pond creation. Default values are set for each NCP indicator. You can either keep the default values or change them based on your own objectives." %}</p>
                </div>
             </div>
 
@@ -224,7 +234,10 @@
                     <tbody>
                         {% for form in formset %}
                         <tr>
-                            <td>{{ form.instance.criteria.name|default:"No Criteria" }}</td>
+                            <td>
+                                {{ criteria_names|index:forloop.counter0|add_subscript|safe }}
+                                <i class="fas fa-info-circle example-icon" data-example="example-{{ forloop.counter }}"></i>
+                            </td>
                             <td>
                                 {{ form.threshold_min }}
                                 {% if form.threshold_min.errors %}
@@ -238,9 +251,16 @@
                                 {% endif %}
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="3">{{ form.id }}</td> <!-- Hidden ID Field -->
+                        <tr id="example-{{ forloop.counter }}" class="example-box" style="display: none;">
+                            <td colspan="3">
+                                <strong>{% translate "Example for" %} {{ criteria_names|index:forloop.counter0|add_subscript|safe }}:</strong><br>
+                                {% with criterion=criteria_info|index:forloop.counter0 %}
+                                {% translate "Minimum:" %} {{ criterion.default_min }}{% translate "%" %}
+                                {% translate "- Maximum:" %} {{ criterion.default_max }}{% translate "%" %}
+                                {% endwith %}
+                            </td>
                         </tr>
+                        {{ form.id }}
                         {% endfor %}
                     </tbody>
                 </table>
@@ -260,6 +280,21 @@
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('info-box').style.display = 'none';
         });
+
+        // Get all info icons and attach click event
+    document.querySelectorAll('.example-icon').forEach(function(icon) {
+        icon.addEventListener('click', function() {
+            var exampleBoxId = this.getAttribute('data-example');
+            var exampleBox = document.getElementById(exampleBoxId);
+            
+            // Toggle visibility of the example box
+            if (exampleBox.style.display === 'none') {
+                exampleBox.style.display = 'table-row';
+            } else {
+                exampleBox.style.display = 'none';
+            }
+        });
+    });
     </script>
 </body>
 </html>

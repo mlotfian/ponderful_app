@@ -5,6 +5,7 @@
     <title>Compare MCDA Results</title>
     {% load static %}
     {% load i18n %}
+    {% load custom_filters%}
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'index.css' %}">
@@ -76,11 +77,12 @@
             /*justify-content: center;*/
         }
 
-        .bad { background-color: red; }
-.weak { background-color: orange; }
-.average { background-color: yellow; }
-.good { background-color: lightgreen; }
-.excellent { background-color: darkgreen; }
+        .bad { background-color: #ffffcc; }
+        .weak { background-color: #c2e699; }
+        .average { background-color: #78c679; }
+        .good { background-color: #31a354; }
+        .excellent { background-color: #006837; }
+        .not-achieved {background-color: red;}
         .table-container {
             display: flex;
             flex-wrap: wrap;
@@ -190,7 +192,7 @@
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="scenario_ids" value="{{ scenario.id }}" id="scenario{{ scenario.id }}">
                     <label class="form-check-label" for="scenario{{ scenario.id }}">
-                        {% translate scenario.name %}
+                        {% translate scenario.description %}
                     </label>
                 </div>
                 {% endfor %}
@@ -204,13 +206,14 @@
             <h3>{% translate "Legend" %}</h3>
             <div><p>{% translate "The results illustrate computed scores(%) presenting at what level the decision-maker's management objectives is reached for each NBS implementation and per each selected NCP indicator, considering the conditions of evolution of the territory and climate in 2050. The global score illustrates the weighted average score." %}</p>
             </div>
-            <div><span class="bad">&nbsp;&nbsp;&nbsp;&nbsp;</span> 0%-20%: {%translate "Poor" %}</div>
-            <div><span class="weak">&nbsp;&nbsp;&nbsp;&nbsp;</span> 20%-40%: {%translate "Weak" %}</div>
-            <div><span class="average">&nbsp;&nbsp;&nbsp;&nbsp;</span> 40%-60%: {%translate "Average" %}</div>
-            <div><span class="good">&nbsp;&nbsp;&nbsp;&nbsp;</span> 60%-80%: {%translate "Good" %}</div>
-            <div><span class="excellent">&nbsp;&nbsp;&nbsp;&nbsp;</span> 80%-100%: {%translate "Excellent" %}</div>
+            <div><p>The management objectives are:</p></div>
+            <div><span class="not-achieved">&nbsp;&nbsp;&nbsp;&nbsp;</span> 0%: {%translate "Not achieved" %}</div>
+            <div><span class="bad">&nbsp;&nbsp;&nbsp;&nbsp;</span> 1%-20%: {%translate "Barely achieved" %}</div>
+            <div><span class="weak">&nbsp;&nbsp;&nbsp;&nbsp;</span> 20%-40%: {%translate "Minimally achieved" %}</div>
+            <div><span class="average">&nbsp;&nbsp;&nbsp;&nbsp;</span> 40%-60%: {%translate "Partially achieved" %}</div>
+            <div><span class="good">&nbsp;&nbsp;&nbsp;&nbsp;</span> 60%-80%: {%translate "Mostly achieved" %}</div>
+            <div><span class="excellent">&nbsp;&nbsp;&nbsp;&nbsp;</span> 80%-100%: {%translate "Fully achieved" %}</div></div>
         </div>
-    </div>
     <div class="table-container">
         {% if selected_scenarios %}
             {% for scenario_key, scenario_data in data.items %}
@@ -221,10 +224,10 @@
                             <tr>
                                 <th>NBS Implementation</th>
                                 {% for title in criteria_titles %}
-                                    <th>{{ title }}</th>
+                                    <th>{{ title|add_subscript|safe }}</th>
                                 {% endfor %}
                                 <!--<th style="border:none;"></th>-->
-                                <th>Global</th>
+                                <th>Weighted Average</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -232,17 +235,38 @@
                                 <tr>
                                     <td>{{ alternative }}</td>
                                     {% for value in details.values2 %}
-                                        <td class="{% if value == 'N/A' %}na{% elif value < 20 and value >= 0 %}bad{% elif value < 40 and value >= 20 %}weak{% elif value < 60 and value >= 40 %}average{% elif value < 80 and value >= 60 %}good{% else %}excellent{% endif %}">
+                                        <td class="{% if value == 'N/A' %}na{% elif value == 0 %}not-achieved{% elif value < 20 %}bad{% elif value < 40 %}weak{% elif value < 60 %}average{% elif value < 80 %}good{% else %}excellent{% endif %}">
                                             {% if value == 'N/A' %}
-                                            <strong>N/A</strong>
+                                                <strong>N/A</strong>
+                                            {% elif value == 0 %}
+                                                <strong>Not Achieved</strong>
+                                            {% elif value < 20 %}
+                                                <strong>Barely Achieved</strong>
+                                            {% elif value < 40 %}
+                                                <strong>Minimally Achieved</strong>
+                                            {% elif value < 60 %}
+                                                <strong>Partially Achieved</strong>
+                                            {% elif value < 80 %}
+                                                <strong>Mostly Achieved</strong>
                                             {% else %}
-                                            <strong>{{ value|floatformat:0 }}%</strong>
+                                                <strong>Fully Achieved</strong>
                                             {% endif %}
                                         </td>
                                     {% endfor %}
-                                    <!--<td style="border:none;"></td> --> <!-- This cell creates the gap -->
-                                    <td class="{% if details.sum < 20 %}bad{% elif details.sum <= 40 %}weak{% elif details.sum <= 60 %}average{% elif details.sum <= 80 %}good{% else %}excellent{% endif %}">
-                                        <strong>{{ details.sum|floatformat:0 }}%</strong>
+                                    <td class="{% if details.sum == 0 %}not-achieved{% elif details.sum < 20 %}bad{% elif details.sum <= 40 %}weak{% elif details.sum <= 60 %}average{% elif details.sum <= 80 %}good{% else %}excellent{% endif %}">
+                                        {% if details.sum == 0 %}
+                                            <strong>Not Achieved</strong>
+                                        {% elif details.sum < 20 %}
+                                            <strong>Barely Achieved</strong>
+                                        {% elif details.sum <= 40 %}
+                                            <strong>Minimally Achieved</strong>
+                                        {% elif details.sum <= 60 %}
+                                            <strong>Partially Achieved</strong>
+                                        {% elif details.sum <= 80 %}
+                                            <strong>Mostly Achieved</strong>
+                                        {% else %}
+                                            <strong>Fully Achieved</strong>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}

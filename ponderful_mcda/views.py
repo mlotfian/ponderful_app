@@ -224,6 +224,7 @@ def map_view(request):
                         'Land Use: No Change, Climate Change: SSP3': '/app/only_CC/GHG_CC_SSP3_percent_difference.tif',
                         'Land Use: No Change, Climate Change: SSP5': '/app/only_CC/GHG_CC_SSP5_percent_difference.tif',},
                 }
+                # missing scenarios for water storage, to be checked with Tuba...
 
                 # Iterate over the variables and SSPs to calculate average raster values
                 for variable, ssps in variables.items():
@@ -354,114 +355,100 @@ def add_params(request):
     study_area_id = request.session.get('study_area_id')
     analysis_run_id = request.session.get('analysis_run_id')
 
-    if analysis_run_id is not None:
-        # Get the AnalysisRun instance from the database
-        analysis_run = get_object_or_404(AnalysisRun, id=analysis_run_id)
-    
-    
     if not selected_criteria:
         return redirect('select_criteria')
-        
-    # Create a formset based on the selected criteria
-   
-    print(len(selected_criteria))
-    
-    CriteriaParamsFormSet = modelformset_factory(criteria_params, fields=['rank'], extra=len(selected_criteria), widgets = {'rank': forms.TextInput(attrs={'type': 'range', 'step': '1', 'min': '1', 'max': '15', 'class':'slider', 'id':'myRange'})})
+
+    CriteriaParamsFormSet = modelformset_factory(criteria_params, fields=['rank'], extra=len(selected_criteria), widgets={
+        'rank': forms.TextInput(attrs={'type': 'range', 'step': '1', 'min': '1', 'max': '15', 'class': 'slider', 'id': 'myRange'})
+    })
 
     if request.method == 'POST':
         formset = CriteriaParamsFormSet(request.POST)
-        
         if formset.is_valid():
-            instances = formset.save(commit=False)
-            rank_data = [instance.rank for instance in instances]
+            # Get rank data from formset
+            rank_data = [form.cleaned_data['rank'] for form in formset.forms]
+            # Calculate weights based on rank
+            max_rank = max(rank_data)
+            min_rank = min(rank_data)
+            all_weights = [
+                rank if rank == max_rank else (rank if rank == min_rank else 1 + ((max_rank - 1) * (max_rank - rank) / (max_rank - min_rank)))
+                for rank in rank_data
+            ]
+            # Store rank and weight data in session for later use
             request.session['rank_data'] = rank_data
-
-            # compute the weight
-
-            all_weights = []
-
-            for i, criterion in enumerate(selected_criteria):
-                instance = criteria_params(
-                    criteria_id=criterion,
-                    study_area_id=study_area_id,
-                    user_id=request.user.id,
-                    rank=rank_data[i],
-                    analysis_run=analysis_run,
-                    #weight_range=weight_range,
-                )
-                if rank_data[i]==max(rank_data):
-                    instance.weight = rank_data[i] #min(rank_data) # least important criteria
-                    all_weights.append(instance.weight)
-                elif rank_data[i]==min(rank_data):
-                    instance.weight = rank_data[i] #max(rank_data) # most important criteria
-                    all_weights.append(instance.weight)
-                else:
-                    instance.weight = 1 + ((max(rank_data)-1)*(max(rank_data)-rank_data[i])/(max(rank_data)-min(rank_data)))
-                    all_weights.append(instance.weight)
-                instance.save()
-                
-            # now calculating the weights in percentage
-            total_weight_sum = sum(all_weights)
-            for instance in criteria_params.objects.filter(criteria_id__in=selected_criteria, user_id=request.user.id, study_area_id=study_area_id):
-                instance.weight_percentage = (instance.weight / total_weight_sum) * 100
-                instance.save()
-            # Redirect to the appropriate view after successful form submission
-            print(len(rank_data))
-            if len(rank_data) == len(selected_criteria):
-                return redirect('add_thresholds')
-            else:
-                print("not right length")
-                formset_data = [{'criteria_name': criteria.objects.get(pk=criterion_id).name} for criterion_id in selected_criteria]
-                formset = CriteriaParamsFormSet(queryset = criteria_params.objects.exclude(pk__in=criteria_params.objects.all()), initial=formset_data)
-                return render(request, 'step2.html', {'formset': formset, 'selected_criteria': selected_criteria})
+            request.session['weights'] = all_weights
+            return redirect('add_thresholds')
         else:
-            # If the formset is not valid, render the formset with errors
-            formset_data = [{'criteria_name': criteria.objects.get(pk=criterion_id).name} for criterion_id in selected_criteria]
-            formset = CriteriaParamsFormSet(queryset = criteria_params.objects.exclude(pk__in=criteria_params.objects.all()), initial=formset_data)
             return render(request, 'step2.html', {'formset': formset, 'selected_criteria': selected_criteria})
     else:
-        # Initialize the formset and exclude displaying the exsiting records in the databse
         formset_data = [{'criteria_name': criteria.objects.get(pk=criterion_id).name} for criterion_id in selected_criteria]
-        formset = CriteriaParamsFormSet(queryset = criteria_params.objects.exclude(pk__in=criteria_params.objects.all()), initial=formset_data)
-        
+        formset = CriteriaParamsFormSet(queryset=criteria_params.objects.none(), initial=formset_data)
         return render(request, 'step2.html', {'formset': formset, 'selected_criteria': selected_criteria})
 
 @login_required
 def add_thresholds(request):
     selected_criteria = request.session.get('selected_criteria', [])
     analysis_run_id = request.session.get('analysis_run_id')
+    study_area_id = request.session.get('study_area_id')
+    rank_data = request.session.get('rank_data', [])
+    weights = request.session.get('weights', [])
 
-    # Ensure the necessary session variables are available
-    if not selected_criteria or not analysis_run_id:
+    if not selected_criteria or not rank_data or not weights:
         return redirect('select_criteria')
 
-    # Get the `criteria_params` for the selected criteria, user, and analysis run
-    criteria_params_queryset = criteria_params.objects.filter(
-        criteria_id__in=selected_criteria, 
-        user=request.user,
-        analysis_run_id=analysis_run_id
-    )
-    print(criteria_params_queryset)
+    # Retrieve criteria names for display
+    criteria_names = [criteria.objects.get(pk=criterion_id).name for criterion_id in selected_criteria]
 
-    # Formset for updating the `threshold_min` and `threshold_max`
-    CriteriaThresholdFormSet = modelformset_factory(criteria_params, form=CriteriaThresholdForm, extra=0)
-    
+    #default_tr_min = [criteria.objects.get(pk=criterion_id).s_threshold_min for criterion_id in select_criteria]
+    #default_tr_max = [criteria.objects.get(pk=criterion_id).s_threshold_max for criterion_id in select_criteria]
+
+    criteria_info = [
+        {
+            "id": criterion.id,
+            "name": criterion.name,
+            "default_min": criterion.s_threshold_min,
+            "default_max": criterion.s_threshold_max,
+        }
+        for criterion in criteria.objects.filter(id__in=selected_criteria)
+    ]
+    form_initial_data = [
+    {
+        'threshold_min': criterion['default_min'],
+        'threshold_max': criterion['default_max']
+    }
+    for criterion in criteria_info
+    ]
+    print(criteria_info)
+
+    # Formset for thresholds
+    CriteriaThresholdFormSet = modelformset_factory(criteria_params, form=CriteriaThresholdForm, extra=len(selected_criteria))
 
     if request.method == 'POST':
-        # Process the submitted formset
-        formset = CriteriaThresholdFormSet(request.POST, queryset=criteria_params_queryset)
-        print(formset)
+        formset = CriteriaThresholdFormSet(request.POST)
         if formset.is_valid():
-            formset.save()  # Save the updated threshold values to the existing `criteria_params` records
-            return redirect('select_scenario')  # Redirect to the next step
-        else:
-            # If the formset is invalid, re-render the page with errors
-            return render(request, 'step3_thresholds.html', {'formset': formset})
-    else:
-        # Initialize the formset for the existing `criteria_params` records
-        formset = CriteriaThresholdFormSet(queryset=criteria_params_queryset)
+            threshold_data = [(form.cleaned_data['threshold_min'], form.cleaned_data['threshold_max']) for form in formset.forms]
 
-        return render(request, 'step3_thresholds.html', {'formset': formset})
+            # Save `criteria_params` in the database for each selected criterion
+            for i, criterion_id in enumerate(selected_criteria):
+                criteria_params.objects.create(
+                    criteria_id=criterion_id,
+                    study_area_id=study_area_id,
+                    user_id=request.user.id,
+                    rank=rank_data[i],
+                    weight=weights[i],
+                    weight_percentage=(weights[i] / sum(weights)) * 100,
+                    threshold_min=threshold_data[i][0],
+                    threshold_max=threshold_data[i][1],
+                    analysis_run_id=analysis_run_id
+                )
+            return redirect('select_scenario')
+        else:
+            
+            return render(request, 'step3_thresholds.html', {'formset': formset, 'criteria_names': criteria_names, 'criteria_info': criteria_info})
+    else:
+        # Initialize formset without querying the database
+        formset = CriteriaThresholdFormSet(queryset=criteria_params.objects.none(), initial=form_initial_data)
+        return render(request, 'step3_thresholds.html', {'formset': formset, 'criteria_names': criteria_names, 'criteria_info': criteria_info})
 
 @login_required
 def select_scenario(request):
@@ -757,7 +744,7 @@ def show_results(request):
                 if isinstance(result, (int, float)):
                     sum_values += result
             scenario_data[alternative]['sum'] = sum_values
-        results_by_scenario[(scen.name, scen.id)] = scenario_data
+        results_by_scenario[(scen.description, scen.id)] = scenario_data
 
     context = {
         'all_scenarios': all_scenarios,

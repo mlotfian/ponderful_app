@@ -2,6 +2,7 @@
     <head>
         {% load static %}
         {% load i18n %}
+        {% load custom_filters %}
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,13 +29,13 @@
         <style>
 
 .cover {
-    background-color: beige; center center;
+    background-color: beige; 
     background-size: cover;
     background-repeat: no-repeat;
     display: flex;
     justify-content: center; /* Center children horizontally */
     align-items: center; /* Center children vertically */
-    height: calc(100vh - 56px); /* Use the full height of the viewport */
+    height: 100vh; /* Use the full height of the viewport */
 }
 
 .navbar {
@@ -67,6 +68,7 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             max-width: 600px;
             width: 100%;
+            margin-top: 20px;
         }
 
         .centered-text-container h5 {
@@ -264,7 +266,7 @@
     
         <!-- Criteria Name -->
         <div class="criteria-container">
-            <div class="criteria-name">{{ form.initial.criteria_name }}</div>
+            <div class="criteria-name">{{ form.initial.criteria_name|add_subscript|safe }}</div>
             <!-- Slider and Labels -->
             <div class="slider-container">
                 <span class="importance-label-minus"><strong>Least Important</strong></span> <!-- Left label -->

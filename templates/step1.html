@@ -6,6 +6,7 @@
     
     {% load static %}
     {% load i18n %}
+    {% load custom_filters %}
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -250,7 +251,7 @@ th, td {
                                     <!-- Adding the logo before the name -->
                                     <img src="{% static 'images/' %}{{ item.name|slugify }}.png" alt="{{ item.name }}" 
                                          style="width: 35px; height: 35px; margin-right: 10px;">
-                                    {{ item.name }}
+                                    {{ item.name|add_subscript|safe }}
                                     <i class="fas fa-info-circle ncp-info-icon" data-ncp="{{ item.ncp }}" style="margin-left: 10px; cursor: pointer;"></i>
                                 </td>
                                 
