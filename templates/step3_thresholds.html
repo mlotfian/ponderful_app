@@ -253,10 +253,10 @@
                         </tr>
                         <tr id="example-{{ forloop.counter }}" class="example-box" style="display: none;">
                             <td colspan="3">
-                                <strong>{% translate "Example for" %} {{ criteria_names|index:forloop.counter0|add_subscript|safe }}:</strong><br>
+                                <strong>{% translate "Example" %}:</strong><br>
                                 {% with criterion=criteria_info|index:forloop.counter0 %}
-                                {% translate "Minimum:" %} {{ criterion.default_min }}{% translate "%" %}
-                                {% translate "- Maximum:" %} {{ criterion.default_max }}{% translate "%" %}
+                                {{ criterion.NCP }} {{ criterion.name|add_subscript|safe }} {% translate " By Minimum " %}  {{ criterion.default_min }}{% translate "%" %}
+                                {% translate "and Maximum " %} {{ criterion.default_max }}{% translate "%" %}
                                 {% endwith %}
                             </td>
                         </tr>

@@ -1,0 +1,21 @@
+﻿Indicator,Trophic state,Average
+Amphibian species,Oligo-mesotrophic,2
+Amphibian species,Eutrophic,3.43
+Amphibian species,Hypertrophic,2.75
+Amphibian species,Highly Hypertrophic,3.13
+Aquatic plant species,Oligo-mesotrophic,21
+Aquatic plant species,Eutrophic,13
+Aquatic plant species,Hypertrophic,12.7
+Aquatic plant species,Highly Hypertrophic,13.2
+Macroinvertebrates,Oligo-mesotrophic,16
+Macroinvertebrates,Eutrophic,9.5
+Macroinvertebrates,Hypertrophic,8.69
+Macroinvertebrates,Highly Hypertrophic,8.81
+"GHG emission (CH4, CO2)",Oligo-mesotrophic,1523
+"GHG emission (CH4, CO2)",Eutrophic,4763
+"GHG emission (CH4, CO2)",Hypertrophic,7486
+"GHG emission (CH4, CO2)",Highly Hypertrophic,12072
+Water quality,Oligo-mesotrophic,0
+Water quality,Eutrophic,101.0869565
+Water quality,Hypertrophic,104.3243243
+Water quality,Highly Hypertrophic,123.8095238

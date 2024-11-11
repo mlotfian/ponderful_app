@@ -155,8 +155,8 @@
   <div class="form-container">
   {% block content %}
   <div class="centered-text-container">
-    <h5>{%translate "Nature-Based Solutions (NBS) Implementation Type" %}</h5>
-  <p>{% translate "Add the Nature Based Solutions (NBS) that you want to implement." %}</p>
+    <h5>{%translate "Type of Nature-Based Solution (NBS) to be implemented " %}</h5>
+  
   </div>
   
   
@@ -224,7 +224,7 @@
               var pondMaxField = form.querySelector('input[name$="pond_max"]'); // Get the pond_max input field
 
               // Replace '7' with the actual ID for "Creation" from your database
-              if (actionSelect.value === '7') {  // Adjust the value to match "Creation" action's ID
+              if (actionSelect.value === '46') {  // Adjust the value to match "Creation" action's ID
                   pondMinField.closest('tr').style.display = ''; // Show pond_min row
                   pondMaxField.closest('tr').style.display = ''; // Show pond_max row
                   // Make pond_min and pond_max fields required

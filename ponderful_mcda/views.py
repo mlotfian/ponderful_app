@@ -408,6 +408,7 @@ def add_thresholds(request):
             "name": criterion.name,
             "default_min": criterion.s_threshold_min,
             "default_max": criterion.s_threshold_max,
+            "NCP": criterion.ncp
         }
         for criterion in criteria.objects.filter(id__in=selected_criteria)
     ]
@@ -520,7 +521,7 @@ def mcda_results(request):
     action_pond = []
     for ac in alt_param:
         # if it is creation
-        if ac[0] == 7:
+        if ac[0] == 46:
             pond_avg = round((ac[1]+ac[2])/2)
             action_pond.append((ac[0],ac[1]))
             action_pond.append((ac[0],ac[2]))
@@ -561,7 +562,7 @@ def mcda_results(request):
         for nbs_action in action_pond:
             for scenario_id in all_scenario_ids:
                 #creation
-                if nbs_action[0] == 7:
+                if nbs_action[0] == 46:
                     #print(indicator)
                     if indicator not in [19,18]: #['GHG emission (CH4, CO2)', 'Water quantity']:
                         #ncp_indicator = criteria.objects.get(name=indicator)
@@ -589,7 +590,7 @@ def mcda_results(request):
                     #print("here", ap[0])
                     
                 # water management
-                elif nbs_action[0] == 12:
+                elif nbs_action[0] == 14:
                     if indicator not in [19,18]:
 
                         # Get the IndicatorTrophicData record for the indicator and trophic state
@@ -608,7 +609,7 @@ def mcda_results(request):
 
                         # calculate output 
                         output = (((future_ncp_wq.average + (future_ncp_wq.average*(scenario_change/100)))-current_ncp_wq.average)/current_ncp_wq.average)*100
-                        all_values.append((indicator,_("Water Quality Management"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
+                        all_values.append((indicator,_("Management of Water Quality"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
                         #print(output)
                         # if emmissions
                     if indicator==18:
@@ -631,7 +632,7 @@ def mcda_results(request):
                             #satisfaction_c = satisfaction_c*(-1)
                             #satisfaction_n = satisfaction_n*(-1)
 
-                        all_values.append((indicator,_("Water Quality Management"), output*(-1), satisfaction_c, satisfaction_n, weight, scenario_id))
+                        all_values.append((indicator,_("Management of Water Quality"), output*(-1), satisfaction_c, satisfaction_n, weight, scenario_id))
         
 
                 # no action
@@ -719,7 +720,7 @@ def show_results(request):
     criteria_titles = sorted({result.criteria.name for result in results_sample})
     alternatives = sorted(set(result.alternative for result in results_sample))
     # order alternatives
-    prioritized_order = ['No action', 'Water Quality Management']
+    prioritized_order = ['No action', 'Management of Water Quality']
     existing_prioritized = [alt for alt in prioritized_order if alt in alternatives]  # Only include if they exist
     remaining_alternatives = [alt for alt in alternatives if alt not in prioritized_order]
     

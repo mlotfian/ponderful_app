@@ -33,9 +33,7 @@ class TrophicState(models.Model):
         ('highly hypertrophic', 'Highly Hypertrophic'),
         ('hypertrophic', 'Hypertrophic'),
         ('eutrophic', 'Eutrophic'),
-        ('mesotrophic', 'Mesotrophic'),
-        ('oligotrophic', 'Oligotrophic'),
-          
+        ('oligo-mesotrophic', 'Oligo-mesotrophic'),
     ]
 
     trophic_state = models.CharField(max_length=50, choices=TROPHIC_CHOICES, blank=True, verbose_name=_('Trophic State'))
@@ -44,12 +42,11 @@ class TrophicState(models.Model):
     @property
     def rank(self):
         rank_mapping = {
-            'oligotrophic': 1,
-            'mesotrophic': 2,
-            'eutrophic': 3,
-            'hypertrophic': 4,
-            'highly hypertrophic': 5,
-            'unknown': 4,  # 'I do not know' maps to 'hypertrophic'
+            'oligo-mesotrophichic': 1,
+            'eutrophic': 2,
+            'hypertrophic': 3,
+            'highly hypertrophic': 4,
+            'unknown': 3,  # 'I do not know' maps to 'hypertrophic'
         }
         return rank_mapping.get(self.trophic_state, None)
 
@@ -86,6 +83,7 @@ class criteria(models.Model):
     name = models.CharField(max_length=255, verbose_name="Criteria Name")
     ncp = models.CharField(max_length=255, verbose_name="NCP Name", blank=True, null=True)
     unit_of_measure = models.CharField(max_length=255, verbose_name="Unit of Measure")
+    description = models.CharField(max_length=255, verbose_name="Description", blank=True, null=True)
     s_threshold_min = models.FloatField(verbose_name="default minimum satisfaction threshold", blank=True, null=True)
     s_threshold_max = models.FloatField(verbose_name="default maximum satisfaction threshold", blank=True, null=True)
 
@@ -141,8 +139,8 @@ class satisfaction_objectives(models.Model):
 # add discription to the NBS 
 class action_types(models.Model):
     actions_types = [
-    ('Creation', _('Creation')),
-    ('Water Quality Management',_('Water Quality Management')), # quantity  
+    ('Creation of New Ponds', _('Creation of New Ponds')),
+    ('Management of Water Quality',_('Management of Water Quality')), # quantity  
     ('No action',_('No action')),
     ]
     name = models.CharField(max_length=255, choices = actions_types, verbose_name="Action Name")
@@ -154,8 +152,8 @@ class action_types(models.Model):
 class alternatives_params(models.Model):
     action = models.ForeignKey(action_types, on_delete=models.CASCADE, verbose_name=_("NBS implementation type"))
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    pond_min = models.IntegerField(verbose_name=_("Minimum number of ponds"), validators=[MinValueValidator(1), MaxValueValidator(20)], blank=True, null=True)
-    pond_max = models.IntegerField(verbose_name=_("Maximum number of ponds"), validators=[MinValueValidator(1), MaxValueValidator(20)], blank=True, null=True)
+    pond_min = models.IntegerField(verbose_name=_("Minimum number of ponds"), validators=[MinValueValidator(1), MaxValueValidator(100)], blank=True, null=True)
+    pond_max = models.IntegerField(verbose_name=_("Maximum number of ponds"), validators=[MinValueValidator(1), MaxValueValidator(100)], blank=True, null=True)
     analysis_run = models.ForeignKey(AnalysisRun, on_delete=models.CASCADE)
 
 # to be discussed with WP3 
