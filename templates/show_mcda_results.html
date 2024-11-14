@@ -12,145 +12,177 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body, html {
-            margin: 0;
-            padding: 0;
-        }
-        
-        .navbar {
-            z-index: 1030; /* Ensure navbar stays on top */
-        }
-        .navbar {
-    display: flex;
-    justify-content: space-between; /* This will place items on both ends */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-.nav-left, .navbar-brand {
+.navbar {
+    z-index: 1030;
+    position: fixed;
+    top: 0;
+    width: 100%;
     display: flex;
-    align-items: center; /* This ensures the items are vertically centered */
+    justify-content: space-between;
+    background-color: white;
 }
 
-.nav-left a {
-    color: green; /* Keeping your color requirement */
-    text-decoration: none; /* Optional: Removes underline from the link */
+.navbar .nav-left a {
+    color: green;
+    text-decoration: none;
 }
+
 .navbar-brand img.brandsize {
-    background-color: transparent; /* Ensures no background color */
-    width: auto; /* Adjust to your needs, keeps the image's aspect ratio */
-    height: 30px; /* Example height; adjust as necessary without scaling too much */
-    object-fit: contain; /* Keeps the image's aspect ratio without cropping */
+    height: 30px;
+    object-fit: contain;
 }
 
-        .content-container {
-            padding-top: 80px; /* Adjust based on your navbar height + some extra space */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            /*background-color: beige; center center; /* Adjust as needed */
-            background-color: beige;
-            background-size: cover;
-            background-repeat: no-repeat;
-            min-height: 100vh; /* Use the full height of the viewport */
-        }
-        .form-and-legend {
-            display: flex;
-            justify-content: space-between;
-            width: 90%;
-            padding: 0 20px;
-            box-sizing: border-box;
-        }
-        .form-container {
-            flex: 1;
-            padding: 20px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-right: 20px;
-        }
-        .legend {
-            flex-basis: 450px; /* Adjust according to your content */
-            padding: 20px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            /*justify-content: center;*/
-        }
+.content-container {
+    margin-top: 50px;
+    padding-top: 80px; /* Offset for navbar */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: beige;
+    min-height: 100vh;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
 
-        .bad { background-color: #ffffcc; }
-        .weak { background-color: #c2e699; }
-        .average { background-color: #78c679; }
-        .good { background-color: #31a354; }
-        .excellent { background-color: #006837; }
-        .not-achieved {background-color: red;}
-        .table-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            width: 100%;
-            padding: 20px;
-        }
-        table {
-            margin: 10px 0;
-            flex-basis: calc(50% - 20px); /* Allows two tables side by side with spacing */
-            max-width: calc(50% - 20px);
-            background-color: white;
-            font-size: 13px;
-        }
-        th, td {
-            padding: 5px; /* Reduced padding */
-            text-align: center;
-            white-space: nowrap; /* Prevent text wrapping */
-        }
-        @media (max-width: 768px) {
-            .form-and-legend {
-                flex-direction: column;
-                align-items: center;
-            }
-            .form-container, .legend {
-                margin: 10px 0;
-                width: 90%; /* Full width on smaller screens */
-            }
-            table {
-                flex-basis: 100%; /* Stack tables on smaller screens */
-                max-width: 100%;
-            }
-        }
-        .table-caption {
+.table-container {
+    flex: 2;
+    margin-right: 20px;
+    gap: 15px;
+    overflow-x: auto; /* Enable scroll for smaller screens */
+}
+
+.sidebar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 300px;
+}
+
+
+
+.legend, .compare-options, .new-analysis-options{
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Full-width Button for Scenario Comparison */
+.compare-options form .btn-primary {
+        width: 100%; /* Makes the button match the box width */
+    }
+
+    /* Full-width Buttons for New Analysis */
+    .new-analysis-options .btn {
+        width: 100%; /* Ensures the buttons are full-width */
+    }
+
+    /* Full-width Buttons for New Analysis with Spacing */
+    .new-analysis-options .btn {
+        width: 100%; /* Ensures the buttons are full-width */
+    }
+
+    .new-analysis-options .btn:first-child {
+        margin-bottom: 10px; /* Space between the two buttons */
+    }
+
+     /* Optional: Adjust the h5 title styling */
+     .new-analysis-options h5 {
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+/* Reduce padding within sidebar elements */
+.legend, .compare-options {
+        padding: 15px; /* Reduced padding */
+    }
+
+    .legend {
+        padding: 15px; /* Maintain compact padding */
+         /* Slightly smaller font size for all text in legend box */
+    }
+
+    /* Smaller text size for legend and compare options */
+    .legend h5, .compare-options h5 {
+        font-size: 1em;
+    }
+
+    /* Further reduce font size of legend description text */
+    .legend p {
+        font-size: 0.95em; /* Smaller font size for detailed descriptions */
+    }
+
+table {
+    width: 100%;
+    margin: 10px 0;
+    background-color: white;
+    font-size: 12px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 4px;
+    text-align: center;
+    white-space: nowrap;
+    border: 1px solid #ddd;
+    word-wrap: break-word;
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .content-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 10px;
+    }
+    .table-container, .sidebar {
+        width: 100%;
+        margin-right: 0;
+    }
+    table {
+        font-size: 12px;
+    }
+    th, td {
+        padding: 4px;
+    }
+}
+
+.main_title {
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #005792;
+    margin-bottom: 20px;
+    background-color: #f0f8ff;
+    border-bottom: 2px solid #005792;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 10px;
+}
+
+.table-caption {
     margin-top: 20px;
     margin-bottom: 10px;
     padding: 5px;
     font-size: 0.8em;
     font-weight: bold;
-    color: #333; /* Adjust color as needed */
+    color: #333;
     text-align: center;
     background-color: white;
 }
 
-.main_title {
-     /* Adjust based on your preference */
-    font-weight: bold;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #005792; /* A pleasant, readable blue. Adjust based on your theme */
-    text-shadow: 1px 1px 0px #ffffff; /* Subtle shadow for depth, adjust color based on background */
-    
-    margin-bottom: 20px; /* Space below the title */
-    background-color: #f0f8ff; /* Very light background to highlight the title */
-    border-bottom: 2px solid #005792; /* Underline effect */
-    text-align: center; /* Center align the title */
-    border-radius: 5px; /* Optional: adds rounded corners to the background */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: subtle shadow around the text for emphasis */
-    padding: 10px;
-}
-
-.form-buttons {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .form-buttons .btn-success {
-        margin-left: auto; /* Pushes the second button to the right */
-    }
+        .bad { background-color: #ffffcc;}
+        .weak { background-color: #c2e699; }
+        .average { background-color: #78c679; }
+        .good { background-color: #31a354; }
+        .excellent { background-color: #006837; color: white;}
+        .not-achieved {background-color: red; color: white;}
+        
     .na {
     background-color: gray;
     color: white;
@@ -173,22 +205,7 @@
             background-color: #ccffcc; /* Light Green */
         }
 
-        .scenario_table {
-    width: auto; /* Auto width based on content */
-    border-collapse: collapse;
-    font-size: 14px;
-    }
-    th {
-        padding: 4px;
-        text-align: left;
-        border: 1px solid #ddd;
-        
-    }
-    .scenario-input, .scenario-name, .scenario-description {
-        padding: 10px;
-        text-align: left;
-        border: 1px solid #ddd;
-    }
+       
         
     </style>
 </head>
@@ -217,71 +234,13 @@
     </form>
 </div> 
 </nav>
-<div class="content-container cover">
-    <h5 class="main_title">{%translate "Objective Achievements Per NBS And For Each NCP, Based on Model Predictions for 2050" %}</h5>
-     <div class="form-and-legend">
-        <div class="form-container">
-            <h5>{% translate "Compare Results for Other Land Use and Climate Change Scenarios in Your Pondscape" %}</h5>
-            <form method="get" action="{% url 'show_results' %}">
-                <table class="scenario_table">
-                    <thead class="thead">
-                        <tr>
-                            <th>{% translate "Select" %}</th>
-                            <th>{% translate "Land Use" %}</th>
-                            <th>{% translate "Climate Change" %}</th>
-                            <th>{% translate "Name" %}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                {% for scenario in all_scenarios %}
-                <div class="form-check">
-                    <tr>
-                        <td class="scenario-input">
-                            <input type="checkbox" name="scenario_ids" value="{{ scenario.id }}" id="scenario{{ scenario.id }}">
-                            <label for="scenario{{ scenario.id }}"></label>
-                        </td>
-                        <td class="scenario-description {% if scenario.landuse == 'No Change' %}land-use-no-change{% elif scenario.landuse == 'Slight' %}land-use-slight{% elif scenario.landuse == 'Moderate' %}land-use-moderate{% elif scenario.landuse == 'Strong' %}land-use-strong{% endif %}">
-                            {% trans scenario.landuse %}
-                        </td>
-                        <td class="scenario-description {% if scenario.climate == 'No Change' %}climate-change-no-change{% elif scenario.climate == 'Slight' %}climate-change-slight{% elif scenario.climate == 'Moderate' %}climate-change-moderate{% elif scenario.climate == 'Strong' %}climate-change-strong{% endif %}">
-                            {% trans scenario.climate %}
-                        </td>
-                        <td class="scenario-name">
-                            {% trans scenario.description %}
-                        </td>
-                    </tr>
-                </div>
-                {% endfor %}
-            </tbody>
-        </table>
-                <div class="form-buttons">
-                <button type="submit" class="btn btn-primary mt-3">{% translate "Compare Results for Scenarios" %}</button>
-                
-                </div>
-            </form>
-        </div>
-        <div class="legend">
-            <h3>{% translate "Legend" %}</h3>
-            <div><p>{% translate "The results illustrate computed scores(%) presenting at what level the decision-maker's management objectives is reached for each NBS implementation and per each selected NCP indicator, considering the conditions of evolution of the territory and climate in 2050. The global score illustrates the weighted average score." %}</p>
-            </div>
-            <div><p>The management objectives are:</p></div>
-            <div><span class="not-achieved">&nbsp;&nbsp;&nbsp;&nbsp;</span> 0%: {%translate "Not achieved" %}</div>
-            <div><span class="bad">&nbsp;&nbsp;&nbsp;&nbsp;</span> 1%-20%: {%translate "Barely achieved" %}</div>
-            <div><span class="weak">&nbsp;&nbsp;&nbsp;&nbsp;</span> 20%-40%: {%translate "Minimally achieved" %}</div>
-            <div><span class="average">&nbsp;&nbsp;&nbsp;&nbsp;</span> 40%-60%: {%translate "Partially achieved" %}</div>
-            <div><span class="good">&nbsp;&nbsp;&nbsp;&nbsp;</span> 60%-80%: {%translate "Mostly achieved" %}</div>
-            <div><span class="excellent">&nbsp;&nbsp;&nbsp;&nbsp;</span> 80%-100%: {%translate "Fully achieved" %}</div>
-            <a href="{% url 'start_analysis_newpondscape' %}" class="btn btn-success mt-4">{% translate "Start a New Analysis For A New Pondscape" %}</a>
-            <a href="{% url 'start_analysis_samepondscape' %}" class="btn btn-success mt-4">{% translate "Start a New Analysis For The Same Pondscape" %}</a>
-            <!--<a href="{% static 'pdf/handbook.pdf' %}#page=5">Go to Page 5 of PDF</a>-->
-        </div>
-            
-        </div>
+<div class="content-container">
+    <!-- Results Table Section, unchanged from your original code -->
     <div class="table-container">
         {% if selected_scenarios %}
             {% for scenario_key, scenario_data in data.items %}
                 <div>
-                    <h4 class="table-caption">Your selected scenario: {% translate scenario_key.0 %}</h4>
+                    <h4 class="table-caption">The selected scenario: {% translate scenario_key.0 %}</h4>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -289,7 +248,6 @@
                                 {% for title in criteria_titles %}
                                     <th>{{ title|add_subscript|safe }}</th>
                                 {% endfor %}
-                                <!--<th style="border:none;"></th>-->
                                 <th>Weighted Average</th>
                             </tr>
                         </thead>
@@ -300,7 +258,7 @@
                                     {% for value in details.values2 %}
                                         <td class="{% if value == 'N/A' %}na{% elif value == 0 %}not-achieved{% elif value < 20 %}bad{% elif value < 40 %}weak{% elif value < 60 %}average{% elif value < 80 %}good{% else %}excellent{% endif %}">
                                             {% if value == 'N/A' %}
-                                                <strong>N/A</strong>
+                                                <strong>Unknown</strong>
                                             {% elif value == 0 %}
                                                 <strong>Not Achieved</strong>
                                             {% elif value < 20 %}
@@ -312,7 +270,7 @@
                                             {% elif value < 80 %}
                                                 <strong>Mostly Achieved</strong>
                                             {% else %}
-                                                <strong>Fully Achieved</strong>
+                                                <strong>Achieved</strong>
                                             {% endif %}
                                         </td>
                                     {% endfor %}
@@ -339,7 +297,59 @@
             {% endfor %}
         {% endif %}
     </div>
+
+    <!-- Sidebar Section -->
+    <div class="sidebar">
+        <!-- Legend Box -->
+        <div class="legend">
+            <h5>{% translate "Legend" %}</h5>
+            <p>The results is based on computed scores(%) presenting at what level the decision-maker's management objectives is reached for each NBS implementation and per each selected NCP indicator, considering the conditions of evolution of the territory and climate in 2050. The global score illustrates the weighted average score.
+                The management objectives are:
+                </p>
+            <div><span class="not-achieved">&nbsp;&nbsp;&nbsp;&nbsp;</span> 0%: {%translate "Not achieved" %}</div>
+            <div><span class="bad">&nbsp;&nbsp;&nbsp;&nbsp;</span> 0%-20%: {%translate "Barely achieved" %}</div>
+            <div><span class="weak">&nbsp;&nbsp;&nbsp;&nbsp;</span> 20%-40%: {%translate "Minimally achieved" %}</div>
+            <div><span class="average">&nbsp;&nbsp;&nbsp;&nbsp;</span> 40%-60%: {%translate "Partially achieved" %}</div>
+            <div><span class="good">&nbsp;&nbsp;&nbsp;&nbsp;</span> 60%-80%: {%translate "Mostly achieved" %}</div>
+            <div><span class="excellent">&nbsp;&nbsp;&nbsp;&nbsp;</span> 80%-100%: {%translate "Achieved" %}</div>
+            
+        </div>
+
+        <!-- Compare Scenarios Section -->
+        <div class="compare-options">
+            <h5>{% translate "Compare Results for Other Land Use and Climate Change Scenarios in Your Pondscape" %}</h5>
+            <form method="get" action="{% url 'show_results' %}">
+                <table class="scenario_table">
+                    <thead>
+                        <tr>
+                            <th>{% translate "Select" %}</th>
+                            <th>{% translate "Land Use" %}</th>
+                            <th>{% translate "Climate Change" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scenario in all_scenarios %}
+                        <tr>
+                            <td><input type="checkbox" name="scenario_ids" value="{{ scenario.id }}"></td>
+                            <td class="{% if scenario.landuse == 'No Change' %}land-use-no-change{% elif scenario.landuse == 'Slight' %}land-use-slight{% elif scenario.landuse == 'Moderate' %}land-use-moderate{% elif scenario.landuse == 'Strong' %}land-use-strong{% endif %}">{{ scenario.landuse }}</td>
+                            <td class="{% if scenario.climate == 'No Change' %}climate-change-no-change{% elif scenario.climate == 'Slight' %}climate-change-slight{% elif scenario.climate == 'Moderate' %}climate-change-moderate{% elif scenario.climate == 'Strong' %}climate-change-strong{% endif %}">{{ scenario.climate }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary mt-3">{% translate "Compare Results for Scenarios" %}</button>
+            </form>
+        </div>
+
+        <!-- New Analysis Options Section -->
+    <div class="new-analysis-options">
+        <h5>{% translate "Start a New Analysis" %}</h5>
+        <a href="{% url 'start_analysis_samepondscape' %}" class="btn btn-success mb-2 w-100">{% translate "Start a New Analysis For The Same Pondscape" %}</a>
+        <a href="{% url 'start_analysis_newpondscape' %}" class="btn btn-success w-100">{% translate "Start a New Analysis For A New Pondscape" %}</a>
+    </div>
+    </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>

@@ -84,6 +84,8 @@ class criteria(models.Model):
     ncp = models.CharField(max_length=255, verbose_name="NCP Name", blank=True, null=True)
     unit_of_measure = models.CharField(max_length=255, verbose_name="Unit of Measure")
     description = models.CharField(max_length=255, verbose_name="Description", blank=True, null=True)
+    objective = models.CharField(max_length=255, verbose_name="Objective", blank=True, null=True)
+    handbook_page = models.IntegerField(verbose_name="Handbook page", blank=True, null=True)
     s_threshold_min = models.FloatField(verbose_name="default minimum satisfaction threshold", blank=True, null=True)
     s_threshold_max = models.FloatField(verbose_name="default maximum satisfaction threshold", blank=True, null=True)
 

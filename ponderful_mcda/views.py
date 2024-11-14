@@ -352,7 +352,7 @@ def create_alternatives(request):
 
 @login_required
 def select_criteria(request):
-    criteria_queryset = criteria.objects.all()  # Get the queryset
+    criteria_queryset = criteria.objects.all().order_by('id')  # Get the queryset
     for crt in criteria_queryset:
         print(f"Name: {crt.name}, Unit of Measure: {crt.unit_of_measure}")
 
@@ -375,6 +375,8 @@ def select_criteria(request):
             'ncp': crt.ncp,
             'name': crt.name,
             'unit_of_measure': crt.unit_of_measure,
+            'objective': crt.objective,
+            'handbook': crt.handbook_page,
         })
 
     return render(request, 'step1.html', {'form': form, 'criteria_data': criteria_data})
@@ -441,7 +443,7 @@ def add_thresholds(request):
             "NCP": criterion.ncp,
             "Description": criterion.description,
         }
-        for criterion in criteria.objects.filter(id__in=selected_criteria)
+        for criterion in criteria.objects.filter(id__in=selected_criteria).order_by('id')
     ]
     form_initial_data = [
     {

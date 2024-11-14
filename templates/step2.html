@@ -28,14 +28,20 @@
 </head>
         <style>
 
+/* Prevent the entire page from scrolling */
+body {
+    overflow: hidden; /* Disables scrolling on the body */
+}
+
 .cover {
-    background-color: beige; 
+    background-color: beige;
     background-size: cover;
     background-repeat: no-repeat;
     display: flex;
-    justify-content: center; /* Center children horizontally */
-    align-items: center; /* Center children vertically */
-    height: 100vh; /* Use the full height of the viewport */
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Take full viewport height */
+    overflow: hidden; /* Ensures no scrolling within the main cover */
 }
 
 .navbar {
@@ -62,14 +68,16 @@
 }
 
 .form-container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-            margin-top: 20px;
-        }
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    /*margin-top: 5px;*/
+    max-height: 80vh;        /* Restrict to 80% of the viewport height */
+    overflow-y: auto;        /* Enable scroll inside the container */
+}
 
         .centered-text-container h5 {
             font-weight: bold;
@@ -178,11 +186,7 @@
             background-color: #218838;
         }
 
-        #info-icon {
-            color: #007bff;
-            margin-left: 5px;
-            cursor: pointer;
-        }
+        
 
         #overlay {
             position: fixed;
@@ -195,17 +199,7 @@
             z-index: 999;
         }
 
-        #info-box {
-            display: none;
-            position: fixed;
-            background-color: #f9f9f9;
-            padding: 20px;
-            border: 1px solid #ccc;
-            width: 300px;
-            z-index: 1000;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
+        
 
         .centered {
             top: 50%;
@@ -243,19 +237,17 @@
                 <div class="form-container">
                   <div class="centered-text-container">
                     <h5>Rank the priority of the NCP indicators
-                      <i id="info-icon" class="fas fa-info-circle"></i>
+                      
                     </h5>
-                    <p>Rank the selected NCP indicators based on their level of importance from <strong>Least Important</strong> to <strong>Most Important</strong>.</p>
-                  </div>
+                    Rank the selected NCP indicators based on their level of importance from <strong>Least Important</strong> to <strong>Most Important</strong>.<br>
+                    <br>An NCP (Nature's Contribution to People) indicator becomes more significant when it aligns closely with a priority management objective. For instance, in a region facing persistent flooding issues yet already possessing a high diversity of aquatic plants, the water quantity indicator would likely be more important than the indicator for aquatic plant species.<br>
+                    <br>
+                </div>
             
                   <!-- Overlay -->
                   <div id="overlay"></div>
             
-                  <!-- Info Box -->
-                  <div id="info-box" class="centered">
-                    Make sure to consider each indicator carefully before making your decision.
-                    <button id="close-info-box" style="display: block; margin-top: 10px;">Close</button>
-                  </div>
+                  
             
                   <form method="post" action="#">
                     {% csrf_token %}
@@ -281,18 +273,7 @@
                 </div>
               </div>
             
-              <script>
-                // Info box toggle
-                document.getElementById('info-icon').addEventListener('click', function () {
-                  document.getElementById('overlay').style.display = 'block';
-                  document.getElementById('info-box').style.display = 'block';
-                });
-            
-                document.getElementById('close-info-box').addEventListener('click', function () {
-                  document.getElementById('overlay').style.display = 'none';
-                  document.getElementById('info-box').style.display = 'none';
-                });
-              </script>
+              
 
         </body>
     

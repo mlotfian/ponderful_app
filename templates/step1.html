@@ -64,13 +64,16 @@
 }
 
 .form-container {
-    width: 100%;  /* Use 100% of the container width */
-    max-width: 900px;  /* Maximum width */
+    
+
+    display: inline-block;   /* Allows container to grow with content */
+    width: auto;             /* Adjusts to content size */
     padding: 20px;
-    margin: auto;  /* This will help in centering if the parent is flex */
+    margin: auto;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: white;
     border-radius: 5px;
+    overflow-x: auto;
     
 }
 
@@ -124,6 +127,7 @@ th, td {
         padding: 4px;
         text-align: left;
         
+        white-space: nowrap;
         
     }
 
@@ -215,7 +219,7 @@ th, td {
             <div class="form-container">
                 <div class="centered-text-container">
                 <h5 style="text-align: center;">{% translate "Choice of NCP indicators (Nature's Contribution to People)" %}
-                    <i id="info-icon" class="fas fa-info-circle"></i>
+                    
                 </h5>
                 <p>{%translate "Which NCP indicators do you want to take into account in your analysis?" %}</p>
             </div>
@@ -240,6 +244,8 @@ th, td {
                                 
                                 <th>{% translate "NCP Indicator" %}</th>
                                 <th>{% translate "Unit of Measure" %}</th>
+                                <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -256,6 +262,8 @@ th, td {
                                 </td>
                                 
                                 <td>{{ item.unit_of_measure|add_subscript|safe }}</td>
+                                <td>{{ item.objective }}</td>
+                                <td><a href="{% static 'pdf/handbook.pdf' %}#page={{ item.handbook }}">Check technical handbook</a></td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -267,7 +275,7 @@ th, td {
         </div>
         </body>
 
-        <script>
+       <!-- <script>
             // the function for the text box popup each time the i icon is clicked
     document.getElementById('info-icon').addEventListener('click', function() {
             var overlay = document.getElementById('overlay');
@@ -306,6 +314,6 @@ th, td {
         }
     });
 });
-        </script>
+        </script>-->
     
 </html>

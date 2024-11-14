@@ -175,10 +175,10 @@ table {
       
       <div class="form-container">
     {% block content %}
-    <div class="centered-text-container"><h5>{% translate "Choice of climate and land-use scenarios for 2050" %}</h5>
-        <p>{% translate "Select The Land Use and Climate Change Scenario <b>in Your Pondscape</b>, Under Which You Want to Measure the Impact." %} </p>
-    </div>
-    
+    <div class="centered-text-container"><h5>{% translate "Choice of climate and land-use scenarios in your pondscape for 2050" %}</h5>
+        </div>
+        {% translate "The multi-criteria analysis will take specific land use and climate change scenarios into account. Which of these scenarios do you believe is the most likely for your management area?" %} <br>
+    <br>
     <div class="table-container">
 <form method="post" action="{% url 'select_scenario' %}">
     {% csrf_token %}
