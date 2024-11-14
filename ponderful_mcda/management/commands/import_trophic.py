@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Path to your CSV file inside the container
-        csv_file_path = '/app/trophic_state/Percent_change_improvement.csv'
+        csv_file_path = '/app/trophic_state/Percent_change_improvement_2.csv'
 
         # Read the CSV file using pandas
         df = pd.read_csv(csv_file_path)

@@ -294,11 +294,14 @@
                         {{ form.name }}
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="total_pond">Total Number of Existing Ponds in Your Pondscape (size between 100 m<sup>2</sup> to 10000 m<sup>2</sup>):</label>
+                        <label class="form-label" for="total_pond">How many ponds currently exist in your management area (your pondscape)? (Ponds of size between 100 m<sup>2</sup> to 10000 m<sup>2</sup>)</label>
                         {{ form.total_pond }}
+                        <div class="invalid-feedback" id="totalPondError" style="display: none; color: red;">
+                            Please enter the number of ponds in your management area.
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="trophic_state">Global Trend of Trophic State in Your Pondscape:</label>
+                        <label class="form-label" for="trophic_state">What is the global average trophic state in your management area (your pondscape)?</label>
                         {{ form.trophic_state }}
                     </div>
                     
@@ -324,16 +327,30 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const totalPondInput = document.getElementById("id_total_pond");
+            const totalPondError = document.getElementById("totalPondError");
+
+            // Ensure the total_pond field cannot accept negative values
             if (totalPondInput) {
-                totalPondInput.setAttribute("min", "0");  // Set minimum input value to 0
+                totalPondInput.setAttribute("min", "0");  
                 totalPondInput.addEventListener("input", function() {
                     if (parseInt(this.value) < 0) {
                         alert("The number of ponds cannot be negative.");
-                        this.value = "";  // Clear the input
+                        this.value = "";  
                     }
                 });
             }
+
+            // Validate form on submission
+            document.getElementById("study-area-form").addEventListener("submit", function(event) {
+                if (!totalPondInput.value) {
+                    totalPondError.style.display = "block"; // Show error
+                    event.preventDefault(); // Prevent form submission
+                } else {
+                    totalPondError.style.display = "none"; // Hide error if valid
+                }
+            });
         });
+        
     </script>
 
     <script>

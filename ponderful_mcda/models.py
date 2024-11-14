@@ -64,7 +64,7 @@ class studyarea(models.Model):
     name = models.CharField(max_length=255, verbose_name="Study Area Name")
     landuseintensity = models.CharField(max_length=255, choices = landuseintensity_choices,blank=True, verbose_name=_('Landuse Intensity'))
     trophic_state = models.ForeignKey(TrophicState, on_delete=models.CASCADE)
-    total_pond = models.IntegerField(verbose_name="Total number of existing ponds", blank=True, null=True)
+    total_pond = models.IntegerField(verbose_name="Total number of existing ponds")
     num_small_pond = models.IntegerField(verbose_name="Number of curret small size ponds", blank=True, null=True)
     num_avg_pond = models.IntegerField(verbose_name="Number of curret average size ponds", blank=True, null=True)
     num_big_pond = models.IntegerField(verbose_name="Number of curret big size ponds", blank=True, null=True)

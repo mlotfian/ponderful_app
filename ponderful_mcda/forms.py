@@ -35,11 +35,7 @@ class StudyAreaForm(ModelForm):
         fields = ['name','total_pond', 'trophic_state', 'geom']
         widgets = {'geom': gis_forms.OSMWidget}
 
-    def clean_total_pond(self):
-        total_pond = self.cleaned_data.get("total_pond")
-        if total_pond < 0:
-            raise forms.ValidationError("The number of ponds cannot be negative.")
-        return total_pond
+    
     
 
 class StudyAreaSelectionForm(forms.Form):

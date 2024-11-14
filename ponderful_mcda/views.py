@@ -45,7 +45,7 @@ class SignUpView(CreateView):
     template_name = "registration/signup.html"
 
 @login_required
-def start_analysis(request):
+def start_analysis_newpondscape(request):
     if request.method == "GET":
         # Create a new AnalysisRun instance for the current user
         max_run_number = AnalysisRun.objects.filter(user=request.user).aggregate(Max('analysis_number'))['analysis_number__max']
@@ -61,6 +61,27 @@ def start_analysis(request):
         request.session['analysis_run_id'] = new_run.id 
         # Redirect to the first step of the analysis or a management page
         return redirect(reverse('map2'))  # Adjust the redirection as needed
+    else:
+        # Redirect back or show an error if the method is not GET
+        return redirect('/')
+
+@login_required
+def start_analysis_samepondscape(request):
+    if request.method == "GET":
+        # Create a new AnalysisRun instance for the current user
+        max_run_number = AnalysisRun.objects.filter(user=request.user).aggregate(Max('analysis_number'))['analysis_number__max']
+        next_run_number = 1 if max_run_number is None else max_run_number + 1
+
+        # Create a new AnalysisRun instance with the next run_number
+        new_run = AnalysisRun.objects.create(
+            user=request.user,
+            analysis_number=next_run_number,
+            # Add any other fields as necessary
+        )
+        # add analysis run number to session
+        request.session['analysis_run_id'] = new_run.id 
+        # Redirect to the first step of the analysis or a management page
+        return redirect(reverse('create_alternatives'))  # Adjust the redirection as needed
     else:
         # Redirect back or show an error if the method is not GET
         return redirect('/')
@@ -223,6 +244,15 @@ def map_view(request):
                         'Land Use: No Change, Climate Change: SSP1': '/app/only_CC/GHG_CC_SSP1_percent_difference.tif',
                         'Land Use: No Change, Climate Change: SSP3': '/app/only_CC/GHG_CC_SSP3_percent_difference.tif',
                         'Land Use: No Change, Climate Change: SSP5': '/app/only_CC/GHG_CC_SSP5_percent_difference.tif',},
+                    
+                    'Water quality':
+                        {'Land Use: SSP1, Climate Change: SSP1': '/app/combinedCC_LU/TN_SSP1_percent_difference.tif',
+                        'Land Use: SSP3, Climate Change: SSP3': '/app/combinedCC_LU/TN_SSP3_percent_difference.tif',
+                        'Land Use: SSP5, Climate Change: SSP5': '/app/combinedCC_LU/TN_SSP5_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP1': '/app/only_CC/TN_CC_SSP1_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP3': '/app/only_CC/TN_CC_SSP3_percent_difference.tif',
+                        'Land Use: No Change, Climate Change: SSP5': '/app/only_CC/TN_CC_SSP5_percent_difference.tif',},
+                    
                 }
                 # missing scenarios for water storage, to be checked with Tuba...
 
@@ -408,7 +438,8 @@ def add_thresholds(request):
             "name": criterion.name,
             "default_min": criterion.s_threshold_min,
             "default_max": criterion.s_threshold_max,
-            "NCP": criterion.ncp
+            "NCP": criterion.ncp,
+            "Description": criterion.description,
         }
         for criterion in criteria.objects.filter(id__in=selected_criteria)
     ]
@@ -509,6 +540,7 @@ def mcda_results(request):
     country = study_area.country
     current_ponds = study_area.total_pond
     trophic_state = study_area.trophic_state
+    
 
     
     # getting all scenario ids
@@ -564,8 +596,9 @@ def mcda_results(request):
                 #creation
                 if nbs_action[0] == 46:
                     #print(indicator)
-                    if indicator not in [19,18]: #['GHG emission (CH4, CO2)', 'Water quantity']:
+                    if indicator not in [19,18,55]: #['GHG emission (CH4, CO2)', 'Water quantity', 'Water quality']:
                         #ncp_indicator = criteria.objects.get(name=indicator)
+                        # get current and future spcies richness from the accumulation curves based on the number of current and future ponds
                         ncp_current = accumulation.objects.get(country = country, pond_num = current_ponds, indicator = indicator)
                         ncp_future = accumulation.objects.get(country = country, pond_num = nbs_action[1]+current_ponds, indicator = indicator)
                         
@@ -576,33 +609,81 @@ def mcda_results(request):
                         scenario_change = scenario_change_obj.average_value
 
                         # calculate output 
-                        output = ((future_richness + (future_richness*scenario_change/100))-current_richness)/current_richness*100
+                        if current_ponds ==0:
+                            #current_richness =1
+                            output = ((future_richness + (future_richness*scenario_change/100))-current_richness)/current_richness*100
+                        else:
+                            output = ((future_richness + (future_richness*scenario_change/100))-current_richness)/current_richness*100
                         #print(output)
                         all_values.append((indicator,_("Creation of ") + str(nbs_action[1]) + _(" Clean Water Ponds"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
                     # water quantity
                     if indicator == 19:
-                        output = ((nbs_action[1]+current_ponds)-current_ponds)/current_ponds*100
+                        if current_ponds ==0:
+                            output = ((nbs_action[1]+current_ponds)-current_ponds)/0.000001*100
+                        else:
+                            output = ((nbs_action[1]+current_ponds)-current_ponds)/current_ponds*100
                         #print(output)
                         all_values.append((indicator,_("Creation of ") + str(nbs_action[1]) + _(" Clean Water Ponds"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
+                    
+                    # water quality
+                    if indicator == 55:
+                        if current_ponds != 0:
+                            future_ponds = nbs_action[1]
 
+                            # get value for Eutrophic state from 
+                            # eutrophic id=4
+                            clean_water_tn = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=4)
+                            clean_water_tn = clean_water_tn.average
+
+                            # get value for current trophic state chosen by the user
+                            current_tn = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=trophic_state.id)
+                            current_tn = current_tn.average
+
+                            # get average values for scenario
+                            scenario_change_obj = StudyAreaResult.objects.get(study_area = study_area_id, scenario = scenario_id, criteria = indicator)
+                            scenario_change = scenario_change_obj.average_value
+
+                            future_tn_avg = (future_ponds * clean_water_tn + current_tn * current_ponds)/(future_ponds + current_ponds)
+
+                            output = (((future_tn_avg + (future_tn_avg*(scenario_change/100)))-current_tn)/current_tn)*100
+                            all_values.append((indicator,_("Creation of ") + str(nbs_action[1]) + _(" Clean Water Ponds"), output*(-1), satisfaction_c, satisfaction_n, weight, scenario_id))
+                    
                 
                     #output = modeling_result.objects.filter(action=nbs_action[0],criteria=indicator, pond_num=ap[1], scenario=scenario_id).values_list('output', flat=True).distinct().first()
                     #print("here", ap[0])
                     
                 # water management
                 elif nbs_action[0] == 14:
-                    if indicator not in [19,18]:
+                    if indicator not in [19,18,55]:
+
+                        # Check if the trophic state is 'unknown' and set it to 'hypertrophic' if true
+                        if trophic_state.trophic_state == 'unknown':
+                        # Retrieve the 'hypertrophic' TrophicState record
+                            hypertrophic_state = TrophicState.objects.get(trophic_state='hypertrophic')
+                            trophic_state = hypertrophic_state  # Set trophic_state to hypertrophic
 
                         # Get the IndicatorTrophicData record for the indicator and trophic state
                         current_ncp_wq = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=trophic_state.id)
         
                         # Get the current trophic state's rank
-                        current_trophic_state = TrophicState.objects.get(id=trophic_state.id)
-                        current_rank = current_trophic_state.rank
-                        print('trohic', trophic_state.degree)
-                        previous_trophic_state = TrophicState.objects.get(degree=current_rank - 1)
-                        print('trohic_oneback', previous_trophic_state.degree)
-                        future_ncp_wq = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=previous_trophic_state.id)
+                        current_rank = trophic_state.rank
+                        print('trophic', trophic_state.degree)
+
+                        # Check if the current state is already at the lowest degree (degree 1)
+                        if current_rank == 1:
+                        # No previous trophic state exists, so we keep the current trophic state as it is
+                            print("The current trophic state is already at the minimum degree (1).")
+                            future_ncp_wq = current_ncp_wq  # Retain the current trophic state data
+                        else:
+                        # Retrieve the previous trophic state by rank, excluding 'unknown' if it exists at the same rank
+                            previous_trophic_state = TrophicState.objects.filter(degree=current_rank - 1).exclude(trophic_state='unknown').first()
+                            if previous_trophic_state:
+                                print('trophic_oneback', previous_trophic_state.degree)
+            
+                                # Get the IndicatorTrophicData for the previous trophic state
+                                future_ncp_wq = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=previous_trophic_state.id)
+                            else:
+                                print("No valid previous trophic state found.")
 
                         scenario_change_obj = StudyAreaResult.objects.get(study_area = study_area_id, scenario = scenario_id, criteria = indicator)
                         scenario_change = scenario_change_obj.average_value
@@ -611,17 +692,37 @@ def mcda_results(request):
                         output = (((future_ncp_wq.average + (future_ncp_wq.average*(scenario_change/100)))-current_ncp_wq.average)/current_ncp_wq.average)*100
                         all_values.append((indicator,_("Management of Water Quality"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
                         #print(output)
-                        # if emmissions
-                    if indicator==18:
+
+                    # if emmissions
+                    if indicator in [18,55]:
+                        # Check if the trophic state is 'unknown' and set it to 'hypertrophic' if true
+                        if trophic_state.trophic_state == 'unknown':
+                        # Retrieve the 'hypertrophic' TrophicState record
+                            hypertrophic_state = TrophicState.objects.get(trophic_state='hypertrophic')
+                            trophic_state = hypertrophic_state  # Set trophic_state to hypertrophic
+
+                        # Get the IndicatorTrophicData record for the indicator and trophic state
                         current_ncp_wq = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=trophic_state.id)
         
                         # Get the current trophic state's rank
-                        current_trophic_state = TrophicState.objects.get(id=trophic_state.id)
-                        current_rank = current_trophic_state.rank
-                        print('trohic', trophic_state.degree)
-                        previous_trophic_state = TrophicState.objects.get(degree=current_rank - 1)
-                        print('trohic_oneback', previous_trophic_state.degree)
-                        future_ncp_wq = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=previous_trophic_state.id)
+                        current_rank = trophic_state.rank
+                        print('trophic', trophic_state.degree)
+
+                        # Check if the current state is already at the lowest degree (degree 1)
+                        if current_rank == 1:
+                        # No previous trophic state exists, so we keep the current trophic state as it is
+                            print("The current trophic state is already at the minimum degree (1).")
+                            future_ncp_wq = current_ncp_wq  # Retain the current trophic state data
+                        else:
+                        # Retrieve the previous trophic state by rank, excluding 'unknown' if it exists at the same rank
+                            previous_trophic_state = TrophicState.objects.filter(degree=current_rank - 1).exclude(trophic_state='unknown').first()
+                            if previous_trophic_state:
+                                print('trophic_oneback', previous_trophic_state.degree)
+            
+                                # Get the IndicatorTrophicData for the previous trophic state
+                                future_ncp_wq = IndicatorTrophicData.objects.get(indicator=indicator, trophic_state=previous_trophic_state.id)
+                            else:
+                                print("No valid previous trophic state found.")
 
                         scenario_change_obj = StudyAreaResult.objects.get(study_area = study_area_id, scenario = scenario_id, criteria = indicator)
                         scenario_change = scenario_change_obj.average_value
@@ -643,7 +744,7 @@ def mcda_results(request):
                         output = scenario_change
                         all_values.append((indicator,_("No action"), output, satisfaction_c, satisfaction_n, weight, scenario_id))
                         # if emmissions
-                    if indicator==18:
+                    if indicator in [18,55]:
                         scenario_change_obj = StudyAreaResult.objects.get(study_area = study_area_id, scenario = scenario_id, criteria = indicator)
                         scenario_change = scenario_change_obj.average_value
                         output = scenario_change
@@ -726,7 +827,7 @@ def show_results(request):
     
     # Combine the prioritized and remaining alternatives
     alternatives = existing_prioritized + remaining_alternatives
-    print(alternatives)
+    #print(alternatives)
     
     # Fetch mcda_result entries for selected scenarios within the analysis_run
     results_by_scenario = {}

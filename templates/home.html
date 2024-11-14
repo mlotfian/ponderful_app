@@ -200,10 +200,10 @@ width: 100px;
   <div class="div1">
     <!-- Introduction Part 1 -->
     <div id="introPart1" class="intro-section active">
-      <p>{% translate "This tool is designed to assist decision-makers in understanding the benefits of ponds for biodiversity, climate change mitigation, and ecosystem, encouraging them to increase the presence of ponds in their regions.</br>Developed as part of the EU Horizon 2020 project, " %} <a href="https://ponderful.eu/" target="_blank">PONDERFUL</a> {% translate ", the tool explores the role of ponds and pond landscapes (pondscapes) as Nature-Based Solutions (NBS). It enables decision-makers to evaluate diverse NBS strategies, including pond creation and water quality management, assessing their impacts on various Nature's Contributions to People (NCP) indicators such as biodiversity and climate resilience. Additionally, the tool allows for scenario analysis, evaluating outcomes under different climate change and land use projections for 2050." %}</p>
+      <p>{% translate "This tool is designed to assist decision-makers in understanding the benefits of ponds for biodiversity, climate change mitigation, and ecosystem, helping them to understand the benefits of increasing the presence of ponds in their regions.</br>Developed as part of the EU Horizon 2020 project, " %} <a href="https://ponderful.eu/" target="_blank">PONDERFUL</a> {% translate ", the tool explores the role of ponds and pond landscapes (pondscapes) as Nature-Based Solutions (NBS). It enables decision-makers to evaluate diverse NBS strategies, including pond creation and water quality management, assessing their impacts on various Nature's Contributions to People (NCP) indicators such as biodiversity and climate resilience. Additionally, the tool allows for scenario analysis, evaluating outcomes under different climate change and land use projections for 2050." %}</p>
       
       <div class="button-container">
-        <a href="{% url 'start_analysis' %}" class="btn btn-secondary btn-lg">{% translate "Skip Introduction" %}</a>
+        <a href="{% url 'start_analysis_newpondscape' %}" class="btn btn-secondary btn-lg">{% translate "Skip Introduction" %}</a>
         <button onclick="showNextPart()" class="btn btn-primary btn-lg">{% translate "Next" %}</button>
       </div>
     </div>
@@ -214,9 +214,10 @@ width: 100px;
 
       <ul>
           <li>{% translate "Your study area (or define it spatially if it is not yet available)" %}</li>
-          <li>{% translate "The actions you wish to implement in your area (NBS): maintain the status quo, moderately or significantly increase the number of ponds, or management of water quality?" %}</li>
-          <li>{% translate "The ecological indicators that are most important to you (NCP)" %}</li>
+          <li>{% translate "The actions you wish to implement in your area (Nature Based Solution - NBS): maintain the status quo, moderately or significantly increase the number of ponds, or management of water quality?" %} <a href="{% static 'pdf/handbook.pdf' %}#page=38">Handbook Page 34</a></li>
+          <li>{% translate "The ecological indicators that are most important to you (Nature Contribution to People - NCP) " %} <a href="{% static 'pdf/handbook.pdf' %}#page=38">Handbook Page 34</a></li>
           <li>{% translate "The climate and land-use scenarios for the year 2050 under which you would like to perform the multi-criteria analysis." %}</li>
+          
       </ul>
   
       <p>{% translate "The results of the multi-criteria analysis are based on measurements and models produced within the Ponderful project. However, they should be interpreted as indicative. A more precise analysis based on local data will be needed afterward to define an operational and contextualized strategy for each area." %}</p>
@@ -224,7 +225,7 @@ width: 100px;
       <div class="button-container">
         <button onclick="showPreviousPart()" class="btn btn-secondary btn-lg">{% translate "Back" %}</button>
         {% if user.is_authenticated %}
-        <a href="{% url 'start_analysis' %}" class="btn btn-success btn-lg">{% translate "Start" %}</a>
+        <a href="{% url 'start_analysis_newpondscape' %}" class="btn btn-success btn-lg">{% translate "Start" %}</a>
         {% else %}
         <a href="{% url 'login' %}" class="btn btn-success btn-lg">{% translate "Start" %}</a>
         {% endif %}

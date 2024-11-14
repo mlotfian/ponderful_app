@@ -255,7 +255,7 @@ th, td {
                                     <!--<i class="fas fa-info-circle ncp-info-icon" data-ncp="{{ item.ncp }}" style="margin-left: 10px; cursor: pointer;"></i>-->
                                 </td>
                                 
-                                <td>{{ item.unit_of_measure }}</td>
+                                <td>{{ item.unit_of_measure|add_subscript|safe }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
