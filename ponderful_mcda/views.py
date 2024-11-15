@@ -820,7 +820,14 @@ def show_results(request):
 
     # Assuming all scenarios within an analysis run share the same criteria and alternatives
     results_sample = mcda_result.objects.filter(scenario=scenarios[0], analysis_run=analysis_run_id).select_related('criteria')
-    criteria_titles = sorted({result.criteria.name for result in results_sample})
+    #criteria_titles = sorted({result.criteria.name for result in results_sample})
+    # Order criteria by ID and extract only the names
+    criteria_titles = list(
+    dict.fromkeys(
+        [result.criteria.name for result in results_sample.order_by('criteria__id')]
+        )
+    )
+    
     alternatives = sorted(set(result.alternative for result in results_sample))
     # order alternatives
     prioritized_order = ['No action', 'Management of Water Quality']
