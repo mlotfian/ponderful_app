@@ -155,7 +155,7 @@ table {
       </span>
 
     
-      <form action="{% url 'set_language' %}" method="post">
+      <!--<form action="{% url 'set_language' %}" method="post">
         {% csrf_token %}
         <input name="next" type="hidden" value="{{ redirect_to }}" />
         <select name="language" onchange="this.form.submit();">
@@ -167,7 +167,7 @@ table {
             </option>
             {% endfor %}
         </select>
-    </form>
+    </form>-->
 </div>
   </nav>
   
@@ -189,7 +189,7 @@ table {
               
               <th>{% translate "Land Use" %}</th>
               <th>{% translate "Climate Change" %}</th>
-              <th>{% translate "Name" %}</th>
+              <th>{% translate "Description" %}</th>
           </tr>
       </thead>
       <tbody>

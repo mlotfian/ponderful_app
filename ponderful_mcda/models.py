@@ -141,7 +141,8 @@ class satisfaction_objectives(models.Model):
 # add discription to the NBS 
 class action_types(models.Model):
     actions_types = [
-    ('Creation of New Ponds', _('Creation of New Ponds')),
+    ('Creation of Clean Water Ponds', _('Creation of Clean Water Ponds')),
+    
     ('Management of Water Quality',_('Management of Water Quality')), # quantity  
     ('No action',_('No action')),
     ]

@@ -155,6 +155,37 @@ def reverse_geocode_country(lat, lon):
         print(f"Error during reverse geocoding: {e}")
         return None
 
+def get_country_from_nearest_point(centroid, gpkg_path):
+    """
+    Find the nearest country based on a point in a GPKG file.
+
+    Args:
+        centroid (Point): The centroid geometry (Shapely Point).
+        gpkg_path (str): Path to the GPKG file containing points with country names.
+
+    Returns:
+        str: Country name based on the nearest point in GPKG.
+    """
+    # Load the GPKG file as a GeoDataFrame
+    gdf = gpd.read_file(gpkg_path)
+
+    # Ensure the centroid and GPKG are in the same CRS
+    if gdf.crs != "EPSG:4326":
+        gdf = gdf.to_crs("EPSG:4326")
+    if centroid.crs != "EPSG:4326":
+        centroid = centroid.to_crs("EPSG:4326")
+
+    # Calculate distances from the centroid to each point in the GPKG
+    gdf['distance'] = gdf.geometry.distance(centroid)
+
+    # Find the closest point
+    nearest_point = gdf.loc[gdf['distance'].idxmin()]
+
+    # Extract the country name from the nearest point
+    country_name = nearest_point['country']  # Adjust this field name to match your GPKG schema
+
+    return country_name
+
 @login_required
 def map_view(request):
     form = StudyAreaForm()
@@ -345,7 +376,7 @@ def create_alternatives(request):
         formset = AlternativesParamsFormSet(queryset=alternatives_params.objects.none())
         # Translate actions based on language preference
         for form in formset:
-            form.fields['action'].choices = [(choice[0], _(choice[1])) for choice in form.fields['action'].choices]
+             form.fields['action'].choices = [(choice[0], _(choice[1])) for choice in form.fields['action'].choices]
 
     return render(request, 'alternatives.html', {'formset': formset})
 # the criteria params form
@@ -555,7 +586,7 @@ def mcda_results(request):
     action_pond = []
     for ac in alt_param:
         # if it is creation
-        if ac[0] == 46:
+        if ac[0] == 47:
             pond_avg = round((ac[1]+ac[2])/2)
             action_pond.append((ac[0],ac[1]))
             action_pond.append((ac[0],ac[2]))
@@ -596,7 +627,7 @@ def mcda_results(request):
         for nbs_action in action_pond:
             for scenario_id in all_scenario_ids:
                 #creation
-                if nbs_action[0] == 46:
+                if nbs_action[0] == 47:
                     #print(indicator)
                     if indicator not in [19,18,55]: #['GHG emission (CH4, CO2)', 'Water quantity', 'Water quality']:
                         #ncp_indicator = criteria.objects.get(name=indicator)

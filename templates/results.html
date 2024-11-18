@@ -97,7 +97,7 @@
           <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
         </span>
 
-        <form action="{% url 'set_language' %}" method="post">
+        <!--<form action="{% url 'set_language' %}" method="post">
             {% csrf_token %}
             <input name="next" type="hidden" value="{{ redirect_to }}" />
             <select name="language" onchange="this.form.submit();">
@@ -109,7 +109,7 @@
                 </option>
                 {% endfor %}
             </select>
-        </form>
+        </form>-->
     </div>
     </nav>
     

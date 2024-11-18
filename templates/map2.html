@@ -210,14 +210,14 @@
 
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     
-    <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);"><i class="fa fa-fw fa-home"></i> {% translate "Home" %}</a></div>
+    <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);"><i class="fa fa-fw fa-home"></i> Home</a></div>
 
     <span class="navbar-brand mb-0 h1">
         <img class="brandsize" src="{% static 'images/logo.png' %}" alt="">
       </span>
 
 
-      <div>
+      <!--<div>
         <form action="{% url 'set_language' %}" method="post">
             {% csrf_token %}
             <input name="next" type="hidden" value="{{ redirect_to }}" />
@@ -231,7 +231,7 @@
                 {% endfor %}
             </select>
         </form>
-    </div>
+    </div>-->
 </nav>
 
     <div id="map"></div>
@@ -369,6 +369,7 @@
                 marker: false,
                 polyline: false,
                 circlemarker: false,
+                circle: false,
                 polygon: {
                     allowIntersection: false,
                     showArea: true

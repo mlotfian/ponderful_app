@@ -196,7 +196,7 @@
           </span>
 
         
-          <form action="{% url 'set_language' %}" method="post">
+          <!--<form action="{% url 'set_language' %}" method="post">
             {% csrf_token %}
             <input name="next" type="hidden" value="{{ redirect_to }}" />
             <select name="language" onchange="this.form.submit();">
@@ -208,7 +208,7 @@
                 </option>
                 {% endfor %}
             </select>
-        </form>
+        </form>-->
     </div>
     </nav>
 
@@ -216,7 +216,7 @@
         <div class="form-container">
             <div class="centered-text-container">
                 <h5>{% translate "Define Management Objectives" %}
-                    <i id="info-icon" class="fas fa-info-circle"></i>
+                    
                 </h5>
                 
                 {% translate "The management objectives represent the decision maker's expectations regarding the increase or decrease of a specific indicator as a result of the selected NBS implementations, such pond creation. Default values are set for each NCP indicator. These default values were established in line with legislation in certain countries, such as England. You may choose to retain these defaults or adjust them according to your specific objectives." %}<br>
@@ -286,15 +286,7 @@
 
     <!-- JavaScript for Info Box -->
     <script>
-        document.getElementById('info-icon').addEventListener('click', function() {
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('info-box').style.display = 'block';
-        });
-
-        document.getElementById('close-info-box').addEventListener('click', function() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('info-box').style.display = 'none';
-        });
+        
 
         // Get all info icons and attach click event
     document.querySelectorAll('.example-icon').forEach(function(icon) {

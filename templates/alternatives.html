@@ -153,13 +153,13 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
    
-    <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0)"><i class="fa fa-fw fa-home"></i> {% translate "Home" %}</a></div>
+    <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0)"><i class="fa fa-fw fa-home"></i> Home</a></div>
     <span class="navbar-brand mb-0 h1">
       <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
     </span>
 
 
-    <form action="{% url 'set_language' %}" method="post">
+    <!--<form action="{% url 'set_language' %}" method="post">
       {% csrf_token %}
       <input name="next" type="hidden" value="{{ redirect_to }}" />
       <select name="language" onchange="this.form.submit();">
@@ -171,7 +171,7 @@
           </option>
           {% endfor %}
       </select>
-  </form>
+  </form>-->
 </div>
 </nav>
 
@@ -179,20 +179,17 @@
   <div class="form-container">
   {% block content %}
   <div class="centered-text-container">
-    <h5>{%translate "Choice of Nature-Based Solution (NBS) to be implemented " %}
-        
-        
-    </h5>
+    <h5>Choice of Nature-Based Solution (NBS) to be implemented</h5>
     What type of actions could potentially be implemented within your pondscape ?<br>
         <ul>
             <li>No Human Action (let nature take its course)</li>
             <li>Management of Water Quality</li>
-            <li>Creation of New Ponds</li>
+            <li>Creation of Clean Water Ponds</li>
         </ul>
     See the technical handbook for more information on the NBS implementation actions:
     <ul>
-        <li><a href="{% static 'pdf/handbook.pdf' %}#page=90">Check handbook for creating ponds and pondscapes</a></li>
-        <li><a href="{% static 'pdf/handbook.pdf' %}#page=83">Check handbook for restoring ponds and pondscapes</a></li>
+        <li>Clean water pond creation: A clean water pond, compared to a nutrient-rich pond, is likely to emit few GHG and host a rich biodiversity.<a href="{% static 'pdf/handbook.pdf' %}#page=90" target="_blank">(See Handbook Page 86)</a></li>
+        <li>Managing and restoring ponds: <a href="{% static 'pdf/handbook.pdf' %}#page=83" target="_blank">(See Handbook Page 79)</a></li>
     </ul>
   </div>
 
@@ -203,7 +200,7 @@
     
     
     
-    <button id="close-info-box" style="display: block; margin-top: 10px;">{% translate "Close" %}</button>
+    <button id="close-info-box" style="display: block; margin-top: 10px;">Close</button>
 </div>
   <form method="post" action="{% url 'create_alternatives' %}">
       {% csrf_token %}
@@ -224,7 +221,7 @@
           {% for form in formset %}
           <div class="card form-entry mb-3">
               <div class="card-header">
-                  <strong>{% translate "NBS Action" %}</strong>
+                  <strong>NBS Action</strong>
               </div>
               <div class="card-body">
                   <table class="table table-borderless">
@@ -236,14 +233,14 @@
       </div>
 
       <div class="button-container">
-          <button type="button" class="btn btn-primary btn-lg" id="add_more"><i class="fas fa-plus-circle"></i> {% translate "Add Another NBS" %}</button>
-          <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-check-circle"></i> {% translate "Submit Selected NBS" %}</button>
+          <button type="button" class="btn btn-primary btn-lg" id="add_more"><i class="fas fa-plus-circle"></i>Add Another NBS</button>
+          <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-check-circle"></i>Submit Selected NBS</button>
       </div>
 
       <div id="empty_form" style="display:none">
           <div class="card form-entry mb-3">
               <div class="card-header">
-                  <strong>{% translate "NBS Action" %}</strong>
+                  <strong>NBS Action</strong>
               </div>
               <div class="card-body">
                   <table class="table table-borderless">
@@ -251,7 +248,7 @@
                   </table>
               </div>
               <!-- Add this button inside the card body -->
-                <button type="button" class="remove-form btn btn-danger btn-sm ml-3 mb-3">{% translate "Remove" %}</button>
+                <button type="button" class="remove-form btn btn-danger btn-sm ml-3 mb-3">Remove</button>
           </div>
       </div>
   </form>
@@ -272,7 +269,7 @@
               var pondMaxField = form.querySelector('input[name$="pond_max"]'); // Get the pond_max input field
 
               // Replace '7' with the actual ID for "Creation" from your database
-              if (actionSelect.value === '46') {  // Adjust the value to match "Creation" action's ID
+              if (actionSelect.value === '47') {  // Adjust the value to match "Creation" action's ID
                   pondMinField.closest('tr').style.display = ''; // Show pond_min row
                   pondMaxField.closest('tr').style.display = ''; // Show pond_max row
                   // Make pond_min and pond_max fields required

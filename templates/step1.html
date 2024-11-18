@@ -195,12 +195,12 @@ th, td {
 
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 
-                <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);"><i class="fa fa-fw fa-home"></i> {% translate "Home" %}</a></div>
+                <div class="nav-right"><a class="active" href="{% url 'home' %}" style="color: rgb(0, 87, 0);"><i class="fa fa-fw fa-home"></i> Home</a></div>
                 <span class="navbar-brand mb-0 h1">
                     <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="">
                   </span>
 
-                  <form action="{% url 'set_language' %}" method="post">
+                  <!--<form action="{% url 'set_language' %}" method="post">
                     {% csrf_token %}
                     <input name="next" type="hidden" value="{{ redirect_to }}" />
                     <select name="language" onchange="this.form.submit();">
@@ -212,16 +212,16 @@ th, td {
                         </option>
                         {% endfor %}
                     </select>
-                </form>
+                </form>-->
             </div>
             </nav>
             <div class="content-container cover">
             <div class="form-container">
                 <div class="centered-text-container">
-                <h5 style="text-align: center;">{% translate "Choice of NCP indicators (Nature's Contribution to People)" %}
+                <h5 style="text-align: center;">Choice of NCP indicators (Nature's Contribution to People)
                     
                 </h5>
-                <p>{%translate "Which NCP indicators do you want to take into account in your analysis?" %}</p>
+                <p>Which NCP indicators do you want to take into account in your analysis?</p>
             </div>
                 
 
@@ -230,9 +230,9 @@ th, td {
 
             <!-- Info Box -->
             <div id="info-box" class="centered">
-                {% translate "Explain the justification behind the choice of the indicators listed here" %}
+                Explain the justification behind the choice of the indicators listed here
                 <img src="{% static 'images/test.jpg' %}" alt="">
-                <button id="close-info-box" style="display: block; margin-top: 10px;">{% translate "Close" %}</button>
+                <button id="close-info-box" style="display: block; margin-top: 10px;">Close</button>
             </div>
                 <form method="post" action="{% url 'select_criteria' %}">
                     {% csrf_token %}
@@ -240,12 +240,12 @@ th, td {
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>{% translate "Select" %}</th>
+                                <th>Select</th>
                                 
-                                <th>{% translate "NCP Indicator" %}</th>
-                                <th>{% translate "Unit of Measure" %}</th>
-                                <th></th>
-                                <th></th>
+                                <th>NCP Indicator</th>
+                                <th>Unit of Measure</th>
+                                <th>Objective</th>
+                                <th>Reference to Handbook</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -268,7 +268,7 @@ th, td {
                             {% endfor %}
                         </tbody>
                     </table>
-                    <button type="submit" class="btn btn-success btn-lg">{% translate "Submit Selection and Rank the Selected Indicators" %}</button>
+                    <button type="submit" class="btn btn-success btn-lg">Submit Selection and Rank the Selected Indicators</button>
                     <!-- This input is now inside the bottom bar, so we remove it from here -->
                 </form>
             </div>

@@ -57,6 +57,7 @@
     overflow-x: auto; /* Enable scroll for smaller screens */
 }
 
+
 .sidebar {
     flex: 1;
     display: flex;
@@ -181,7 +182,7 @@ th, td {
         .average { background-color: #78c679; }
         .good { background-color: #31a354; }
         .excellent { background-color: #006837; color: white;}
-        .not-achieved {background-color: red; color: white;}
+        .not-achieved {background-color: #f4a89a; }
         
     .na {
     background-color: gray;
@@ -205,7 +206,25 @@ th, td {
             background-color: #ccffcc; /* Light Green */
         }
 
-       
+  /* Add spacing between the second-to-last column and the Weighted Average column */
+  .table-container table {
+      border-collapse: separate; /* Allows border-spacing */
+      border-spacing: 0; /* No global spacing */
+  }
+
+  .table-container table td,
+  .table-container table th {
+      padding: 8px; /* Standard padding */
+  }
+
+  .table-container table .weighted-average-cell {
+      padding-left: 20px; /* Add space to the left of Weighted Average column */
+  }
+
+  .table-container table th:last-child,
+  .table-container table td:last-child {
+      padding-left: 20px; /* Adjust for the last column as well */
+  }
         
     </style>
 </head>
@@ -219,7 +238,7 @@ th, td {
         <img class="brandsize" src="{% static 'images/logo.jpg' %}" alt="Logo">
     </span>
 
-    <form action="{% url 'set_language' %}" method="post">
+    <!--<form action="{% url 'set_language' %}" method="post">
         {% csrf_token %}
         <input name="next" type="hidden" value="{{ redirect_to }}" />
         <select name="language" onchange="this.form.submit();">
@@ -231,7 +250,7 @@ th, td {
             </option>
             {% endfor %}
         </select>
-    </form>
+    </form>-->
 </div> 
 </nav>
 <div class="content-container">
@@ -248,6 +267,7 @@ th, td {
                                 {% for title in criteria_titles %}
                                     <th>{{ title|add_subscript|safe }}</th>
                                 {% endfor %}
+                                <th style="border: none;"></th>
                                 <th>Weighted Average</th>
                             </tr>
                         </thead>
@@ -274,7 +294,8 @@ th, td {
                                             {% endif %}
                                         </td>
                                     {% endfor %}
-                                    <td class="{% if details.sum == 0 %}not-achieved{% elif details.sum < 20 %}bad{% elif details.sum <= 40 %}weak{% elif details.sum <= 60 %}average{% elif details.sum <= 80 %}good{% else %}excellent{% endif %}">
+                                    <td style="border: none;"></td>
+                                    <td class="weighted-average-cell {% if details.sum == 0 %}not-achieved{% elif details.sum < 20 %}bad{% elif details.sum <= 40 %}weak{% elif details.sum <= 60 %}average{% elif details.sum <= 80 %}good{% else %}excellent{% endif %}">
                                         {% if details.sum == 0 %}
                                             <strong>Not Achieved</strong>
                                         {% elif details.sum < 20 %}
@@ -303,15 +324,23 @@ th, td {
         <!-- Legend Box -->
         <div class="legend">
             <h5>{% translate "Legend" %}</h5>
-            <p>The results is based on computed scores(%) presenting at what level the decision-maker's management objectives is reached for each NBS implementation and per each selected NCP indicator, considering the conditions of evolution of the territory and climate in 2050. The global score illustrates the weighted average score.
-                The management objectives are:
-                </p>
+            <p>The management objectives are:</p>
+            <div><span class="na">&nbsp;&nbsp;&nbsp;&nbsp;</span> {%translate "Unknown" %}: Not enough data available</div>
             <div><span class="not-achieved">&nbsp;&nbsp;&nbsp;&nbsp;</span> 0%: {%translate "Not achieved" %}</div>
             <div><span class="bad">&nbsp;&nbsp;&nbsp;&nbsp;</span> 0%-20%: {%translate "Barely achieved" %}</div>
             <div><span class="weak">&nbsp;&nbsp;&nbsp;&nbsp;</span> 20%-40%: {%translate "Minimally achieved" %}</div>
             <div><span class="average">&nbsp;&nbsp;&nbsp;&nbsp;</span> 40%-60%: {%translate "Partially achieved" %}</div>
             <div><span class="good">&nbsp;&nbsp;&nbsp;&nbsp;</span> 60%-80%: {%translate "Mostly achieved" %}</div>
             <div><span class="excellent">&nbsp;&nbsp;&nbsp;&nbsp;</span> 80%-100%: {%translate "Achieved" %}</div>
+            
+        </div>
+
+        <!-- Legend Box -->
+        <div class="legend">
+            <h5>{% translate "Note" %}</h5>
+            <p>The results is based on computed scores(%) presenting at what level the decision-maker's management objectives is reached for each NBS implementation and per each selected NCP indicator, considering the conditions of evolution of the territory and climate in 2050. The global score illustrates the weighted average score.<br>
+                </p>
+                <p style="font-style: italic; margin-top: 10px;">Please note that while the results presented here focus on species richness, the creation of clean water ponds is expected to enhance species abundance and is likely to generate lower GHG emissions compared to nutrient-rich ponds.</p>
             
         </div>
 
