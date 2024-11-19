@@ -35,7 +35,10 @@ from shapely.geometry import shape
 from rasterio.mask import mask
 from django.contrib.gis.gdal import SpatialReference
 from shapely.geometry import box
-
+import geopandas as gpd
+from pyproj import Transformer
+from shapely.geometry import Point
+from shapely.geometry import Point as ShapelyPoint
 
 # Create your views here.
 
@@ -106,8 +109,8 @@ def calculate_avg_raster_value(raster_path, geom):
     with rasterio.open(raster_path) as src:
         raster_crs = src.crs
         raster_epsg = int(raster_crs.to_epsg()) 
-        print(raster_epsg) # Convert the CRS to EPSG integer
-        print(f"Raster NoData value: {src.nodata}")
+        #print(raster_epsg) # Convert the CRS to EPSG integer
+        #print(f"Raster NoData value: {src.nodata}")
         
     
     # Get the current CRS of the polygon (assuming it's defined in geom.srid)
@@ -126,16 +129,16 @@ def calculate_avg_raster_value(raster_path, geom):
 
         # Check the NoData value
         nodata_value = src.nodata
-        print(f"NoData value in the raster: {nodata_value}")
+        #print(f"NoData value in the raster: {nodata_value}")
 
         # Mask NaN values explicitly
         out_image = np.ma.masked_invalid(out_image)
-        print(f"Masked image (with NaNs removed): {out_image}")
-        print(out_image)
+        #print(f"Masked image (with NaNs removed): {out_image}")
+        #print(out_image)
 
         # Calculate the mean, ignoring NaN and 0 values
         mean_value = out_image.mean()
-        print(f"Mean pixel value: {mean_value}")
+        #print(f"Mean pixel value: {mean_value}")
 
     return mean_value
 def reverse_geocode_country(lat, lon):
@@ -155,34 +158,57 @@ def reverse_geocode_country(lat, lon):
         print(f"Error during reverse geocoding: {e}")
         return None
 
-def get_country_from_nearest_point(centroid, gpkg_path):
+def transform_point_crs(point, from_crs, to_crs):
     """
-    Find the nearest country based on a point in a GPKG file.
+    Transform a Shapely Point from one CRS to another using pyproj.
+    
+    Args:
+        point (Point): The Shapely Point geometry.
+        from_crs (str or int): Source CRS (e.g., "EPSG:4326").
+        to_crs (str or int): Target CRS (e.g., "EPSG:3857").
+        
+    Returns:
+        Point: Transformed Shapely Point in the target CRS.
+    """
+    transformer = Transformer.from_crs(from_crs, to_crs, always_xy=True)
+    x, y = transformer.transform(point.x, point.y)
+    return Point(x, y)
+
+def get_country_from_nearest_point(centroid, gpkg_path, geom_crs):
+    """
+    Find the nearest point to the centroid in a GPKG file and reverse geocode its location.
 
     Args:
-        centroid (Point): The centroid geometry (Shapely Point).
-        gpkg_path (str): Path to the GPKG file containing points with country names.
+        centroid (django.contrib.gis.geos.Point): The centroid geometry (Django Point).
+        gpkg_path (str): Path to the GPKG file containing points.
+        geom_crs (str): CRS of the input geometry (e.g., "EPSG:4326").
 
     Returns:
-        str: Country name based on the nearest point in GPKG.
+        str: Country name based on reverse geocoding of the nearest point.
     """
+    # Convert the centroid (Django Point) to a Shapely Point
+    shapely_centroid = ShapelyPoint(centroid.x, centroid.y)
+
     # Load the GPKG file as a GeoDataFrame
     gdf = gpd.read_file(gpkg_path)
 
-    # Ensure the centroid and GPKG are in the same CRS
-    if gdf.crs != "EPSG:4326":
-        gdf = gdf.to_crs("EPSG:4326")
-    if centroid.crs != "EPSG:4326":
-        centroid = centroid.to_crs("EPSG:4326")
+    # Ensure the GPKG GeoDataFrame is in the same CRS as the centroid
+    gpkg_crs = gdf.crs.to_string()  # CRS of the GPKG
+    if gpkg_crs != geom_crs:
+        gdf = gdf.to_crs(geom_crs)
 
-    # Calculate distances from the centroid to each point in the GPKG
-    gdf['distance'] = gdf.geometry.distance(centroid)
+    # Calculate distances from the Shapely centroid to each point in the GPKG
+    gdf['distance'] = gdf.geometry.distance(shapely_centroid)
 
     # Find the closest point
     nearest_point = gdf.loc[gdf['distance'].idxmin()]
 
-    # Extract the country name from the nearest point
-    country_name = nearest_point['country']  # Adjust this field name to match your GPKG schema
+    # Extract the coordinates of the nearest point
+    nearest_lat = nearest_point.geometry.y
+    nearest_lon = nearest_point.geometry.x
+
+    # Use reverse geocoding on the nearest point's coordinates
+    country_name = reverse_geocode_country(nearest_lat, nearest_lon)
 
     return country_name
 
@@ -234,6 +260,22 @@ def map_view(request):
 
                 # Use the centroid to find the country using reverse geocoding
                 country_name = reverse_geocode_country(centroid.y, centroid.x)  # Latitude and Longitude
+
+                # Accepted country list
+                accepted_countries = [
+                    "Belgium", "Denmark", "Germany",
+                    "Spain", "Switzerland", "Turkey",
+                    "United Kingdom"
+                ]
+
+                # CRS of the geometry
+                geom_crs = f"EPSG:{geom.srid}"  # GEOSGeometry CRS
+
+                # If the country is not in the accepted list, use the nearest GPKG point
+                if not country_name or country_name not in accepted_countries:
+                    gpkg_path = '/app/all_ponds/all_ponds.gpkg'
+                    country_name = get_country_from_nearest_point(centroid, gpkg_path, geom_crs)
+
 
                 if country_name:
                     study_area.country = country_name
@@ -631,9 +673,15 @@ def mcda_results(request):
                     #print(indicator)
                     if indicator not in [19,18,55]: #['GHG emission (CH4, CO2)', 'Water quantity', 'Water quality']:
                         #ncp_indicator = criteria.objects.get(name=indicator)
+
+                        # check if the number of current and future ponds is bigger than 100, then use acuu for 100
+                        new_numb_ponds = nbs_action[1]+current_ponds
+                        if current_ponds>100 or new_numb_ponds>100:
+                            current_ponds = 100
+                            new_numb_ponds = 100
                         # get current and future spcies richness from the accumulation curves based on the number of current and future ponds
                         ncp_current = accumulation.objects.get(country = country, pond_num = current_ponds, indicator = indicator)
-                        ncp_future = accumulation.objects.get(country = country, pond_num = nbs_action[1]+current_ponds, indicator = indicator)
+                        ncp_future = accumulation.objects.get(country = country, pond_num = new_numb_ponds, indicator = indicator)
                         
                         current_richness = ncp_current.sp_richness
                         future_richness = ncp_future.sp_richness
@@ -771,7 +819,7 @@ def mcda_results(request):
 
                 # no action
                 else:
-                    if indicator not in [19,18]:
+                    if indicator not in [19,18,55]:
                         scenario_change_obj = StudyAreaResult.objects.get(study_area = study_area_id, scenario = scenario_id, criteria = indicator)
                         scenario_change = scenario_change_obj.average_value
                         output = scenario_change
@@ -781,7 +829,7 @@ def mcda_results(request):
                         scenario_change_obj = StudyAreaResult.objects.get(study_area = study_area_id, scenario = scenario_id, criteria = indicator)
                         scenario_change = scenario_change_obj.average_value
                         output = scenario_change
-                        
+                        #print(output)
                             #satisfaction_c = satisfaction_c*(-1)
                             #satisfaction_n = satisfaction_n*(-1)
                         #print(ap[0])

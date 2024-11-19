@@ -206,7 +206,11 @@ width: 100px;
       <p>This tool is designed to assist decision-makers in understanding the benefits of ponds for biodiversity and climate change adaptation/mitigation, helping them to understand the benefits of increasing the presence of ponds in their regions.</br>Developed as part of the EU Horizon 2020 project, <a href="https://ponderful.eu/" target="_blank">PONDERFUL</a>, (2020-2024) the tool explores the role of ponds and pond landscapes (pondscapes) as Nature-Based Solutions (NBS) for adressing societal challenges linked to climate changes. It enables decision-makers to evaluate selected NBS strategies (pond creation and water quality management), assessing their impacts on a set of Nature's Contributions to People (NCP) indicators (aquatic biodiversity (amphibians, plants, macroinvertebrates), emissions of GHG, water quantity, water quality). Additionally, the tool allows for scenario analysis, evaluating outcomes under different climate change and land use projections for 2050.</p>
       
       <div class="button-container">
+        {% if user.is_authenticated %}
         <a href="{% url 'start_analysis_newpondscape' %}" class="btn btn-secondary btn-lg">Skip Introduction</a>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-secondary btn-lg">Skip Introduction</a>
+        {% endif %}
         <button onclick="showNextPart()" class="btn btn-primary btn-lg">Next</button>
       </div>
     </div>

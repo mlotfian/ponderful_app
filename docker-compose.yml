@@ -11,6 +11,7 @@ services:
       - /mnt/e/Maryam/Ponderful/OnlyCCPercentChange:/app/only_CC
       - /mnt/e/Maryam/Ponderful/accumulation_curve:/app/accumulation
       - /mnt/e/Maryam/Ponderful/trophic_state:/app/trophic_state
+      - /mnt/e/Maryam/Ponderful/all_ponds:/app/all_ponds
     ports:
       - 8000:8000
     env_file:
