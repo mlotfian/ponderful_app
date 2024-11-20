@@ -6,6 +6,8 @@ from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import *
 from modeltranslation.translator import register, TranslationOptions
 from modeltranslation.admin import TranslationAdmin
+import csv
+from django.http import HttpResponse
 # Register your models here.
 
 class CustomUserAdmin(UserAdmin):
@@ -102,5 +104,23 @@ class IndicatorTrophicDataAdmin(admin.ModelAdmin):
 admin.site.register(IndicatorTrophicData, IndicatorTrophicDataAdmin) 
 
 class AccumulationAdmin(admin.ModelAdmin): 
-    list_display = ['id', 'country', 'sp_richness','pond_num', 'indicator'] 
+    list_display = ['id', 'country', 'sp_richness','pond_num', 'indicator']
+    actions = ['export_as_csv']
+
+    def export_as_csv(self, request, queryset):
+        # Create the HttpResponse object with the appropriate CSV header.
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="accumulation.csv"'
+
+        writer = csv.writer(response)
+        # Write the header row
+        writer.writerow(['Country', 'Species Richness', 'Pond Number', 'Indicator'])
+
+        # Write data rows
+        for obj in queryset:
+            writer.writerow([obj.country, obj.sp_richness, obj.pond_num, obj.indicator.name])
+
+        return response
+
+    export_as_csv.short_description = "Export Selected as CSV"
 admin.site.register(accumulation, AccumulationAdmin) 
