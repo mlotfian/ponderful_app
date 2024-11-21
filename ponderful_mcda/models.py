@@ -42,7 +42,7 @@ class TrophicState(models.Model):
     @property
     def rank(self):
         rank_mapping = {
-            'oligo-mesotrophichic': 1,
+            'oligo-mesotrophic': 1,
             'eutrophic': 2,
             'hypertrophic': 3,
             'highly hypertrophic': 4,
