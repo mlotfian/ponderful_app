@@ -1,7 +1,7 @@
 ## A Decision Support Tool For Guiding Decision Makers With Their Pond Management Actions
 
 This tool is designed to assist decision-makers in understanding the benefits of ponds for biodiversity and climate change adaptation/mitigation, helping them to understand the benefits of increasing the presence of ponds in their regions.
-Developed as part of the EU Horizon 2020 project, PONDERFUL, (2020-2024) the tool explores the role of ponds and pond landscapes (pondscapes) as Nature-Based Solutions (NBS) for adressing societal challenges linked to climate changes. It enables decision-makers to evaluate selected NBS strategies (pond creation and water quality management), assessing their impacts on a set of Nature's Contributions to People (NCP) indicators (aquatic biodiversity (amphibians, plants, macroinvertebrates), emissions of GHG, water quantity, water quality). Additionally, the tool allows for scenario analysis, evaluating outcomes under different climate change and land use projections for 2050.
+Developed as part of the EU Horizon 2020 project, PONDERFUL(https://ponderful.eu/), (2020-2024) the tool explores the role of ponds and pond landscapes (pondscapes) as Nature-Based Solutions (NBS) for adressing societal challenges linked to climate changes. It enables decision-makers to evaluate selected NBS strategies (pond creation and water quality management), assessing their impacts on a set of Nature's Contributions to People (NCP) indicators (aquatic biodiversity (amphibians, plants, macroinvertebrates), emissions of GHG, water quantity, water quality). Additionally, the tool allows for scenario analysis, evaluating outcomes under different climate change and land use projections for 2050.
 
 
 ## Django App with Docker
@@ -16,7 +16,7 @@ This tool is developed as a Django web application containerized with Docker for
 
 ## Main folders structure
 
-    ```bash
+    ```plaintext
     /
     ├── ponderful_app/          # Django project
     ├── ponderful_mcda/         # Django app
