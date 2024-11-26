@@ -164,6 +164,10 @@ cython_debug/
 ngrok_2.txt
 ngrok.txt
 aurelie_pass.txt
+ponderful.sql
+ponderful_data.sql
+ponderful_db_mcda.json
+ponderful_dump.sql
 
 # folders
 /only_CC/
