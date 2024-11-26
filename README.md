@@ -17,13 +17,13 @@ This tool is developed as a Django web application containerized with Docker for
 ## Main folders structure
 
     ```bash
-   /
-   ├── ponderful_app/          # Django project
-   ├── ponderful_mcda/         # Django app
-   ├── Dockerfile              # Docker configuration
-   ├── docker-compose.yml      # Docker Compose file
-   ├── .env.example            # Example environment variables
-   └── ...
+    /
+    ├── ponderful_app/          # Django project
+    ├── ponderful_mcda/         # Django app
+    ├── Dockerfile              # Docker configuration
+    ├── docker-compose.yml      # Docker Compose file
+    ├── .env.example            # Example environment variables
+    └── ...
 
 
 ## How to Run
