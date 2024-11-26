@@ -28,5 +28,6 @@ This tool is developed as a Django web application containerized with Docker for
    docker-compose up --build
    
 3. Migrate the database:
-  ```bash
-  docker-compose exec web python manage.py migrate
+   
+   ```bash
+   docker-compose exec web python manage.py migrate
