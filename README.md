@@ -16,7 +16,7 @@ This tool is developed as a Django web application containerized with Docker for
 
 ## Main folders structure
 
-   ```bash
+    ```bash
    /
    ├── ponderful_app/          # Django project
    ├── ponderful_mcda/         # Django app
