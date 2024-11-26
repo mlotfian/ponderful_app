@@ -175,5 +175,9 @@ ponderful_dump.sql
 /OnlyCCPercentChange/
 /OnlyLUPercentChange/
 /trophic_state/
-
+/all_maps/
+/all_ponds/
+/accumulation_curve/
+/Percent_changes_bio18/
+/Percent_changes_CombinedCC_LU/
 
