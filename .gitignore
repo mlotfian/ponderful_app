@@ -168,6 +168,13 @@ ponderful.sql
 ponderful_data.sql
 ponderful_db_mcda.json
 ponderful_dump.sql
+Maryam-Shortcut.lnk
+full_ponderful_dump.sql
+image.png 
+my_project.png 
+my_project.dot 
+users_data.sql 
+
 
 # folders
 /only_CC/
@@ -180,4 +187,7 @@ ponderful_dump.sql
 /accumulation_curve/
 /Percent_changes_bio18/
 /Percent_changes_CombinedCC_LU/
+/jorat_mezier/
+/node_modules/
+
 
