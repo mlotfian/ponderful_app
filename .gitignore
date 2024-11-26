@@ -161,6 +161,15 @@ cython_debug/
 
 .sql
 .json
+ngrok_2.txt
+ngrok.txt
+aurelie_pass.txt
 
 # folders
-/only_CC
+only_CC/
+only_LU/
+OnlyCCPercentChange/
+OnlyLUPercentChange/
+trophic_state/
+
+
