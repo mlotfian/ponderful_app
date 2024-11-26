@@ -166,10 +166,10 @@ ngrok.txt
 aurelie_pass.txt
 
 # folders
-only_CC/
-only_LU/
-OnlyCCPercentChange/
-OnlyLUPercentChange/
-trophic_state/
+/only_CC
+/only_LU
+/OnlyCCPercentChange
+/OnlyLUPercentChange
+/trophic_state
 
 
