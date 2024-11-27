@@ -22,6 +22,7 @@ This tool is developed as a Django web application containerized with Docker for
      ├── ponderful_mcda/         # Django app
      ├── Dockerfile              # Docker configuration
      ├── docker-compose.yml      # Docker Compose file
+     ├── manage.py               # Django project manage.py file
      ├── .env.example            # Example environment variables
      └── ...
 

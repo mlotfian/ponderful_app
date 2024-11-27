@@ -335,6 +335,9 @@ def map_view(request):
                     for ssp, raster_path in ssps.items():
                         scenario_name = scenario.objects.get(name=ssp)  # Assuming your scenario names match the keys
                         avg_value = calculate_avg_raster_value(raster_path, geom)
+                        print(avg_value)
+                        print(type(avg_value))
+                       
 
                         # Save the result in the new StudyAreaResult model
                         StudyAreaResult.objects.create(
